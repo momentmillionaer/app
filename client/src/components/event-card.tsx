@@ -237,7 +237,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
             </div>
           </div>
 
-          {/* Location and time */}
+          {/* Location, time and price */}
           <div className="flex items-center gap-4 text-sm text-white/80 mb-4">
             {event.location && (
               <div className="flex items-center">
@@ -249,6 +249,12 @@ export function EventCard({ event, onClick }: EventCardProps) {
               <div className="flex items-center">
                 <Clock className="mr-1 h-4 w-4 text-white/60" />
                 <span>{event.time}</span>
+              </div>
+            )}
+            {event.price && event.price !== "0" && event.price !== "" && parseFloat(event.price) > 0 && (
+              <div className="flex items-center">
+                <span className="mr-1 text-white/60">€</span>
+                <span>{event.price}</span>
               </div>
             )}
           </div>
