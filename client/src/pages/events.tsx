@@ -169,12 +169,12 @@ export default function EventsPage() {
           </div>
           <div className="flex items-center space-x-4">
             {/* View Mode Toggle */}
-            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            <div className="flex items-center bg-gray-100/80 backdrop-blur-sm rounded-2xl p-2 shadow-sm">
               <Button
                 variant={viewMode === "calendar" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("calendar")}
-                className="flex items-center space-x-1"
+                className="flex items-center space-x-2 rounded-xl px-4 py-2"
               >
                 <Calendar className="h-4 w-4" />
                 <span>Kalender</span>
@@ -183,7 +183,7 @@ export default function EventsPage() {
                 variant={viewMode === "list" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("list")}
-                className="flex items-center space-x-1"
+                className="flex items-center space-x-2 rounded-xl px-4 py-2"
               >
                 <List className="h-4 w-4" />
                 <span>Liste</span>
@@ -194,10 +194,10 @@ export default function EventsPage() {
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-500">Sortierung:</span>
                 <Select value={sortOption} onValueChange={setSortOption}>
-                  <SelectTrigger className="w-40">
+                  <SelectTrigger className="w-40 rounded-2xl border-gray-300 shadow-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-2xl border-0 shadow-lg">
                     <SelectItem value="date-asc">Datum (aufsteigend)</SelectItem>
                     <SelectItem value="date-desc">Datum (absteigend)</SelectItem>
                     <SelectItem value="title">Titel (A-Z)</SelectItem>
@@ -213,7 +213,7 @@ export default function EventsPage() {
         {isLoading ? (
           <div className="space-y-4">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div key={i} className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-md border-0 p-8">
                 <div className="flex space-x-4">
                   <Skeleton className="w-20 h-20 rounded-lg" />
                   <div className="flex-1 space-y-2">

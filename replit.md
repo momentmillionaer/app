@@ -10,12 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-**July 14, 2025 - Dynamic Categories & Custom Colors**
+**July 14, 2025 - iOS-Inspired Design with Brand Colors**
 - ✓ Updated app to use dynamic "Kategorie" field from Notion database instead of predefined categories
 - ✓ Implemented custom color palette from user's brand colors (#0A0A0A, #0000FF, #D0FE1D, #F3DCFA, #F4F3F2, #FE5C2B, #FEE4C3)
 - ✓ Added /api/categories endpoint to fetch available categories from Notion
-- ✓ Applied consistent color scheme across calendar view, event cards, and category badges
-- ✓ Enhanced typography with Connihof Regular font for main title and Helvetica Neue LT Pro Bold for headers
+- ✓ Applied iOS-inspired design with rounded corners throughout (rounded-2xl, rounded-3xl)
+- ✓ Enhanced with backdrop blur effects and subtle shadows for modern glass morphism
+- ✓ Switched to Helvetica font family throughout the application
+- ✓ Category badges simplified to light gray with black text for better readability
 
 ## System Architecture
 

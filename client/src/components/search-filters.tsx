@@ -56,7 +56,7 @@ export function SearchFilters({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+    <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-lg border border-gray-200/50 p-8 mb-8">
       {/* Search Bar */}
       <div className="mb-6">
         <div className="relative">
@@ -64,7 +64,7 @@ export function SearchFilters({
           <Input
             type="text"
             placeholder="Events, Veranstaltungsorte oder Beschreibungen durchsuchen..."
-            className="pl-10 py-3"
+            className="pl-10 py-4 rounded-2xl border-gray-300"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -77,10 +77,10 @@ export function SearchFilters({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Kategorie</label>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger>
+            <SelectTrigger className="rounded-2xl border-gray-300 shadow-sm">
               <SelectValue placeholder="Alle Kategorien" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-2xl border-0 shadow-lg">
               <SelectItem value="all">Alle Kategorien</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
@@ -98,6 +98,7 @@ export function SearchFilters({
             type="date"
             value={dateFrom}
             onChange={(e) => onDateFromChange(e.target.value)}
+            className="rounded-2xl border-gray-300 shadow-sm"
           />
         </div>
 
@@ -108,6 +109,7 @@ export function SearchFilters({
             type="date"
             value={dateTo}
             onChange={(e) => onDateToChange(e.target.value)}
+            className="rounded-2xl border-gray-300 shadow-sm"
           />
         </div>
       </div>
@@ -116,7 +118,7 @@ export function SearchFilters({
       {hasActiveFilters && (
         <div className="mt-4 flex flex-wrap gap-2 items-center">
           {searchQuery && (
-            <Badge variant="default" className="bg-primary text-white">
+            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
               Suche: {searchQuery}
               <button
                 className="ml-2 hover:text-gray-200"
@@ -127,7 +129,7 @@ export function SearchFilters({
             </Badge>
           )}
           {selectedCategory && selectedCategory !== "all" && (
-            <Badge variant="default" className="bg-primary text-white">
+            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
               {selectedCategory}
               <button
                 className="ml-2 hover:text-gray-200"
@@ -138,7 +140,7 @@ export function SearchFilters({
             </Badge>
           )}
           {dateFrom && (
-            <Badge variant="default" className="bg-primary text-white">
+            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
               Von: {dateFrom}
               <button
                 className="ml-2 hover:text-gray-200"
@@ -149,7 +151,7 @@ export function SearchFilters({
             </Badge>
           )}
           {dateTo && (
-            <Badge variant="default" className="bg-primary text-white">
+            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
               Bis: {dateTo}
               <button
                 className="ml-2 hover:text-gray-200"
@@ -161,7 +163,7 @@ export function SearchFilters({
           )}
           <Button
             variant="link"
-            className="text-sm text-gray-500 hover:text-gray-700 p-0 h-auto"
+            className="text-sm text-gray-500 hover:text-gray-700 p-0 h-auto rounded-2xl"
             onClick={onClearFilters}
           >
             Alle Filter löschen

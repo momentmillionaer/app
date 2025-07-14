@@ -39,7 +39,7 @@
   --destructive: hsl(11, 99%, 58%); /* Your orange #FE5C2B */
   --destructive-foreground: hsl(0, 0%, 98%);
   --ring: hsl(240, 5%, 64.9%);
-  --radius: 0.5rem;
+  --radius: 1rem;
   
   /* Your custom brand colors */
   --brand-black: hsl(0, 0%, 4%); /* #0A0A0A */
