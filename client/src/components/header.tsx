@@ -12,7 +12,7 @@ export function Header({ eventCount, lastUpdated }: HeaderProps) {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Calendar className="text-primary text-2xl mr-3" />
-            <h1 className="text-xl font-bold text-gray-700">Eventkalender Graz</h1>
+            <h1 className="text-xl font-bold text-gray-700">Momentmillionär</h1>
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <span className="text-sm text-gray-600">{eventCount} Events</span>

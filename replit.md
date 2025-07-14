@@ -1,8 +1,8 @@
-# Event Calendar Graz - replit.md
+# Momentmillionär - replit.md
 
 ## Overview
 
-This is a full-stack event calendar application built for displaying events in Graz, Austria. The application features a React frontend with a Node.js/Express backend that integrates with Notion as a content management system. Events are stored and managed through Notion databases and displayed in a modern, responsive web interface.
+This is a full-stack event calendar application called "Momentmillionär" built for displaying events in Graz, Austria. The application features a React frontend with a Node.js/Express backend that integrates with Notion as a content management system. Events are stored and managed through Notion databases and displayed in a modern, responsive web interface.
 
 ## User Preferences
 
