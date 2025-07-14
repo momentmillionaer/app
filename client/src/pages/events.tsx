@@ -3,12 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/header";
 import { SearchFilters } from "@/components/search-filters";
 import { CalendarView } from "@/components/calendar-view";
+import { GridView } from "@/components/grid-view";
 import { EventCard } from "@/components/event-card";
 import { EventModal } from "@/components/event-modal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CalendarX, List, Calendar } from "lucide-react";
+import { CalendarX, List, Calendar, Grid3X3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Event } from "@shared/schema";
 
@@ -21,7 +22,7 @@ export default function EventsPage() {
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [sortOption, setSortOption] = useState("date-asc");
-  const [viewMode, setViewMode] = useState<"calendar" | "list">("list");
+  const [viewMode, setViewMode] = useState<"calendar" | "list" | "grid">("list");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -276,7 +277,7 @@ export default function EventsPage() {
                 variant={viewMode === "calendar" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("calendar")}
-                className="flex items-center space-x-2 rounded-xl px-4 py-2"
+                className="flex items-center space-x-2 rounded-xl px-3 py-2"
               >
                 <Calendar className="h-4 w-4" />
                 <span>Kalender</span>
@@ -285,14 +286,23 @@ export default function EventsPage() {
                 variant={viewMode === "list" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("list")}
-                className="flex items-center space-x-2 rounded-xl px-4 py-2"
+                className="flex items-center space-x-2 rounded-xl px-3 py-2"
               >
                 <List className="h-4 w-4" />
                 <span>Liste</span>
               </Button>
+              <Button
+                variant={viewMode === "grid" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("grid")}
+                className="flex items-center space-x-2 rounded-xl px-3 py-2"
+              >
+                <Grid3X3 className="h-4 w-4" />
+                <span>Raster</span>
+              </Button>
             </div>
             
-            {viewMode === "list" && (
+            {(viewMode === "list" || viewMode === "grid") && (
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-white/80 drop-shadow-sm">Sortierung:</span>
                 <Select value={sortOption} onValueChange={setSortOption}>
@@ -348,6 +358,8 @@ export default function EventsPage() {
           </div>
         ) : viewMode === "calendar" ? (
           <CalendarView events={filteredEvents} onEventClick={handleEventClick} />
+        ) : viewMode === "grid" ? (
+          <GridView events={filteredEvents} onEventClick={handleEventClick} />
         ) : (
           <div className="space-y-4">
             {filteredEvents.map((event) => (
