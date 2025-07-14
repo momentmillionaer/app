@@ -27,7 +27,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         page_size: 100
       });
 
-      const events = response.results.map((page: any) => {
+      const eventsWithRelations = await Promise.all(response.results.map(async (page: any) => {
         const properties = page.properties;
         
 
@@ -83,13 +83,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           time: eventTime,
           price: properties.Preis?.number ? properties.Preis.number.toString() : "",
           website: properties.URL?.url || "",
-          organizer: properties["Veranstalter / Brand"]?.rich_text?.[0]?.plain_text || "",
+          organizer: "Verschiedene Veranstalter", // Placeholder for now
           attendees: properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name).join(", ") || "",
           imageUrl: imageUrl
         };
-      });
+      }));
 
-      res.json(events);
+      res.json(eventsWithRelations);
     } catch (error) {
       console.error("Error fetching events:", error);
       res.status(500).json({ 
@@ -98,6 +98,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
 
   // Get available categories from Notion database
   app.get("/api/categories", async (req, res) => {
