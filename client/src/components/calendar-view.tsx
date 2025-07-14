@@ -15,7 +15,7 @@ export function CalendarView({ events }: CalendarViewProps) {
   // Get the first day of the month and calculate calendar grid
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-  const firstDayOfWeek = firstDayOfMonth.getDay();
+  const firstDayOfWeek = (firstDayOfMonth.getDay() + 6) % 7; // Convert Sunday=0 to Monday=0
   const daysInMonth = lastDayOfMonth.getDate();
 
   // Create array of dates for the calendar grid
@@ -61,7 +61,57 @@ export function CalendarView({ events }: CalendarViewProps) {
     "Juli", "August", "September", "Oktober", "November", "Dezember"
   ];
 
-  const dayNames = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+  const dayNames = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+
+  // Function to generate emoji based on event content
+  const getEventEmoji = (event: Event): string => {
+    const title = event.title.toLowerCase();
+    const category = event.category?.toLowerCase() || '';
+    
+    // Check for specific keywords and categories
+    if (category.includes('dating') || category.includes('❤️')) return '❤️';
+    if (category.includes('festivals') || category.includes('🃏')) return '🎉';
+    if (category.includes('musik') || title.includes('konzert') || title.includes('musik')) return '🎵';
+    if (category.includes('sport') || title.includes('sport')) return '⚽';
+    if (category.includes('kunst') || title.includes('kunst') || title.includes('galerie')) return '🎨';
+    if (category.includes('theater') || title.includes('theater')) return '🎭';
+    if (category.includes('kino') || title.includes('film')) return '🎬';
+    if (category.includes('essen') || title.includes('restaurant') || title.includes('food')) return '🍽️';
+    if (category.includes('nacht') || title.includes('party') || title.includes('club')) return '🌙';
+    if (category.includes('markt') || title.includes('markt')) return '🛍️';
+    if (category.includes('workshop') || title.includes('workshop')) return '🛠️';
+    if (category.includes('konferenz') || title.includes('meeting')) return '👥';
+    if (title.includes('weihnacht') || title.includes('christmas')) return '🎄';
+    if (title.includes('silvester') || title.includes('new year')) return '🎆';
+    if (title.includes('outdoor') || title.includes('wandern')) return '🏞️';
+    
+    return '📅'; // Default calendar emoji
+  };
+
+  // Function to check if a day is weekend
+  const isWeekend = (day: number): boolean => {
+    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    const dayOfWeek = date.getDay();
+    return dayOfWeek === 0 || dayOfWeek === 6; // Sunday or Saturday
+  };
+
+  // Function to check if a day is a holiday (simplified - you can expand this)
+  const isHoliday = (day: number): boolean => {
+    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    const month = date.getMonth();
+    const dayOfMonth = date.getDate();
+    
+    // Austrian holidays (simplified list)
+    const holidays = [
+      { month: 0, day: 1 },   // New Year
+      { month: 4, day: 1 },   // Labour Day
+      { month: 9, day: 26 },  // National Day
+      { month: 11, day: 25 }, // Christmas Day
+      { month: 11, day: 26 }, // Boxing Day
+    ];
+    
+    return holidays.some(holiday => holiday.month === month && holiday.day === dayOfMonth);
+  };
 
   const getCategoryColor = (category: string) => {
     return "px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200";
@@ -95,7 +145,7 @@ export function CalendarView({ events }: CalendarViewProps) {
       </div>
 
       {/* Calendar Grid */}
-      <Card className="rounded-[2rem] border-0 liquid-glass-strong">
+      <Card className="rounded-[2rem] border-0 liquid-glass">
         <CardContent className="p-8">
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1 mb-4">
@@ -110,7 +160,7 @@ export function CalendarView({ events }: CalendarViewProps) {
           <div className="grid grid-cols-7 gap-1">
             {calendarDays.map((day, index) => {
               if (day === null) {
-                return <div key={`empty-${index}`} className="p-2 h-24"></div>;
+                return <div key={`empty-${index}`} className="p-2 h-32"></div>;
               }
 
               const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}`;
@@ -119,37 +169,50 @@ export function CalendarView({ events }: CalendarViewProps) {
                 new Date().getDate() === day && 
                 new Date().getMonth() === currentDate.getMonth() && 
                 new Date().getFullYear() === currentDate.getFullYear();
+              
+              const weekend = isWeekend(day);
+              const holiday = isHoliday(day);
+              const isSpecialDay = weekend || holiday;
 
               return (
                 <div
                   key={`day-${day}`}
-                  className={`p-3 h-28 border-0 rounded-2xl relative overflow-hidden transition-all duration-300 ${
-                    isToday ? 'bg-brand-lime/90 liquid-glass-strong ring-2 ring-brand-blue/50' : 'liquid-glass hover:liquid-glass-strong'
+                  className={`p-3 h-32 border-0 rounded-2xl relative overflow-hidden transition-all duration-300 ${
+                    isToday 
+                      ? 'bg-brand-lime/80 liquid-glass-strong ring-2 ring-brand-blue/50' 
+                      : isSpecialDay
+                        ? 'liquid-glass bg-brand-purple/20 hover:liquid-glass-strong'
+                        : 'liquid-glass hover:liquid-glass-strong'
                   }`}
                 >
-                  <div className={`text-sm font-medium ${isToday ? 'text-brand-black' : 'text-white drop-shadow-sm'}`}>
+                  <div className={`text-sm font-bold mb-1 ${
+                    isToday 
+                      ? 'text-brand-black' 
+                      : isSpecialDay 
+                        ? 'text-brand-purple drop-shadow-sm'
+                        : 'text-white drop-shadow-sm'
+                  }`}>
                     {day}
+                    {holiday && <span className="ml-1">🎄</span>}
                   </div>
                   
                   {/* Events for this day */}
-                  <div className="mt-1 space-y-1">
-                    {dayEvents.slice(0, 2).map((event, eventIndex) => (
+                  <div className="space-y-1">
+                    {dayEvents.slice(0, 3).map((event, eventIndex) => (
                       <div
                         key={`${day}-event-${eventIndex}`}
-                        className="text-xs px-2 py-1 rounded-full truncate liquid-glass bg-white/30 text-gray-900"
+                        className="text-xs px-2 py-1 rounded-full truncate liquid-glass bg-white/40 text-gray-900 border border-white/20"
                         title={`${event.title} - ${event.time || 'Ganztägig'}`}
                       >
-                        {event.time && (
-                          <span className="font-medium">{event.time.slice(0, 5)} </span>
-                        )}
+                        <span className="mr-1">{getEventEmoji(event)}</span>
                         {event.title}
                       </div>
                     ))}
                     
                     {/* Show "+X more" if there are more events */}
-                    {dayEvents.length > 2 && (
-                      <div className="text-xs text-gray-500 px-1">
-                        +{dayEvents.length - 2} weitere
+                    {dayEvents.length > 3 && (
+                      <div className="text-xs text-white/70 px-2 drop-shadow-sm">
+                        +{dayEvents.length - 3} weitere
                       </div>
                     )}
                   </div>
@@ -162,7 +225,7 @@ export function CalendarView({ events }: CalendarViewProps) {
 
       {/* Events List for Selected Month */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-white drop-shadow-sm">
           Alle Events im {monthNames[currentDate.getMonth()]}
         </h3>
         
@@ -176,22 +239,25 @@ export function CalendarView({ events }: CalendarViewProps) {
             })
             .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())
             .map((event, index) => (
-              <Card key={`monthly-event-${index}-${event.notionId}`} className="hover:shadow-md transition-shadow">
+              <Card key={`monthly-event-${index}-${event.notionId}`} className="liquid-glass rounded-2xl border-0 hover:liquid-glass-strong transition-all duration-300">
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-semibold text-gray-900 line-clamp-2">{event.title}</h4>
+                    <h4 className="font-semibold text-white drop-shadow-sm line-clamp-2">
+                      <span className="mr-2">{getEventEmoji(event)}</span>
+                      {event.title}
+                    </h4>
                     <Badge className={getCategoryColor(event.category)}>
                       {event.category}
                     </Badge>
                   </div>
                   
                   {event.description && (
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    <p className="text-sm text-white/80 mb-3 line-clamp-2 drop-shadow-sm">
                       {event.description}
                     </p>
                   )}
                   
-                  <div className="space-y-1 text-sm text-gray-500">
+                  <div className="space-y-1 text-sm text-white/70 drop-shadow-sm">
                     {event.date && (
                       <div>
                         📅 {new Date(event.date).toLocaleDateString('de-DE')}
@@ -207,7 +273,7 @@ export function CalendarView({ events }: CalendarViewProps) {
                       href={event.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block mt-3 text-blue-600 hover:text-blue-800 text-sm"
+                      className="inline-block mt-3 text-brand-blue hover:text-brand-lime text-sm drop-shadow-sm transition-colors"
                     >
                       Mehr Infos →
                     </a>
