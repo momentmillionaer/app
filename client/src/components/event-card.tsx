@@ -161,29 +161,31 @@ export function EventCard({ event, onClick }: EventCardProps) {
       )}
       
       <div className="pl-6 pr-6 pt-6 pb-6 flex gap-4 h-full">
-        {/* Event Image - Left side with date overlay */}
-        <div className="flex-shrink-0 w-32 sm:w-40 relative h-full">
-          {event.imageUrl && !imageError ? (
-            <div className="w-full h-full overflow-hidden rounded-xl bg-white/10">
-              <img 
-                src={event.imageUrl} 
-                alt={event.title}
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                crossOrigin="anonymous"
-                onError={(e) => {
-                  console.error('Image failed to load:', event.imageUrl);
-                  setImageError(true);
-                }}
-                onLoad={() => {
-                  console.log('Image loaded successfully:', event.imageUrl);
-                }}
-              />
-            </div>
-          ) : (
-            <div className="w-full h-full bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
-              <span className="text-6xl">{getEventEmoji(event)}</span>
-            </div>
-          )}
+        {/* Event Image - Left side with date overlay - 4:5 aspect ratio */}
+        <div className="flex-shrink-0 w-32 sm:w-40 relative">
+          <div className="aspect-[4/5] w-full">
+            {event.imageUrl && !imageError ? (
+              <div className="w-full h-full overflow-hidden rounded-xl bg-white/10">
+                <img 
+                  src={event.imageUrl} 
+                  alt={event.title}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  crossOrigin="anonymous"
+                  onError={(e) => {
+                    console.error('Image failed to load:', event.imageUrl);
+                    setImageError(true);
+                  }}
+                  onLoad={() => {
+                    console.log('Image loaded successfully:', event.imageUrl);
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="w-full h-full bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <span className="text-6xl">{getEventEmoji(event)}</span>
+              </div>
+            )}
+          </div>
           
           {/* Date badge overlay - liquid glass design */}
           {eventDate && (
