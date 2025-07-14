@@ -46,25 +46,13 @@ export function SearchFilters({
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  // Create audience options with emojis
-  const getAudienceEmoji = (audience: string): string => {
-    if (audience.toLowerCase().includes('kind')) return '👶';
-    if (audience.toLowerCase().includes('jugend')) return '🧒';
-    if (audience.toLowerCase().includes('erwachsen')) return '🧑';
-    if (audience.toLowerCase().includes('senior')) return '👴';
-    if (audience.toLowerCase().includes('famili')) return '👨‍👩‍👧‍👦';
-    if (audience.toLowerCase().includes('paar')) return '💑';
-    if (audience.toLowerCase().includes('single')) return '🙋';
-    if (audience.toLowerCase().includes('student')) return '🎓';
-    return '🎯';
-  };
-
+  // Create audience options - emojis are already in the database values
   const audienceOptions = [
     { value: "all", label: "🎯 Alle Zielgruppen", emoji: "🎯" },
     ...audiences.map(audience => ({
       value: audience,
-      label: `${getAudienceEmoji(audience)} ${audience}`,
-      emoji: getAudienceEmoji(audience)
+      label: audience, // Emoji is already included in the audience name from database
+      emoji: audience.charAt(0) // First character is the emoji
     }))
   ];
 

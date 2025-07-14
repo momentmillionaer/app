@@ -60,7 +60,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           time: eventTime,
           price: properties.Preis?.number ? properties.Preis.number.toString() : "",
           website: properties.URL?.url || "",
-          attendees: properties["für wen"]?.multi_select?.map((audience: any) => audience.name).join(", ") || ""
+          attendees: properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name).join(", ") || ""
         };
       });
 
@@ -220,7 +220,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       response.results.forEach((page: any) => {
         const properties = page.properties;
-        const audiences = properties["für wen"]?.multi_select?.map((audience: any) => audience.name) || [];
+        const audiences = properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name) || [];
         audiences.forEach((audience: string) => audienceSet.add(audience));
       });
 
