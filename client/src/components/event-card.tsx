@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 import { de } from "date-fns/locale";
-import { MapPin, Euro, Users, ExternalLink, Clock } from "lucide-react";
+import { MapPin, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import type { Event } from "@shared/schema";
@@ -159,11 +159,12 @@ export function EventCard({ event, onClick }: EventCardProps) {
           <span className="text-lg">🔗</span>
         </div>
       )}
-      <div className="p-8">
-        <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-          {/* Event Image - Left side, square */}
+      
+      <div className="p-6">
+        <div className="flex items-start gap-4">
+          {/* Event Image - Left side, compact */}
           {event.imageUrl && !imageError ? (
-            <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 overflow-hidden rounded-2xl bg-white/10">
+            <div className="flex-shrink-0 w-20 h-20 overflow-hidden rounded-xl bg-white/10">
               <img 
                 src={event.imageUrl} 
                 alt={event.title}
@@ -179,145 +180,120 @@ export function EventCard({ event, onClick }: EventCardProps) {
               />
             </div>
           ) : (
-            <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-              <span className="text-5xl sm:text-6xl">{getEventEmoji(event)}</span>
+            <div className="flex-shrink-0 w-20 h-20 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
+              <span className="text-4xl">{getEventEmoji(event)}</span>
             </div>
           )}
 
-          {/* Date Column */}
-          <div className="flex-shrink-0">
-            {eventDate && (
-              <>
-                <div className="bg-brand-blue/90 text-white rounded-2xl p-4 text-center min-w-[80px] liquid-glass-button border-0">
-                  <div className="text-xs font-medium uppercase">
-                    {format(eventDate, "EE", { locale: de }).toUpperCase()}
-                  </div>
-                  <div className="text-xl font-bold">
-                    {format(eventDate, "dd")}
-                  </div>
-                  <div className="text-xs">
-                    {format(eventDate, "MMM", { locale: de }).toUpperCase()}
-                  </div>
-                </div>
-                {event.time && (
-                  <div className="text-center mt-2 text-sm text-white/70 drop-shadow-sm">
-                    {event.time}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Event Details */}
+          {/* Main Content */}
           <div className="flex-grow min-w-0">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-              <div className="space-y-1">
-                <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight">
+            {/* Header with title and date */}
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div className="flex-grow min-w-0">
+                <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight mb-1">
                   {event.title}
                 </h3>
                 {event.organizer && (
-                  <p className="text-sm text-white/70 drop-shadow-sm">
+                  <p className="text-sm text-white/70 drop-shadow-sm mb-2">
                     {event.organizer}
                   </p>
                 )}
               </div>
+              
+              {/* Date badge - compact */}
+              <div className="flex-shrink-0">
+                {eventDate && (
+                  <div className="bg-brand-blue/90 text-white rounded-xl p-3 text-center min-w-[70px] liquid-glass-button border-0">
+                    <div className="text-xs font-medium uppercase leading-tight">
+                      {format(eventDate, "EE", { locale: de }).toUpperCase()}
+                    </div>
+                    <div className="text-lg font-bold leading-tight">
+                      {format(eventDate, "dd")}
+                    </div>
+                    <div className="text-xs leading-tight">
+                      {format(eventDate, "MMM", { locale: de }).toUpperCase()}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Info row - location, time, category, price */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-4 text-sm text-white/80">
+                {event.location && (
+                  <div className="flex items-center">
+                    <MapPin className="mr-1 h-4 w-4 text-white/60" />
+                    <span className="line-clamp-1">{event.location}</span>
+                  </div>
+                )}
+                {event.time && (
+                  <div className="flex items-center">
+                    <Clock className="mr-1 h-4 w-4 text-white/60" />
+                    <span>{event.time}</span>
+                  </div>
+                )}
+              </div>
+              
               <div className="flex items-center gap-2 flex-shrink-0">
                 {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
-                  <span className="text-lg flex items-center" title="Kostenlos">
-                    🆓
-                  </span>
+                  <span className="text-lg" title="Kostenlos">🆓</span>
                 )}
-                
-                <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30">
+                <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
                   {event.category}
                 </Badge>
               </div>
             </div>
-
-            {event.location && (
-              <div className="flex items-center text-sm text-white/80 mb-3 drop-shadow-sm">
-                <MapPin className="mr-2 text-white/60 h-4 w-4" />
-                <span>{event.location}</span>
-              </div>
-            )}
-
-            {event.description && (
-              <>
-                {/* Check if description contains multiple dates (merged event) */}
-                {event.description.startsWith('Termine:') ? (
-                  <div className="mb-4">
-                    <div className="text-white/80 text-sm mb-2 drop-shadow-sm font-medium">
-                      📅 Weitere Termine:
-                    </div>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {(() => {
-                        const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
-                        if (termineMatch) {
-                          const dates = termineMatch[1].split(',').map(d => d.trim());
-                          // Skip first date as it's already shown in the main date column
-                          return dates.slice(1).map((dateStr, index) => {
-                            try {
-                              const dateObj = new Date(dateStr);
-                              return (
-                                <Badge 
-                                  key={index} 
-                                  className="bg-brand-blue/20 text-white border-brand-blue/30 hover:bg-brand-blue/30 text-xs px-3 py-1"
-                                >
-                                  {format(dateObj, "dd.MM", { locale: de })}
-                                </Badge>
-                              );
-                            } catch (error) {
-                              return (
-                                <Badge 
-                                  key={index} 
-                                  className="bg-brand-blue/20 text-white border-brand-blue/30 hover:bg-brand-blue/30 text-xs px-3 py-1"
-                                >
-                                  {dateStr}
-                                </Badge>
-                              );
-                            }
-                          });
-                        }
-                        return null;
-                      })()}
-                    </div>
-                    {/* Show remaining description after the Termine: line */}
-                    {(() => {
-                      const remainingDescription = event.description.split('\n').slice(1).join('\n').trim();
-                      if (remainingDescription) {
-                        return (
-                          <p className="text-white/75 text-sm line-clamp-2 drop-shadow-sm font-normal">
-                            {remainingDescription}
-                          </p>
-                        );
-                      }
-                      return null;
-                    })()}
-                  </div>
-                ) : (
-                  <p className="text-white/75 text-sm line-clamp-3 mb-4 drop-shadow-sm font-normal">
-                    {event.description}
-                  </p>
-                )}
-              </>
-            )}
-
-            <div className="flex flex-wrap items-center gap-4 text-sm text-white/70 drop-shadow-sm">
-              {event.price && (
-                <span className="flex items-center">
-                  <Euro className="mr-1 text-white/60 h-4 w-4" />
-                  <span>{event.price}</span>
-                </span>
-              )}
-              
-              {event.attendees && (
-                <span className="flex items-center">
-                  <span>{event.attendees.replace(/,\s*/g, ' ')}</span>
-                </span>
-              )}
-            </div>
           </div>
         </div>
+        
+        {/* Optional description section */}
+        {event.description && event.description !== "Details" && (
+          <div className="mt-4">
+            {event.description.startsWith('Termine:') ? (
+              <div>
+                <div className="text-white/80 text-xs mb-2 drop-shadow-sm font-medium">
+                  📅 Weitere Termine:
+                </div>
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {(() => {
+                    const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+                    if (termineMatch) {
+                      const dates = termineMatch[1].split(',').map(d => d.trim());
+                      return dates.slice(1, 3).map((dateStr, index) => {
+                        try {
+                          const dateObj = new Date(dateStr);
+                          return (
+                            <Badge 
+                              key={index} 
+                              className="bg-brand-blue/20 text-white border-brand-blue/30 text-xs px-2 py-1"
+                            >
+                              {format(dateObj, "dd.MM", { locale: de })}
+                            </Badge>
+                          );
+                        } catch (error) {
+                          return (
+                            <Badge 
+                              key={index} 
+                              className="bg-brand-blue/20 text-white border-brand-blue/30 text-xs px-2 py-1"
+                            >
+                              {dateStr}
+                            </Badge>
+                          );
+                        }
+                      });
+                    }
+                    return null;
+                  })()}
+                </div>
+              </div>
+            ) : (
+              <p className="text-white/70 text-xs line-clamp-2 drop-shadow-sm">
+                {event.description}
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
