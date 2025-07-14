@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DualRangeSlider } from "@/components/dual-range-slider";
+import { DateRangePicker } from "@/components/date-range-picker";
 
 interface SearchFiltersProps {
   searchQuery: string;
@@ -156,25 +157,14 @@ export function SearchFilters({
           </Select>
         </div>
 
-        {/* Date From */}
-        <div className="min-w-[150px]">
-          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">📅 Von Datum</label>
-          <Input
-            type="date"
-            value={dateFrom}
-            onChange={(e) => onDateFromChange(e.target.value)}
-            className="rounded-2xl border-0 liquid-glass bg-white/20 text-white"
-          />
-        </div>
-
-        {/* Date To */}
-        <div className="min-w-[150px]">
-          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">📅 Bis Datum</label>
-          <Input
-            type="date"
-            value={dateTo}
-            onChange={(e) => onDateToChange(e.target.value)}
-            className="rounded-2xl border-0 liquid-glass bg-white/20 text-white"
+        {/* Date Range Filter */}
+        <div className="min-w-[200px]">
+          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">📅 Datum</label>
+          <DateRangePicker
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+            onDateFromChange={onDateFromChange}
+            onDateToChange={onDateToChange}
           />
         </div>
 
