@@ -280,6 +280,20 @@
   background: transparent;
 }
 
+.ios-calendar * {
+  background-color: transparent !important;
+}
+
+.ios-calendar .rdp-table {
+  background: transparent !important;
+}
+
+.ios-calendar .rdp-head,
+.ios-calendar .rdp-tbody,
+.ios-calendar .rdp-row {
+  background: transparent !important;
+}
+
 .ios-calendar .rdp-day_button {
   border-radius: 12px;
   transition: all 0.2s ease;
@@ -294,21 +308,30 @@
 }
 
 .ios-calendar .rdp-day_button[aria-selected="true"] {
-  background: rgba(255, 255, 255, 0.25);
-  color: white;
+  background: rgba(0, 0, 255, 0.8) !important;
+  color: white !important;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .ios-calendar .rdp-day_range_start,
 .ios-calendar .rdp-day_range_end {
-  background: rgba(0, 0, 255, 0.6);
-  color: white;
+  background: rgba(0, 0, 255, 0.8) !important;
+  color: white !important;
 }
 
 .ios-calendar .rdp-day_range_middle {
-  background: rgba(0, 0, 255, 0.2);
-  color: white;
+  background: rgba(0, 0, 255, 0.3) !important;
+  color: white !important;
+}
+
+/* Override any default calendar styling that might cause green background */
+.ios-calendar .rdp-day_button {
+  background: transparent !important;
+}
+
+.ios-calendar .rdp-day_button:not([aria-selected="true"]):hover {
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
 .ios-calendar .rdp-head_cell {
