@@ -120,7 +120,7 @@ export function SearchFilters({
       </div>
 
       {/* Filter Controls - Horizontal Layout */}
-      <div className="flex flex-wrap gap-4 items-end">
+      <div className="flex flex-wrap gap-4 items-start">
         {/* Category Filter */}
         <div className="min-w-[200px]">
           <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">🎭 Kategorie</label>
@@ -179,8 +179,8 @@ export function SearchFilters({
         </div>
 
         {/* Price Range Filter */}
-        <div className="space-y-3">
-          <label className="text-sm text-white/80 drop-shadow-sm">💰 Preisspanne</label>
+        <div className="min-w-[200px]">
+          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">💰 Preisspanne</label>
           <div className="space-y-4">
             <div className="px-3">
               <DualRangeSlider
@@ -211,7 +211,7 @@ export function SearchFilters({
 
         {/* Clear Filters Button */}
         {hasActiveFilters && (
-          <div>
+          <div className="flex items-end">
             <Button
               variant="outline"
               onClick={onClearFilters}
