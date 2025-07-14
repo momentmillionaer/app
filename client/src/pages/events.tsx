@@ -101,14 +101,9 @@ export default function EventsPage() {
     return eventDate < today;
   };
 
-  // Filtered and sorted events for list and grid views (excludes past events)
+  // Filtered and sorted events (includes all events, past events will be grayed out in components)
   const filteredEvents = useMemo(() => {
     let filtered = mergedEvents;
-
-    // Filter out past events for list and grid views
-    if (viewMode !== 'calendar') {
-      filtered = filtered.filter(event => !isEventInPast(event));
-    }
 
     // Apply filters
     if (searchQuery) {

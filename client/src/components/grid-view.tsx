@@ -131,27 +131,41 @@ export function GridView({ events, onEventClick }: GridViewProps) {
           }
         })();
 
+        // Check if event is in the past
+        const isEventPast = (() => {
+          if (!eventDate) return false;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          return eventDate < today;
+        })();
+
         return (
           <div
             key={`${event.notionId}-${index}`}
-            className="rounded-[1.5rem] transition-all duration-500 cursor-pointer shadow-xl overflow-hidden relative group"
+            className={`rounded-[1.5rem] transition-all duration-500 cursor-pointer shadow-xl overflow-hidden relative group ${
+              isEventPast ? 'opacity-60' : ''
+            }`}
             style={{
               aspectRatio: '4/5', // Instagram post ratio
-              background: 'rgba(255, 255, 255, 0.15)',
+              background: isEventPast ? 'rgba(128, 128, 128, 0.15)' : 'rgba(255, 255, 255, 0.15)',
               backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
               WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
+              border: isEventPast ? '1px solid rgba(128, 128, 128, 0.25)' : '1px solid rgba(255, 255, 255, 0.25)',
               boxShadow: '0 8px 25px rgba(0, 0, 0, 0.25), 0 3px 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.25)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
-              e.currentTarget.style.backdropFilter = 'blur(35px) saturate(160%) brightness(1.15)';
-              e.currentTarget.style.WebkitBackdropFilter = 'blur(35px) saturate(160%) brightness(1.15)';
+              if (!isEventPast) {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
+                e.currentTarget.style.backdropFilter = 'blur(35px) saturate(160%) brightness(1.15)';
+                e.currentTarget.style.WebkitBackdropFilter = 'blur(35px) saturate(160%) brightness(1.15)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-              e.currentTarget.style.backdropFilter = 'blur(30px) saturate(140%) brightness(1.1)';
-              e.currentTarget.style.WebkitBackdropFilter = 'blur(30px) saturate(140%) brightness(1.1)';
+              if (!isEventPast) {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                e.currentTarget.style.backdropFilter = 'blur(30px) saturate(140%) brightness(1.1)';
+                e.currentTarget.style.WebkitBackdropFilter = 'blur(30px) saturate(140%) brightness(1.1)';
+              }
             }}
             onClick={() => onEventClick?.(event)}
           >
