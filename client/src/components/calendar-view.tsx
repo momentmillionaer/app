@@ -275,10 +275,11 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
 
               const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}`;
               const dayEvents = eventsByDate[dateKey] || [];
+              const today = new Date();
               const isToday = 
-                new Date().getDate() === day && 
-                new Date().getMonth() === currentDate.getMonth() && 
-                new Date().getFullYear() === currentDate.getFullYear();
+                today.getDate() === day && 
+                today.getMonth() === currentDate.getMonth() && 
+                today.getFullYear() === currentDate.getFullYear();
               
               const weekend = isWeekend(day);
               const holiday = isHoliday(day);
@@ -316,11 +317,11 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                   {/* Events for this day */}
                   <div className="space-y-1">
                     {dayEvents.slice(0, 3).map((event, eventIndex) => {
-                      // Check if event is in the past
+                      // Check if THIS SPECIFIC event instance is in the past
                       const eventDate = new Date(event.date || '');
-                      const today = new Date();
-                      today.setHours(0, 0, 0, 0);
-                      const isEventPast = eventDate < today;
+                      const todayMidnight = new Date();
+                      todayMidnight.setHours(0, 0, 0, 0);
+                      const isEventPast = eventDate < todayMidnight;
                       
                       return (
                         <div
