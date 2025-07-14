@@ -13,7 +13,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json([]);
       }
 
-      // Use the Momentmillionär Entries database directly
+      // Use the Momentmillionär Entries database (accessible)
       const databaseId = "22ffd137-5c6e-8043-ad8e-efd20cbb70c1";
 
       const response = await notion.databases.query({
