@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Slider } from "@/components/ui/slider";
+import { DualRangeSlider } from "@/components/dual-range-slider";
 
 interface SearchFiltersProps {
   searchQuery: string;
@@ -183,20 +183,15 @@ export function SearchFilters({
           <label className="text-sm text-white/80 drop-shadow-sm">💰 Preisspanne</label>
           <div className="space-y-4">
             <div className="px-3">
-              <Slider
-                value={[
-                  priceMin ? parseInt(priceMin) : 0,
-                  priceMax ? parseInt(priceMax) : 1000
-                ]}
-                onValueChange={(values) => {
-                  const [min, max] = values;
-                  onPriceMinChange(min.toString());
-                  onPriceMaxChange(max.toString());
-                }}
-                max={1000}
+              <DualRangeSlider
                 min={0}
+                max={1000}
                 step={10}
-                className="w-full price-range-slider"
+                minValue={priceMin ? parseInt(priceMin) : 0}
+                maxValue={priceMax ? parseInt(priceMax) : 1000}
+                onMinChange={(value) => onPriceMinChange(value.toString())}
+                onMaxChange={(value) => onPriceMaxChange(value.toString())}
+                className="w-full"
               />
             </div>
             <div className="flex justify-between items-center">
