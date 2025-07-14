@@ -6,8 +6,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'connihof': ['Connihof', 'serif'],
-        'helvetica-neue': ['Helvetica Neue LT Pro', 'sans-serif'],
+        'sans': ['Helvetica Neue LT Pro', 'Helvetica', 'Arial', 'sans-serif'],
+        'helvetica': ['Helvetica Neue LT Pro', 'Helvetica', 'Arial', 'sans-serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -55,6 +55,15 @@ export default {
           "3": "var(--chart-3)",
           "4": "var(--chart-4)",
           "5": "var(--chart-5)",
+        },
+        brand: {
+          black: "var(--brand-black)",
+          blue: "var(--brand-blue)",
+          lime: "var(--brand-lime)",
+          purple: "var(--brand-purple)",
+          gray: "var(--brand-gray)",
+          orange: "var(--brand-orange)",
+          cream: "var(--brand-cream)",
         },
         sidebar: {
           DEFAULT: "var(--sidebar-background)",

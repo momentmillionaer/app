@@ -17,10 +17,10 @@ export function Header({ eventCount, lastUpdated }: HeaderProps) {
               alt="Momentmillionär Logo" 
               className="w-10 h-10 mr-3 rounded-lg object-cover shadow-sm"
             />
-            <h1 className="text-xl font-bold text-gray-700 font-connihof">Momentmillionär</h1>
+            <h1 className="text-xl font-bold text-brand-black">Momentmillionär</h1>
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            <span className="text-sm text-gray-600">{eventCount} Events</span>
+            <span className="text-sm text-brand-black bg-brand-lime px-3 py-1 rounded-full font-medium">{eventCount} Events</span>
             <div className="w-px h-6 bg-gray-300"></div>
             <span className="text-sm text-gray-600">
               Letzte Aktualisierung: <span>{lastUpdated}</span>

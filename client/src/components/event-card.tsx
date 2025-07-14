@@ -8,34 +8,8 @@ interface EventCardProps {
   event: Event;
 }
 
-const getCategoryColorData = (category: string) => {
-  // Use your custom color palette for consistent category colors
-  let hash = 0;
-  for (let i = 0; i < category.length; i++) {
-    hash = category.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const colorStyles = [
-    { bg: "#0A0A0A", text: "#FFFFFF" }, // Black
-    { bg: "#0000FF", text: "#FFFFFF" }, // Blue
-    { bg: "#D0FE1D", text: "#0A0A0A" }, // Lime Green
-    { bg: "#F3DCFA", text: "#5A2C5F" }, // Light Purple
-    { bg: "#F4F3F2", text: "#2D2D2D" }, // Light Gray
-    { bg: "#FE5C2B", text: "#FFFFFF" }, // Orange
-    { bg: "#FEE4C3", text: "#8B4513" }, // Cream
-  ];
-  return colorStyles[Math.abs(hash) % colorStyles.length];
-};
-
 const getCategoryColor = (category: string) => {
-  return "px-2 py-1 rounded-full text-xs font-medium";
-};
-
-const getCategoryBgColor = (category: string) => {
-  return getCategoryColorData(category).bg;
-};
-
-const getCategoryTextColor = (category: string) => {
-  return getCategoryColorData(category).text;
+  return "px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200";
 };
 
 
@@ -51,7 +25,7 @@ export function EventCard({ event }: EventCardProps) {
           <div className="flex-shrink-0">
             {eventDate && (
               <>
-                <div className="bg-primary text-white rounded-lg p-3 text-center min-w-[80px]">
+                <div className="bg-brand-blue text-white rounded-lg p-3 text-center min-w-[80px]">
                   <div className="text-xs font-medium uppercase">
                     {format(eventDate, "MMM", { locale: de })}
                   </div>
@@ -77,13 +51,7 @@ export function EventCard({ event }: EventCardProps) {
               <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
                 {event.title}
               </h3>
-              <Badge 
-                className={`${getCategoryColor(event.category)} flex-shrink-0`}
-                style={{
-                  backgroundColor: getCategoryBgColor(event.category),
-                  color: getCategoryTextColor(event.category)
-                }}
-              >
+              <Badge className={`${getCategoryColor(event.category)} flex-shrink-0`}>
                 {event.category}
               </Badge>
             </div>

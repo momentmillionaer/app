@@ -63,41 +63,15 @@ export function CalendarView({ events }: CalendarViewProps) {
 
   const dayNames = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 
-  const getCategoryColorData = (category: string) => {
-    // Use your custom color palette for consistent category colors
-    let hash = 0;
-    for (let i = 0; i < category.length; i++) {
-      hash = category.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const colorStyles = [
-      { bg: "#0A0A0A", text: "#FFFFFF" }, // Black
-      { bg: "#0000FF", text: "#FFFFFF" }, // Blue
-      { bg: "#D0FE1D", text: "#0A0A0A" }, // Lime Green
-      { bg: "#F3DCFA", text: "#5A2C5F" }, // Light Purple
-      { bg: "#F4F3F2", text: "#2D2D2D" }, // Light Gray
-      { bg: "#FE5C2B", text: "#FFFFFF" }, // Orange
-      { bg: "#FEE4C3", text: "#8B4513" }, // Cream
-    ];
-    return colorStyles[Math.abs(hash) % colorStyles.length];
-  };
-
   const getCategoryColor = (category: string) => {
-    return "px-2 py-1 rounded-full text-xs font-medium";
-  };
-
-  const getCategoryBgColor = (category: string) => {
-    return getCategoryColorData(category).bg;
-  };
-
-  const getCategoryTextColor = (category: string) => {
-    return getCategoryColorData(category).text;
+    return "px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200";
   };
 
   return (
     <div className="space-y-6">
       {/* Calendar Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900 font-helvetica-neue">
+        <h2 className="text-2xl font-bold text-gray-900">
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
         </h2>
         <div className="flex space-x-2">
@@ -105,7 +79,7 @@ export function CalendarView({ events }: CalendarViewProps) {
             variant="outline"
             size="sm"
             onClick={() => navigateMonth('prev')}
-            className="p-2"
+            className="p-2 border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -113,7 +87,7 @@ export function CalendarView({ events }: CalendarViewProps) {
             variant="outline"
             size="sm"
             onClick={() => navigateMonth('next')}
-            className="p-2"
+            className="p-2 border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -150,10 +124,10 @@ export function CalendarView({ events }: CalendarViewProps) {
                 <div
                   key={`day-${day}`}
                   className={`p-2 h-24 border border-gray-200 relative overflow-hidden ${
-                    isToday ? 'bg-blue-50 border-blue-300' : 'bg-white hover:bg-gray-50'
+                    isToday ? 'bg-brand-lime border-brand-blue' : 'bg-white hover:bg-brand-gray'
                   }`}
                 >
-                  <div className={`text-sm font-medium ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
+                  <div className={`text-sm font-medium ${isToday ? 'text-brand-black' : 'text-gray-900'}`}>
                     {day}
                   </div>
                   
@@ -162,11 +136,7 @@ export function CalendarView({ events }: CalendarViewProps) {
                     {dayEvents.slice(0, 2).map((event, eventIndex) => (
                       <div
                         key={`${day}-event-${eventIndex}`}
-                        className={`text-xs px-1 py-0.5 rounded truncate ${getCategoryColor(event.category)}`}
-                        style={{
-                          backgroundColor: getCategoryBgColor(event.category),
-                          color: getCategoryTextColor(event.category)
-                        }}
+                        className="text-xs px-1 py-0.5 rounded truncate bg-gray-100 text-gray-800"
                         title={`${event.title} - ${event.time || 'Ganztägig'}`}
                       >
                         {event.time && (
@@ -192,7 +162,7 @@ export function CalendarView({ events }: CalendarViewProps) {
 
       {/* Events List for Selected Month */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 font-helvetica-neue">
+        <h3 className="text-lg font-semibold text-gray-900">
           Alle Events im {monthNames[currentDate.getMonth()]}
         </h3>
         
@@ -210,13 +180,7 @@ export function CalendarView({ events }: CalendarViewProps) {
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-semibold text-gray-900 line-clamp-2">{event.title}</h4>
-                    <Badge 
-                      className={getCategoryColor(event.category)}
-                      style={{
-                        backgroundColor: getCategoryBgColor(event.category),
-                        color: getCategoryTextColor(event.category)
-                      }}
-                    >
+                    <Badge className={getCategoryColor(event.category)}>
                       {event.category}
                     </Badge>
                   </div>

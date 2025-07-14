@@ -114,7 +114,7 @@ export default function EventsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-neutral">
+      <div className="min-h-screen bg-brand-gray">
         <Header eventCount={0} lastUpdated="Fehler" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Alert variant="destructive">
@@ -139,7 +139,7 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral">
+    <div className="min-h-screen bg-brand-gray">
       <Header eventCount={events.length} lastUpdated={getLastUpdated()} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
