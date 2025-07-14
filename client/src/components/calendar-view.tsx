@@ -122,7 +122,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
     <div className="space-y-6">
       {/* Calendar Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white drop-shadow-lg">
+        <h2 className="text-2xl font-bold text-black drop-shadow-lg">
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
         </h2>
         <div className="flex space-x-2">
@@ -151,7 +151,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1 mb-4">
             {dayNames.map(day => (
-              <div key={day} className="p-2 text-center text-sm font-semibold text-white/80 drop-shadow-sm">
+              <div key={day} className="p-2 text-center text-sm font-semibold text-black/80 drop-shadow-sm">
                 {day}
               </div>
             ))}
@@ -191,7 +191,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                       ? 'text-brand-black' 
                       : isSpecialDay 
                         ? 'text-brand-purple drop-shadow-sm'
-                        : 'text-white drop-shadow-sm'
+                        : 'text-black drop-shadow-sm'
                   }`}>
                     {day}
                     {holiday && <span className="ml-1">🎄</span>}
@@ -221,7 +221,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                     
                     {/* Show "+X more" if there are more events */}
                     {dayEvents.length > 3 && (
-                      <div className="text-xs text-white/70 px-2 drop-shadow-sm">
+                      <div className="text-xs text-black/70 px-2 drop-shadow-sm">
                         +{dayEvents.length - 3} weitere
                       </div>
                     )}
@@ -235,7 +235,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
 
       {/* Events List for Selected Month */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-white drop-shadow-sm">
+        <h3 className="text-lg font-semibold text-black drop-shadow-sm">
           Alle Events im {monthNames[currentDate.getMonth()]}
         </h3>
         

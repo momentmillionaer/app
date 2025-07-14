@@ -41,7 +41,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
                   </div>
                 </div>
                 {event.time && (
-                  <div className="text-center mt-2 text-sm text-white/70 drop-shadow-sm">
+                  <div className="text-center mt-2 text-sm text-black/70 drop-shadow-sm">
                     {event.time}
                   </div>
                 )}
@@ -52,7 +52,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
           {/* Event Details */}
           <div className="flex-grow min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-              <h3 className="text-lg font-semibold text-white drop-shadow-sm line-clamp-2">
+              <h3 className="text-lg font-semibold text-black drop-shadow-sm line-clamp-2">
                 {event.title}
                 {event.price === "0" && (
                   <span className="ml-2 text-sm bg-brand-lime/90 text-brand-black px-2 py-1 rounded-full font-bold">
@@ -60,51 +60,51 @@ export function EventCard({ event, onClick }: EventCardProps) {
                   </span>
                 )}
               </h3>
-              <Badge className="bg-white/30 text-white border-white/20 hover:bg-white/40 flex-shrink-0">
+              <Badge className="bg-black/20 text-black border-black/20 hover:bg-black/30 flex-shrink-0">
                 {event.category}
               </Badge>
             </div>
 
             {event.location && (
-              <div className="flex items-center text-sm text-white/80 mb-3 drop-shadow-sm">
-                <MapPin className="mr-2 text-white/60 h-4 w-4" />
+              <div className="flex items-center text-sm text-black/80 mb-3 drop-shadow-sm">
+                <MapPin className="mr-2 text-black/60 h-4 w-4" />
                 <span>{event.location}</span>
               </div>
             )}
 
             {event.description && (
-              <p className="text-white/75 text-sm line-clamp-3 mb-4 drop-shadow-sm">
+              <p className="text-black/75 text-sm line-clamp-3 mb-4 drop-shadow-sm">
                 {event.description}
               </p>
             )}
 
-            <div className="flex flex-wrap items-center gap-4 text-sm text-white/70 drop-shadow-sm">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-black/70 drop-shadow-sm">
               {event.price && (
                 <span className="flex items-center">
-                  <Euro className="mr-1 text-white/60 h-4 w-4" />
+                  <Euro className="mr-1 text-black/60 h-4 w-4" />
                   <span>{event.price}</span>
                 </span>
               )}
               {event.attendees && (
                 <span className="flex items-center">
-                  <Users className="mr-1 text-white/60 h-4 w-4" />
+                  <Users className="mr-1 text-black/60 h-4 w-4" />
                   <span>{event.attendees}</span>
                 </span>
               )}
               {!event.time && eventDate && (
                 <span className="flex items-center">
-                  <Clock className="mr-1 text-white/60 h-4 w-4" />
+                  <Clock className="mr-1 text-black/60 h-4 w-4" />
                   <span>Ganztägig</span>
                 </span>
               )}
               {event.website && (
                 <span className="flex items-center">
-                  <ExternalLink className="mr-1 text-white/60 h-4 w-4" />
+                  <ExternalLink className="mr-1 text-black/60 h-4 w-4" />
                   <a 
                     href={event.website} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-white/90 hover:text-white hover:underline transition-colors"
+                    className="text-black/90 hover:text-black hover:underline transition-colors"
                   >
                     Mehr Details
                   </a>
