@@ -24,10 +24,25 @@ export function EventCard({ event, onClick }: EventCardProps) {
 
   // Check if event is in the past
   const isEventPast = (() => {
-    if (!eventDate) return false;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return eventDate < today;
+    if (!event.date) return false;
+    
+    // Parse dates as local dates to avoid timezone issues
+    const eventDateParts = event.date.split('-');
+    const eventYear = parseInt(eventDateParts[0]);
+    const eventMonth = parseInt(eventDateParts[1]) - 1; // Month is 0-indexed
+    const eventDay = parseInt(eventDateParts[2]);
+    
+    const todayDate = new Date();
+    const todayYear = todayDate.getFullYear();
+    const todayMonth = todayDate.getMonth();
+    const todayDay = todayDate.getDate();
+    
+    // Compare dates without time components
+    if (eventYear < todayYear) return true;
+    if (eventYear > todayYear) return false;
+    if (eventMonth < todayMonth) return true;
+    if (eventMonth > todayMonth) return false;
+    return eventDay < todayDay;
   })();
 
   // Function to get appropriate emoji based on event content
