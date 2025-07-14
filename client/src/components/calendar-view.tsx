@@ -146,19 +146,18 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
       </div>
 
       {/* Calendar Grid */}
-      <Card className="rounded-[2rem] border-0 liquid-glass">
-        <CardContent className="p-8">
-          {/* Day headers */}
-          <div className="grid grid-cols-7 gap-1 mb-4">
+      <div className="rounded-[2rem] border-0 liquid-glass-strong p-8">
+        {/* Day headers */}
+        <div className="grid grid-cols-7 gap-1 mb-4">
             {dayNames.map(day => (
               <div key={day} className="p-2 text-center text-sm font-semibold text-white/80 drop-shadow-sm">
                 {day}
               </div>
             ))}
-          </div>
+        </div>
 
-          {/* Calendar days */}
-          <div className="grid grid-cols-7 gap-1">
+        {/* Calendar days */}
+        <div className="grid grid-cols-7 gap-1">
             {calendarDays.map((day, index) => {
               if (day === null) {
                 return <div key={`empty-${index}`} className="p-2 h-32"></div>;
@@ -229,9 +228,8 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                 </div>
               );
             })}
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Events List for Selected Month */}
       <div className="space-y-4">
