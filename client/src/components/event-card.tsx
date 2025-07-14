@@ -10,7 +10,14 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, onClick }: EventCardProps) {
-  const eventDate = event.date ? parseISO(event.date) : null;
+  const eventDate = (() => {
+    try {
+      return event.date ? parseISO(event.date) : null;
+    } catch (error) {
+      console.error('Date parsing error:', error, event.date);
+      return null;
+    }
+  })();
 
   return (
     <div 
@@ -37,29 +44,28 @@ export function EventCard({ event, onClick }: EventCardProps) {
       <div className="p-8">
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
           {/* Event Image - Left side, square */}
-          {event.imageUrl && (
+          {event.imageUrl ? (
             <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 overflow-hidden rounded-2xl bg-white/10">
               <img 
                 src={event.imageUrl} 
                 alt={event.title}
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                crossOrigin="anonymous"
                 onError={(e) => {
-                  console.log('Image failed to load:', event.imageUrl);
+                  console.error('Image failed to load:', event.imageUrl);
                   e.currentTarget.style.display = 'none';
+                  e.currentTarget.parentElement!.innerHTML = '<div class="w-full h-full bg-red-500/20 flex items-center justify-center text-white text-xs">No Image</div>';
                 }}
                 onLoad={() => {
                   console.log('Image loaded successfully:', event.imageUrl);
                 }}
               />
             </div>
+          ) : (
+            <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-gray-500/20 rounded-2xl flex items-center justify-center">
+              <span className="text-white/60 text-xs">📷</span>
+            </div>
           )}
-          
-          {/* Debug info - temporarily visible */}
-          <div className="flex-shrink-0 w-32 h-32 bg-red-500 rounded-2xl flex items-center justify-center text-white text-xs p-2 text-center">
-            Event: {event.title?.substring(0, 10)}...
-            <br/>
-            URL: {event.imageUrl ? 'YES' : 'NO'}
-          </div>
 
           {/* Date Column */}
           <div className="flex-shrink-0">
