@@ -2,11 +2,12 @@ import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/header";
 import { SearchFilters } from "@/components/search-filters";
-import { EventCard } from "@/components/event-card";
+import { CalendarView } from "@/components/calendar-view";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CalendarX } from "lucide-react";
+import { CalendarX, List, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { Event } from "@shared/schema";
 
 export default function EventsPage() {
@@ -15,6 +16,7 @@ export default function EventsPage() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [sortOption, setSortOption] = useState("date-asc");
+  const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
 
   // Fetch events from API
   const { 
@@ -162,7 +164,7 @@ export default function EventsPage() {
           onClearFilters={clearFilters}
         />
 
-        {/* Results Summary */}
+        {/* View Mode Toggle */}
         <div className="flex items-center justify-between mb-6">
           <div className="text-gray-600">
             {isLoading ? (
@@ -174,23 +176,49 @@ export default function EventsPage() {
               </>
             )}
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500">Sortierung:</span>
-            <Select value={sortOption} onValueChange={setSortOption}>
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="date-asc">Datum (aufsteigend)</SelectItem>
-                <SelectItem value="date-desc">Datum (absteigend)</SelectItem>
-                <SelectItem value="title">Titel (A-Z)</SelectItem>
-                <SelectItem value="category">Kategorie</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex items-center space-x-4">
+            {/* View Mode Toggle */}
+            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+              <Button
+                variant={viewMode === "calendar" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("calendar")}
+                className="flex items-center space-x-1"
+              >
+                <Calendar className="h-4 w-4" />
+                <span>Kalender</span>
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                className="flex items-center space-x-1"
+              >
+                <List className="h-4 w-4" />
+                <span>Liste</span>
+              </Button>
+            </div>
+            
+            {viewMode === "list" && (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-500">Sortierung:</span>
+                <Select value={sortOption} onValueChange={setSortOption}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="date-asc">Datum (aufsteigend)</SelectItem>
+                    <SelectItem value="date-desc">Datum (absteigend)</SelectItem>
+                    <SelectItem value="title">Titel (A-Z)</SelectItem>
+                    <SelectItem value="category">Kategorie</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Event List */}
+        {/* Content Area */}
         {isLoading ? (
           <div className="space-y-4">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -225,10 +253,59 @@ export default function EventsPage() {
               </button>
             )}
           </div>
+        ) : viewMode === "calendar" ? (
+          <CalendarView events={filteredEvents} />
         ) : (
           <div className="space-y-4">
             {filteredEvents.map((event) => (
-              <EventCard key={event.notionId} event={event} />
+              <div key={event.notionId} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">{event.title}</h3>
+                  <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                    {event.category}
+                  </span>
+                </div>
+                
+                {event.description && (
+                  <p className="text-gray-600 mb-4">{event.description}</p>
+                )}
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500">
+                  {event.date && (
+                    <div>
+                      <strong>Datum:</strong> {new Date(event.date).toLocaleDateString('de-DE')}
+                    </div>
+                  )}
+                  {event.time && (
+                    <div>
+                      <strong>Zeit:</strong> {event.time}
+                    </div>
+                  )}
+                  {event.location && (
+                    <div>
+                      <strong>Ort:</strong> {event.location}
+                    </div>
+                  )}
+                  {event.price && (
+                    <div>
+                      <strong>Preis:</strong> €{event.price}
+                    </div>
+                  )}
+                </div>
+                
+                {event.website && (
+                  <div className="mt-4">
+                    <a
+                      href={event.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 text-sm"
+                    >
+                      Mehr Informationen →
+                    </a>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         )}
@@ -238,7 +315,7 @@ export default function EventsPage() {
           <div className="px-4 sm:px-6 lg:px-8 py-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="flex items-center mb-4 md:mb-0">
-                <span className="text-gray-600">Eventkalender Graz</span>
+                <span className="text-gray-600">Momentmillionär</span>
               </div>
               <div className="flex items-center space-x-6 text-sm text-gray-500">
                 <span>Powered by Notion API</span>
