@@ -128,7 +128,6 @@ export function SearchFilters({
       <div className="flex flex-wrap gap-4 items-start">
         {/* Category Filter */}
         <div className="min-w-[200px]">
-          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">🎭 Kategorie</label>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
             <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20">
               <SelectValue placeholder="Alle Kategorien" />
@@ -146,7 +145,6 @@ export function SearchFilters({
 
         {/* Audience Filter */}
         <div className="min-w-[200px]">
-          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">🎯 Zielgruppe</label>
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
             <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20">
               <SelectValue placeholder="Alle Zielgruppen" />
@@ -163,7 +161,6 @@ export function SearchFilters({
 
         {/* Date Range Filter */}
         <div className="min-w-[200px]">
-          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">📅 Datum</label>
           <DateRangePicker
             dateFrom={dateFrom}
             dateTo={dateTo}
@@ -174,7 +171,6 @@ export function SearchFilters({
 
         {/* Price Range Filter */}
         <div className="min-w-[200px]">
-          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">💰 Preisspanne</label>
           <div className="space-y-4">
             <div className="px-3">
               <DualRangeSlider
