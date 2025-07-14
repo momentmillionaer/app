@@ -1,4 +1,5 @@
 import { Calendar } from "lucide-react";
+import logoImage from "@assets/Unbenannt-1-02_1752488253396.png";
 
 interface HeaderProps {
   eventCount: number;
@@ -11,7 +12,11 @@ export function Header({ eventCount, lastUpdated }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Calendar className="text-primary text-2xl mr-3" />
+            <img 
+              src={logoImage} 
+              alt="Momentmillionär Logo" 
+              className="w-10 h-10 mr-3 rounded-lg object-cover shadow-sm"
+            />
             <h1 className="text-xl font-bold text-gray-700">Momentmillionär</h1>
           </div>
           <div className="hidden md:flex items-center space-x-4">
