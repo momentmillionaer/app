@@ -203,28 +203,38 @@ export function EventCard({ event, onClick }: EventCardProps) {
 
         {/* Content section - Right side */}
         <div className="flex-grow flex flex-col justify-between min-w-0">
-          {/* Top section with badges */}
-          <div className="flex justify-end items-start gap-2 mb-3">
-            {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
-              <Badge className="bg-brand-blue/90 text-white border-brand-blue/30 text-xs font-medium px-2 py-1">
-                FREE
+          {/* Top section with title and badges aligned */}
+          <div className="flex justify-between items-start gap-3 mb-4">
+            {/* Title and organizer - left side */}
+            <div className="flex-grow">
+              <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight mb-2">
+                {event.title}
+              </h3>
+              {event.organizer && (
+                <p className="text-sm text-white/70 drop-shadow-sm mb-2">
+                  {event.organizer}
+                </p>
+              )}
+              
+              {/* Description text - between organizer and location */}
+              {event.description && event.description !== "Details" && !event.description.startsWith('Termine:') && (
+                <p className="text-white/70 text-xs line-clamp-2 drop-shadow-sm mb-2">
+                  {event.description}
+                </p>
+              )}
+            </div>
+            
+            {/* Badges - right side */}
+            <div className="flex gap-2 flex-shrink-0">
+              {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
+                <Badge className="bg-brand-blue/90 text-white border-brand-blue/30 text-xs font-medium px-2 py-1">
+                  FREE
+                </Badge>
+              )}
+              <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
+                {event.category}
               </Badge>
-            )}
-            <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
-              {event.category}
-            </Badge>
-          </div>
-
-          {/* Title and organizer */}
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight mb-2">
-              {event.title}
-            </h3>
-            {event.organizer && (
-              <p className="text-sm text-white/70 drop-shadow-sm mb-3">
-                {event.organizer}
-              </p>
-            )}
+            </div>
           </div>
 
           {/* Location and time */}
@@ -285,15 +295,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
             </div>
           )}
         </div>
-        
-        {/* Optional description section - only for non-Termine descriptions */}
-        {event.description && event.description !== "Details" && !event.description.startsWith('Termine:') && (
-          <div className="mt-4">
-            <p className="text-white/70 text-xs line-clamp-2 drop-shadow-sm">
-              {event.description}
-            </p>
-          </div>
-        )}
+
       </div>
     </div>
   );
