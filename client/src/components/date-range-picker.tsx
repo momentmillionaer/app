@@ -50,7 +50,7 @@ export function DateRangePicker({
         // Auto-apply for single date selection for better UX
         setTimeout(() => {
           onDateFromChange(date.toISOString().split('T')[0]);
-          onDateToChange("");
+          onDateToChange(""); // Clear any existing end date
           setIsOpen(false);
         }, 100);
       }
@@ -79,16 +79,26 @@ export function DateRangePicker({
   };
 
   const handleApply = () => {
-    if (tempFromDate) {
-      onDateFromChange(tempFromDate.toISOString().split('T')[0]);
+    if (mode === "single") {
+      // Single date mode: clear any existing range
+      if (tempFromDate) {
+        onDateFromChange(tempFromDate.toISOString().split('T')[0]);
+      } else {
+        onDateFromChange("");
+      }
+      onDateToChange(""); // Always clear end date in single mode
     } else {
-      onDateFromChange("");
-    }
-    
-    if (tempToDate) {
-      onDateToChange(tempToDate.toISOString().split('T')[0]);
-    } else if (mode === "single") {
-      onDateToChange("");
+      // Range mode: set both dates or clear both
+      if (tempFromDate && tempToDate) {
+        onDateFromChange(tempFromDate.toISOString().split('T')[0]);
+        onDateToChange(tempToDate.toISOString().split('T')[0]);
+      } else if (tempFromDate) {
+        onDateFromChange(tempFromDate.toISOString().split('T')[0]);
+        onDateToChange(""); // Clear end date if only start is selected
+      } else {
+        onDateFromChange("");
+        onDateToChange("");
+      }
     }
     
     setIsOpen(false);
@@ -139,7 +149,7 @@ export function DateRangePicker({
               size="sm"
               onClick={() => {
                 setMode("single");
-                setTempToDate(undefined);
+                setTempToDate(undefined); // Clear end date when switching to single mode
               }}
               className="text-xs rounded-xl"
             >
@@ -148,7 +158,11 @@ export function DateRangePicker({
             <Button
               variant={mode === "range" ? "default" : "outline"}
               size="sm"
-              onClick={() => setMode("range")}
+              onClick={() => {
+                setMode("range");
+                // Don't auto-clear dates when switching to range mode
+                // User might want to extend their single date to a range
+              }}
               className="text-xs rounded-xl"
             >
               📅 Zeitraum
