@@ -30,8 +30,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const events = response.results.map((page: any) => {
         const properties = page.properties;
         
-        // Debug: Log all available properties
-        console.log("Available properties:", Object.keys(properties));
+
         
         // Use categories directly from your Notion database
         const categories = properties.Kategorie?.multi_select?.map((cat: any) => cat.name) || [];
@@ -53,25 +52,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
 
-        // Extract image URL from file properties - trying different possible names
+        // Extract image URL from "Dateien" property
         let imageUrl = "";
+        const eventName = properties.Name?.title?.[0]?.plain_text || "Unknown";
         
-        // Try different property names for files/images
-        const fileProperties = ['Datein', 'Files', 'Bilder', 'Image', 'Bild', 'Foto', 'Photo'];
-        
-        for (const propName of fileProperties) {
-          if (properties[propName]?.files && properties[propName].files.length > 0) {
-            const firstFile = properties[propName].files[0];
-            if (firstFile.type === "file") {
-              imageUrl = firstFile.file.url;
-            } else if (firstFile.type === "external") {
-              imageUrl = firstFile.external.url;
-            }
-            if (imageUrl) {
-              console.log(`Found image in property "${propName}":`, imageUrl);
-              break;
-            }
+        if (properties.Dateien?.files && properties.Dateien.files.length > 0) {
+          console.log(`Event "${eventName}" has ${properties.Dateien.files.length} files`);
+          const firstFile = properties.Dateien.files[0];
+          console.log(`First file type: ${firstFile.type}`);
+          if (firstFile.type === "file") {
+            imageUrl = firstFile.file.url;
+            console.log(`File URL: ${imageUrl}`);
+          } else if (firstFile.type === "external") {
+            imageUrl = firstFile.external.url;
+            console.log(`External URL: ${imageUrl}`);
           }
+        } else {
+          console.log(`Event "${eventName}" has no files in Dateien property`);
         }
 
         return {
