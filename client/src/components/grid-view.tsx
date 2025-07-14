@@ -175,7 +175,7 @@ export function GridView({ events, onEventClick }: GridViewProps) {
                 <img 
                   src={event.imageUrl} 
                   alt={event.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 blur-[1px] group-hover:blur-0"
                   crossOrigin="anonymous"
                   onError={() => handleImageError(event.notionId || '')}
                   onLoad={() => {
@@ -187,8 +187,8 @@ export function GridView({ events, onEventClick }: GridViewProps) {
                   <span className="text-8xl opacity-30">{getEventEmoji(event)}</span>
                 </div>
               )}
-              {/* Gradient overlay for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              {/* Enhanced gradient overlay for better text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
             </div>
 
             {/* Content overlay */}
@@ -228,20 +228,20 @@ export function GridView({ events, onEventClick }: GridViewProps) {
                 )}
 
                 {/* Title */}
-                <h3 className="text-lg font-semibold text-white drop-shadow-lg line-clamp-2 tracking-tight">
+                <h3 className="text-lg font-semibold text-white line-clamp-2 tracking-tight" style={{textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 1px 3px rgba(0,0,0,0.9)'}}>
                   {event.title}
                 </h3>
 
                 {/* Location and time */}
                 <div className="space-y-1">
                   {event.location && (
-                    <div className="flex items-center text-xs text-white/80 drop-shadow-sm">
+                    <div className="flex items-center text-xs text-white/80" style={{textShadow: '0 1px 4px rgba(0,0,0,0.8)'}}>
                       <MapPin className="mr-1 h-3 w-3" />
                       <span className="line-clamp-1">{event.location}</span>
                     </div>
                   )}
                   {event.time && (
-                    <div className="flex items-center text-xs text-white/80 drop-shadow-sm">
+                    <div className="flex items-center text-xs text-white/80" style={{textShadow: '0 1px 4px rgba(0,0,0,0.8)'}}>
                       <Clock className="mr-1 h-3 w-3" />
                       <span>{event.time}</span>
                     </div>
