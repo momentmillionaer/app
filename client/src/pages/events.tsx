@@ -15,6 +15,7 @@ import type { Event } from "@shared/schema";
 export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedAudience, setSelectedAudience] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [sortOption, setSortOption] = useState("date-asc");
@@ -61,6 +62,14 @@ export default function EventsPage() {
       filtered = filtered.filter(event => event.category === selectedCategory);
     }
 
+    // Filter by audience
+    if (selectedAudience && selectedAudience !== "all") {
+      filtered = filtered.filter(event => {
+        if (!event.attendees) return false;
+        return event.attendees.toLowerCase().includes(selectedAudience.toLowerCase());
+      });
+    }
+
     if (dateFrom) {
       filtered = filtered.filter(event => 
         event.date && event.date >= dateFrom
@@ -97,11 +106,12 @@ export default function EventsPage() {
     }
 
     return filtered;
-  }, [events, searchQuery, selectedCategory, dateFrom, dateTo, sortOption]);
+  }, [events, searchQuery, selectedCategory, selectedAudience, dateFrom, dateTo, sortOption]);
 
   const clearFilters = () => {
     setSearchQuery("");
     setSelectedCategory("all");
+    setSelectedAudience("all");
     setDateFrom("");
     setDateTo("");
   };
@@ -115,6 +125,9 @@ export default function EventsPage() {
     const parts = [];
     if (selectedCategory && selectedCategory !== "all") {
       parts.push(selectedCategory);
+    }
+    if (selectedAudience && selectedAudience !== "all") {
+      parts.push(selectedAudience);
     }
     if (dateFrom && dateTo) {
       parts.push(`${dateFrom} bis ${dateTo}`);
@@ -166,6 +179,8 @@ export default function EventsPage() {
           onDateFromChange={setDateFrom}
           dateTo={dateTo}
           onDateToChange={setDateTo}
+          selectedAudience={selectedAudience}
+          onAudienceChange={setSelectedAudience}
           onClearFilters={clearFilters}
         />
 

@@ -15,6 +15,8 @@ interface SearchFiltersProps {
   onDateFromChange: (date: string) => void;
   dateTo: string;
   onDateToChange: (date: string) => void;
+  selectedAudience: string;
+  onAudienceChange: (audience: string) => void;
   onClearFilters: () => void;
 }
 
@@ -27,6 +29,8 @@ export function SearchFilters({
   onDateFromChange,
   dateTo,
   onDateToChange,
+  selectedAudience,
+  onAudienceChange,
   onClearFilters,
 }: SearchFiltersProps) {
   
@@ -36,12 +40,30 @@ export function SearchFilters({
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  const hasActiveFilters = (selectedCategory && selectedCategory !== "all") || dateFrom || dateTo || searchQuery;
+  // Target audience options
+  const audienceOptions = [
+    { value: "all", label: "🎯 Alle Zielgruppen", emoji: "🎯" },
+    { value: "kinder", label: "👶 Kinder", emoji: "👶" },
+    { value: "jugendliche", label: "🧒 Jugendliche", emoji: "🧒" },
+    { value: "erwachsene", label: "🧑 Erwachsene", emoji: "🧑" },
+    { value: "senioren", label: "👴 Senioren", emoji: "👴" },
+    { value: "familien", label: "👨‍👩‍👧‍👦 Familien", emoji: "👨‍👩‍👧‍👦" },
+    { value: "paare", label: "💑 Paare", emoji: "💑" },
+    { value: "singles", label: "🙋 Singles", emoji: "🙋" },
+    { value: "studenten", label: "🎓 Studenten", emoji: "🎓" },
+  ];
+
+  const hasActiveFilters = (selectedCategory && selectedCategory !== "all") || 
+                          (selectedAudience && selectedAudience !== "all") || 
+                          dateFrom || dateTo || searchQuery;
 
   const removeFilter = (filterType: string) => {
     switch (filterType) {
       case 'category':
         onCategoryChange("all");
+        break;
+      case 'audience':
+        onAudienceChange("all");
         break;
       case 'dateFrom':
         onDateFromChange("");
@@ -71,17 +93,17 @@ export function SearchFilters({
         </div>
       </div>
 
-      {/* Filter Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Filter Controls - Horizontal Layout */}
+      <div className="flex flex-wrap gap-4 items-end">
         {/* Category Filter */}
-        <div>
-          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">Kategorie</label>
+        <div className="min-w-[200px]">
+          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">🎭 Kategorie</label>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
             <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20">
               <SelectValue placeholder="Alle Kategorien" />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-0 liquid-glass-strong">
-              <SelectItem value="all">Alle Kategorien</SelectItem>
+              <SelectItem value="all">🎭 Alle Kategorien</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
                   {category}
@@ -91,9 +113,26 @@ export function SearchFilters({
           </Select>
         </div>
 
+        {/* Audience Filter */}
+        <div className="min-w-[200px]">
+          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">🎯 Zielgruppe</label>
+          <Select value={selectedAudience} onValueChange={onAudienceChange}>
+            <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20">
+              <SelectValue placeholder="Alle Zielgruppen" />
+            </SelectTrigger>
+            <SelectContent className="rounded-2xl border-0 liquid-glass-strong">
+              {audienceOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         {/* Date From */}
-        <div>
-          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">Von Datum</label>
+        <div className="min-w-[150px]">
+          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">📅 Von Datum</label>
           <Input
             type="date"
             value={dateFrom}
@@ -103,8 +142,8 @@ export function SearchFilters({
         </div>
 
         {/* Date To */}
-        <div>
-          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">Bis Datum</label>
+        <div className="min-w-[150px]">
+          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">📅 Bis Datum</label>
           <Input
             type="date"
             value={dateTo}
@@ -112,6 +151,19 @@ export function SearchFilters({
             className="rounded-2xl border-0 liquid-glass bg-white/20 text-white"
           />
         </div>
+
+        {/* Clear Filters Button */}
+        {hasActiveFilters && (
+          <div>
+            <Button
+              variant="outline"
+              onClick={onClearFilters}
+              className="rounded-2xl border-white/20 bg-white/10 text-white hover:bg-white/20 px-6"
+            >
+              🗑️ Filter löschen
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Active Filters Display */}
@@ -130,10 +182,21 @@ export function SearchFilters({
           )}
           {selectedCategory && selectedCategory !== "all" && (
             <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
-              {selectedCategory}
+              🎭 {selectedCategory}
               <button
                 className="ml-2 hover:text-gray-200"
                 onClick={() => removeFilter('category')}
+              >
+                ×
+              </button>
+            </Badge>
+          )}
+          {selectedAudience && selectedAudience !== "all" && (
+            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
+              {audienceOptions.find(opt => opt.value === selectedAudience)?.label || selectedAudience}
+              <button
+                className="ml-2 hover:text-gray-200"
+                onClick={() => removeFilter('audience')}
               >
                 ×
               </button>
