@@ -92,9 +92,23 @@ export default function EventsPage() {
     return Array.from(eventMap.values());
   }, [events]);
 
-  // Filtered and sorted events
+  // Helper function to check if an event is in the past
+  const isEventInPast = (event: Event): boolean => {
+    if (!event.date) return false;
+    const eventDate = new Date(event.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of day for comparison
+    return eventDate < today;
+  };
+
+  // Filtered and sorted events for list and grid views (excludes past events)
   const filteredEvents = useMemo(() => {
     let filtered = mergedEvents;
+
+    // Filter out past events for list and grid views
+    if (viewMode !== 'calendar') {
+      filtered = filtered.filter(event => !isEventInPast(event));
+    }
 
     // Apply filters
     if (searchQuery) {

@@ -216,25 +216,35 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                   
                   {/* Events for this day */}
                   <div className="space-y-1">
-                    {dayEvents.slice(0, 3).map((event, eventIndex) => (
-                      <div
-                        key={`${day}-event-${eventIndex}`}
-                        className={`text-xs px-2 py-1 rounded-full truncate liquid-glass text-gray-900 border cursor-pointer hover:bg-white/50 transition-colors ${
-                          event.price === "0" 
-                            ? "bg-brand-lime/80 border-brand-lime text-brand-black font-bold" 
-                            : "bg-white/40 border-white/20"
-                        }`}
-                        title={`${event.title} - ${event.time || 'Ganztägig'}${event.price === "0" ? " • GRATIS" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEventClick?.(event);
-                        }}
-                      >
-                        <span className="mr-1">{getEventEmoji(event)}</span>
-                        {event.title}
-                        {event.price === "0" && <span className="ml-1">🎉</span>}
-                      </div>
-                    ))}
+                    {dayEvents.slice(0, 3).map((event, eventIndex) => {
+                      // Check if event is in the past
+                      const eventDate = new Date(event.date || '');
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const isEventPast = eventDate < today;
+                      
+                      return (
+                        <div
+                          key={`${day}-event-${eventIndex}`}
+                          className={`text-xs px-2 py-1 rounded-full truncate liquid-glass border cursor-pointer transition-colors ${
+                            isEventPast 
+                              ? "bg-gray-400/20 border-gray-400/30 text-gray-400 opacity-60" // Past events are grayed out
+                              : event.price === "0" 
+                                ? "bg-brand-lime/80 border-brand-lime text-brand-black font-bold hover:bg-white/50" 
+                                : "bg-white/40 border-white/20 text-gray-900 hover:bg-white/50"
+                          }`}
+                          title={`${event.title} - ${event.time || 'Ganztägig'}${event.price === "0" ? " • GRATIS" : ""}${isEventPast ? ' (Vergangen)' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEventClick?.(event);
+                          }}
+                        >
+                          <span className="mr-1">{getEventEmoji(event)}</span>
+                          {event.title}
+                          {!isEventPast && event.price === "0" && <span className="ml-1">🎉</span>}
+                        </div>
+                      );
+                    })}
                     
                     {/* Show "+X more" if there are more events */}
                     {dayEvents.length > 3 && (
