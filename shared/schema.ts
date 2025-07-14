@@ -1,0 +1,41 @@
+import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+// Events schema for Notion data
+export const events = pgTable("events", {
+  id: serial("id").primaryKey(),
+  notionId: text("notion_id").notNull().unique(),
+  title: text("title").notNull(),
+  description: text("description"),
+  category: text("category").notNull(),
+  location: text("location"),
+  date: timestamp("date").notNull(),
+  time: text("time"),
+  price: text("price"),
+  website: text("website"),
+  attendees: text("attendees"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertEventSchema = createInsertSchema(events).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type Event = typeof events.$inferSelect;
+export type InsertEvent = z.infer<typeof insertEventSchema>;
+
+// Categories enum for filtering
+export const EVENT_CATEGORIES = [
+  "musik",
+  "theater", 
+  "kunst",
+  "sport",
+  "food",
+  "workshop",
+  "festival",
+  "other"
+] as const;
+
+export type EventCategory = typeof EVENT_CATEGORIES[number];
