@@ -56,7 +56,7 @@ export function SearchFilters({
   };
 
   return (
-    <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-lg border border-gray-200/50 p-8 mb-8">
+    <div className="liquid-glass-strong rounded-3xl p-8 mb-8 border-0">
       {/* Search Bar */}
       <div className="mb-6">
         <div className="relative">
@@ -64,7 +64,7 @@ export function SearchFilters({
           <Input
             type="text"
             placeholder="Events, Veranstaltungsorte oder Beschreibungen durchsuchen..."
-            className="pl-10 py-4 rounded-2xl border-gray-300"
+            className="pl-10 py-4 rounded-2xl border-0 liquid-glass bg-white/20"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -77,10 +77,10 @@ export function SearchFilters({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Kategorie</label>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className="rounded-2xl border-gray-300 shadow-sm">
+            <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20">
               <SelectValue placeholder="Alle Kategorien" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-0 shadow-lg">
+            <SelectContent className="rounded-2xl border-0 liquid-glass-strong">
               <SelectItem value="all">Alle Kategorien</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
@@ -98,7 +98,7 @@ export function SearchFilters({
             type="date"
             value={dateFrom}
             onChange={(e) => onDateFromChange(e.target.value)}
-            className="rounded-2xl border-gray-300 shadow-sm"
+            className="rounded-2xl border-0 liquid-glass bg-white/20"
           />
         </div>
 
@@ -109,7 +109,7 @@ export function SearchFilters({
             type="date"
             value={dateTo}
             onChange={(e) => onDateToChange(e.target.value)}
-            className="rounded-2xl border-gray-300 shadow-sm"
+            className="rounded-2xl border-0 liquid-glass bg-white/20"
           />
         </div>
       </div>

@@ -79,7 +79,7 @@ export function CalendarView({ events }: CalendarViewProps) {
             variant="outline"
             size="sm"
             onClick={() => navigateMonth('prev')}
-            className="p-3 border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white rounded-2xl shadow-sm"
+            className="p-3 border-0 text-brand-blue liquid-glass-button rounded-2xl"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -87,7 +87,7 @@ export function CalendarView({ events }: CalendarViewProps) {
             variant="outline"
             size="sm"
             onClick={() => navigateMonth('next')}
-            className="p-3 border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white rounded-2xl shadow-sm"
+            className="p-3 border-0 text-brand-blue liquid-glass-button rounded-2xl"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -95,7 +95,7 @@ export function CalendarView({ events }: CalendarViewProps) {
       </div>
 
       {/* Calendar Grid */}
-      <Card className="rounded-3xl border-0 shadow-lg bg-white/95 backdrop-blur-sm">
+      <Card className="rounded-3xl border-0 liquid-glass-strong">
         <CardContent className="p-8">
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1 mb-4">
@@ -123,8 +123,8 @@ export function CalendarView({ events }: CalendarViewProps) {
               return (
                 <div
                   key={`day-${day}`}
-                  className={`p-3 h-28 border-0 rounded-2xl relative overflow-hidden shadow-sm transition-all duration-200 ${
-                    isToday ? 'bg-brand-lime shadow-lg ring-2 ring-brand-blue' : 'bg-white hover:bg-brand-gray hover:shadow-md'
+                  className={`p-3 h-28 border-0 rounded-2xl relative overflow-hidden transition-all duration-300 ${
+                    isToday ? 'bg-brand-lime/90 liquid-glass-strong ring-2 ring-brand-blue/50' : 'liquid-glass hover:liquid-glass-strong'
                   }`}
                 >
                   <div className={`text-sm font-medium ${isToday ? 'text-brand-black' : 'text-gray-900'}`}>
@@ -136,7 +136,7 @@ export function CalendarView({ events }: CalendarViewProps) {
                     {dayEvents.slice(0, 2).map((event, eventIndex) => (
                       <div
                         key={`${day}-event-${eventIndex}`}
-                        className="text-xs px-2 py-1 rounded-full truncate bg-gray-100 text-gray-800 shadow-sm"
+                        className="text-xs px-2 py-1 rounded-full truncate liquid-glass bg-white/30 text-gray-800"
                         title={`${event.title} - ${event.time || 'Ganztägig'}`}
                       >
                         {event.time && (

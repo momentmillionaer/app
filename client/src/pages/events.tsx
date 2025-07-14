@@ -114,7 +114,7 @@ export default function EventsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-brand-gray">
+      <div className="min-h-screen">
         <Header eventCount={0} lastUpdated="Fehler" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Alert variant="destructive">
@@ -139,7 +139,7 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-gray">
+    <div className="min-h-screen">
       <Header eventCount={events.length} lastUpdated={getLastUpdated()} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -169,7 +169,7 @@ export default function EventsPage() {
           </div>
           <div className="flex items-center space-x-4">
             {/* View Mode Toggle */}
-            <div className="flex items-center bg-gray-100/80 backdrop-blur-sm rounded-2xl p-2 shadow-sm">
+            <div className="flex items-center liquid-glass-button rounded-2xl p-2">
               <Button
                 variant={viewMode === "calendar" ? "default" : "ghost"}
                 size="sm"
@@ -194,10 +194,10 @@ export default function EventsPage() {
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-500">Sortierung:</span>
                 <Select value={sortOption} onValueChange={setSortOption}>
-                  <SelectTrigger className="w-40 rounded-2xl border-gray-300 shadow-sm">
+                  <SelectTrigger className="w-40 rounded-2xl border-0 liquid-glass bg-white/20">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="rounded-2xl border-0 shadow-lg">
+                  <SelectContent className="rounded-2xl border-0 liquid-glass-strong">
                     <SelectItem value="date-asc">Datum (aufsteigend)</SelectItem>
                     <SelectItem value="date-desc">Datum (absteigend)</SelectItem>
                     <SelectItem value="title">Titel (A-Z)</SelectItem>
@@ -213,7 +213,7 @@ export default function EventsPage() {
         {isLoading ? (
           <div className="space-y-4">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-md border-0 p-8">
+              <div key={i} className="liquid-glass rounded-3xl p-8">
                 <div className="flex space-x-4">
                   <Skeleton className="w-20 h-20 rounded-lg" />
                   <div className="flex-1 space-y-2">

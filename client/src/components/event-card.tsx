@@ -18,14 +18,14 @@ export function EventCard({ event }: EventCardProps) {
   const eventDate = event.date ? parseISO(event.date) : null;
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-md border-0 hover:shadow-xl transition-all duration-300">
+    <div className="liquid-glass rounded-3xl hover:liquid-glass-strong transition-all duration-500">
       <div className="p-8">
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
           {/* Date Column */}
           <div className="flex-shrink-0">
             {eventDate && (
               <>
-                <div className="bg-brand-blue text-white rounded-2xl p-4 text-center min-w-[80px] shadow-lg">
+                <div className="bg-brand-blue/90 text-white rounded-2xl p-4 text-center min-w-[80px] liquid-glass-button border-0">
                   <div className="text-xs font-medium uppercase">
                     {format(eventDate, "MMM", { locale: de })}
                   </div>

@@ -10,14 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-**July 14, 2025 - iOS-Inspired Design with Brand Colors**
+**July 14, 2025 - iOS 26 Liquid Glass Design**
 - ✓ Updated app to use dynamic "Kategorie" field from Notion database instead of predefined categories
 - ✓ Implemented custom color palette from user's brand colors (#0A0A0A, #0000FF, #D0FE1D, #F3DCFA, #F4F3F2, #FE5C2B, #FEE4C3)
 - ✓ Added /api/categories endpoint to fetch available categories from Notion
-- ✓ Applied iOS-inspired design with rounded corners throughout (rounded-2xl, rounded-3xl)
-- ✓ Enhanced with backdrop blur effects and subtle shadows for modern glass morphism
+- ✓ Applied iOS 26 Liquid Glass design with advanced glass morphism effects
+- ✓ Enhanced backdrop blur with saturation and brightness adjustments for authentic liquid glass look
+- ✓ Implemented dynamic gradient background with subtle color transitions
 - ✓ Switched to Helvetica font family throughout the application
-- ✓ Category badges simplified to light gray with black text for better readability
+- ✓ All UI elements now feature translucent materials with depth and subtle animations
 
 ## System Architecture
 
