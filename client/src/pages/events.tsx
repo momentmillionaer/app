@@ -46,6 +46,11 @@ export default function EventsPage() {
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
   });
 
+  // Debug logging
+  console.log('Events data:', events);
+  console.log('Is loading:', isLoading);
+  console.log('Error:', error);
+
   // Filtered and sorted events
   const filteredEvents = useMemo(() => {
     let filtered = events;
