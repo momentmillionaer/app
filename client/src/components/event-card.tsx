@@ -8,33 +8,37 @@ interface EventCardProps {
   event: Event;
 }
 
-const getCategoryColor = (category: string) => {
-  const colors: Record<string, string> = {
-    musik: "bg-blue-100 text-blue-800",
-    theater: "bg-green-100 text-green-800", 
-    kunst: "bg-purple-100 text-purple-800",
-    sport: "bg-orange-100 text-orange-800",
-    food: "bg-red-100 text-red-800",
-    workshop: "bg-yellow-100 text-yellow-800",
-    festival: "bg-pink-100 text-pink-800",
-    other: "bg-gray-100 text-gray-800",
-  };
-  return colors[category] || colors.other;
+const getCategoryColorData = (category: string) => {
+  // Use your custom color palette for consistent category colors
+  let hash = 0;
+  for (let i = 0; i < category.length; i++) {
+    hash = category.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const colorStyles = [
+    { bg: "#0A0A0A", text: "#FFFFFF" }, // Black
+    { bg: "#0000FF", text: "#FFFFFF" }, // Blue
+    { bg: "#D0FE1D", text: "#0A0A0A" }, // Lime Green
+    { bg: "#F3DCFA", text: "#5A2C5F" }, // Light Purple
+    { bg: "#F4F3F2", text: "#2D2D2D" }, // Light Gray
+    { bg: "#FE5C2B", text: "#FFFFFF" }, // Orange
+    { bg: "#FEE4C3", text: "#8B4513" }, // Cream
+  ];
+  return colorStyles[Math.abs(hash) % colorStyles.length];
 };
 
-const getCategoryDisplayName = (category: string) => {
-  const names: Record<string, string> = {
-    musik: "Musik",
-    theater: "Theater",
-    kunst: "Kunst", 
-    sport: "Sport",
-    food: "Food & Drink",
-    workshop: "Workshop",
-    festival: "Festival",
-    other: "Sonstiges",
-  };
-  return names[category] || "Sonstiges";
+const getCategoryColor = (category: string) => {
+  return "px-2 py-1 rounded-full text-xs font-medium";
 };
+
+const getCategoryBgColor = (category: string) => {
+  return getCategoryColorData(category).bg;
+};
+
+const getCategoryTextColor = (category: string) => {
+  return getCategoryColorData(category).text;
+};
+
+
 
 export function EventCard({ event }: EventCardProps) {
   const eventDate = event.date ? parseISO(event.date) : null;
@@ -73,8 +77,14 @@ export function EventCard({ event }: EventCardProps) {
               <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
                 {event.title}
               </h3>
-              <Badge className={`${getCategoryColor(event.category)} flex-shrink-0`}>
-                {getCategoryDisplayName(event.category)}
+              <Badge 
+                className={`${getCategoryColor(event.category)} flex-shrink-0`}
+                style={{
+                  backgroundColor: getCategoryBgColor(event.category),
+                  color: getCategoryTextColor(event.category)
+                }}
+              >
+                {event.category}
               </Badge>
             </div>
 

@@ -63,23 +63,34 @@ export function CalendarView({ events }: CalendarViewProps) {
 
   const dayNames = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 
-  const getCategoryColor = (category: string) => {
-    // Use a hash function to generate consistent colors for categories
+  const getCategoryColorData = (category: string) => {
+    // Use your custom color palette for consistent category colors
     let hash = 0;
     for (let i = 0; i < category.length; i++) {
       hash = category.charCodeAt(i) + ((hash << 5) - hash);
     }
-    const colors = [
-      "bg-blue-100 text-blue-800",
-      "bg-green-100 text-green-800", 
-      "bg-purple-100 text-purple-800",
-      "bg-pink-100 text-pink-800",
-      "bg-orange-100 text-orange-800",
-      "bg-red-100 text-red-800",
-      "bg-yellow-100 text-yellow-800",
-      "bg-indigo-100 text-indigo-800"
+    const colorStyles = [
+      { bg: "#0A0A0A", text: "#FFFFFF" }, // Black
+      { bg: "#0000FF", text: "#FFFFFF" }, // Blue
+      { bg: "#D0FE1D", text: "#0A0A0A" }, // Lime Green
+      { bg: "#F3DCFA", text: "#5A2C5F" }, // Light Purple
+      { bg: "#F4F3F2", text: "#2D2D2D" }, // Light Gray
+      { bg: "#FE5C2B", text: "#FFFFFF" }, // Orange
+      { bg: "#FEE4C3", text: "#8B4513" }, // Cream
     ];
-    return colors[Math.abs(hash) % colors.length];
+    return colorStyles[Math.abs(hash) % colorStyles.length];
+  };
+
+  const getCategoryColor = (category: string) => {
+    return "px-2 py-1 rounded-full text-xs font-medium";
+  };
+
+  const getCategoryBgColor = (category: string) => {
+    return getCategoryColorData(category).bg;
+  };
+
+  const getCategoryTextColor = (category: string) => {
+    return getCategoryColorData(category).text;
   };
 
   return (
@@ -152,6 +163,10 @@ export function CalendarView({ events }: CalendarViewProps) {
                       <div
                         key={`${day}-event-${eventIndex}`}
                         className={`text-xs px-1 py-0.5 rounded truncate ${getCategoryColor(event.category)}`}
+                        style={{
+                          backgroundColor: getCategoryBgColor(event.category),
+                          color: getCategoryTextColor(event.category)
+                        }}
                         title={`${event.title} - ${event.time || 'Ganztägig'}`}
                       >
                         {event.time && (
@@ -195,7 +210,13 @@ export function CalendarView({ events }: CalendarViewProps) {
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-semibold text-gray-900 line-clamp-2">{event.title}</h4>
-                    <Badge className={getCategoryColor(event.category)}>
+                    <Badge 
+                      className={getCategoryColor(event.category)}
+                      style={{
+                        backgroundColor: getCategoryBgColor(event.category),
+                        color: getCategoryTextColor(event.category)
+                      }}
+                    >
                       {event.category}
                     </Badge>
                   </div>

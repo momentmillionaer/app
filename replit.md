@@ -8,6 +8,15 @@ This is a full-stack event calendar application called "Momentmillionär" built 
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+**July 14, 2025 - Dynamic Categories & Custom Colors**
+- ✓ Updated app to use dynamic "Kategorie" field from Notion database instead of predefined categories
+- ✓ Implemented custom color palette from user's brand colors (#0A0A0A, #0000FF, #D0FE1D, #F3DCFA, #F4F3F2, #FE5C2B, #FEE4C3)
+- ✓ Added /api/categories endpoint to fetch available categories from Notion
+- ✓ Applied consistent color scheme across calendar view, event cards, and category badges
+- ✓ Enhanced typography with Connihof Regular font for main title and Helvetica Neue LT Pro Bold for headers
+
 ## System Architecture
 
 ### Frontend Architecture
