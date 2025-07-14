@@ -107,7 +107,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
           {/* Event Details */}
           <div className="flex-grow min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-              <h3 className="text-lg font-semibold text-white drop-shadow-sm line-clamp-2">
+              <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight">
                 {event.title}
               </h3>
               <div className="flex items-center gap-2 flex-shrink-0">
@@ -131,7 +131,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
             )}
 
             {event.description && (
-              <p className="text-white/75 text-sm line-clamp-3 mb-4 drop-shadow-sm">
+              <p className="text-white/75 text-sm line-clamp-3 mb-4 drop-shadow-sm font-normal">
                 {event.description}
               </p>
             )}
