@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
 
 interface SearchFiltersProps {
   searchQuery: string;
@@ -17,6 +18,10 @@ interface SearchFiltersProps {
   onDateToChange: (date: string) => void;
   selectedAudience: string;
   onAudienceChange: (audience: string) => void;
+  priceMin: string;
+  onPriceMinChange: (price: string) => void;
+  priceMax: string;
+  onPriceMaxChange: (price: string) => void;
   onClearFilters: () => void;
 }
 
@@ -31,6 +36,10 @@ export function SearchFilters({
   onDateToChange,
   selectedAudience,
   onAudienceChange,
+  priceMin,
+  onPriceMinChange,
+  priceMax,
+  onPriceMaxChange,
   onClearFilters,
 }: SearchFiltersProps) {
   
@@ -66,7 +75,7 @@ export function SearchFilters({
 
   const hasActiveFilters = (selectedCategory && selectedCategory !== "all") || 
                           (selectedAudience && selectedAudience !== "all") || 
-                          dateFrom || dateTo || searchQuery;
+                          dateFrom || dateTo || searchQuery || priceMin || priceMax;
 
   const removeFilter = (filterType: string) => {
     switch (filterType) {
@@ -84,6 +93,12 @@ export function SearchFilters({
         break;
       case 'search':
         onSearchChange("");
+        break;
+      case 'priceMin':
+        onPriceMinChange("");
+        break;
+      case 'priceMax':
+        onPriceMaxChange("");
         break;
     }
   };
@@ -163,6 +178,41 @@ export function SearchFilters({
           />
         </div>
 
+        {/* Price Range Filter */}
+        <div className="space-y-3">
+          <label className="text-sm text-white/80 drop-shadow-sm">💰 Preisspanne</label>
+          <div className="space-y-4">
+            <div className="px-3">
+              <Slider
+                value={[
+                  priceMin ? parseInt(priceMin) : 0,
+                  priceMax ? parseInt(priceMax) : 1000
+                ]}
+                onValueChange={(values) => {
+                  onPriceMinChange(values[0].toString());
+                  onPriceMaxChange(values[1].toString());
+                }}
+                max={1000}
+                min={0}
+                step={10}
+                className="w-full price-range-slider"
+              />
+            </div>
+            <div className="flex justify-between items-center">
+              <div className="liquid-glass bg-brand-lime/20 px-3 py-1 rounded-full">
+                <span className="text-sm text-white font-medium">
+                  {priceMin || "0"}€
+                </span>
+              </div>
+              <div className="liquid-glass bg-brand-lime/20 px-3 py-1 rounded-full">
+                <span className="text-sm text-white font-medium">
+                  {priceMax || "1000"}€
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Clear Filters Button */}
         {hasActiveFilters && (
           <div>
@@ -231,6 +281,28 @@ export function SearchFilters({
               <button
                 className="ml-2 hover:text-gray-200"
                 onClick={() => removeFilter('dateTo')}
+              >
+                ×
+              </button>
+            </Badge>
+          )}
+          {priceMin && (
+            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
+              💰 Ab: {priceMin}€
+              <button
+                className="ml-2 hover:text-gray-200"
+                onClick={() => removeFilter('priceMin')}
+              >
+                ×
+              </button>
+            </Badge>
+          )}
+          {priceMax && (
+            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
+              💰 Bis: {priceMax}€
+              <button
+                className="ml-2 hover:text-gray-200"
+                onClick={() => removeFilter('priceMax')}
               >
                 ×
               </button>

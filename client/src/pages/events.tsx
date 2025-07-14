@@ -18,6 +18,8 @@ export default function EventsPage() {
   const [selectedAudience, setSelectedAudience] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
   const [sortOption, setSortOption] = useState("date-asc");
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -72,6 +74,20 @@ export default function EventsPage() {
       });
     }
 
+    // Filter by price range
+    if (priceMin || priceMax) {
+      filtered = filtered.filter(event => {
+        if (!event.price) return false;
+        const eventPrice = parseFloat(event.price);
+        if (isNaN(eventPrice)) return false;
+        
+        const minPrice = priceMin ? parseFloat(priceMin) : 0;
+        const maxPrice = priceMax ? parseFloat(priceMax) : Infinity;
+        
+        return eventPrice >= minPrice && eventPrice <= maxPrice;
+      });
+    }
+
     if (dateFrom) {
       filtered = filtered.filter(event => 
         event.date && event.date >= dateFrom
@@ -108,7 +124,7 @@ export default function EventsPage() {
     }
 
     return filtered;
-  }, [events, searchQuery, selectedCategory, selectedAudience, dateFrom, dateTo, sortOption]);
+  }, [events, searchQuery, selectedCategory, selectedAudience, dateFrom, dateTo, priceMin, priceMax, sortOption]);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -116,6 +132,8 @@ export default function EventsPage() {
     setSelectedAudience("all");
     setDateFrom("");
     setDateTo("");
+    setPriceMin("");
+    setPriceMax("");
   };
 
   const getLastUpdated = () => {
@@ -183,6 +201,10 @@ export default function EventsPage() {
           onDateToChange={setDateTo}
           selectedAudience={selectedAudience}
           onAudienceChange={setSelectedAudience}
+          priceMin={priceMin}
+          onPriceMinChange={setPriceMin}
+          priceMax={priceMax}
+          onPriceMaxChange={setPriceMax}
           onClearFilters={clearFilters}
         />
 
