@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Event } from "@shared/schema";
+import { EventCard } from "./event-card";
 
 interface CalendarViewProps {
   events: Event[];
@@ -237,7 +238,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
           Alle Events im {monthNames[currentDate.getMonth()]}
         </h3>
         
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-4">
           {events
             .filter(event => {
               if (!event.date) return false;
@@ -246,57 +247,12 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                      eventDate.getFullYear() === currentDate.getFullYear();
             })
             .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())
-            .map((event, index) => (
-              <Card 
-                key={`monthly-event-${index}-${event.notionId}`} 
-                className="liquid-glass rounded-2xl border-0 hover:liquid-glass-strong transition-all duration-300 cursor-pointer"
+            .map((event) => (
+              <EventCard
+                key={`monthly-event-${event.notionId}`}
+                event={event}
                 onClick={() => onEventClick?.(event)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-semibold text-white drop-shadow-sm line-clamp-2">
-                      <span className="mr-2">{getEventEmoji(event)}</span>
-                      {event.title}
-                      {event.price === "0" && (
-                        <span className="ml-2 text-sm bg-brand-lime/90 text-brand-black px-2 py-1 rounded-full font-bold">
-                          🎉 GRATIS
-                        </span>
-                      )}
-                    </h4>
-                    <Badge className={getCategoryColor(event.category)}>
-                      {event.category}
-                    </Badge>
-                  </div>
-                  
-                  {event.description && (
-                    <p className="text-sm text-white/80 mb-3 line-clamp-2 drop-shadow-sm">
-                      {event.description}
-                    </p>
-                  )}
-                  
-                  <div className="space-y-1 text-sm text-white/70 drop-shadow-sm">
-                    {event.date && (
-                      <div>
-                        📅 {new Date(event.date).toLocaleDateString('de-DE')}
-                        {event.time && ` um ${event.time}`}
-                      </div>
-                    )}
-                    {event.location && <div>📍 {event.location}</div>}
-                    {event.price && <div>💰 €{event.price}</div>}
-                  </div>
-                  
-                  {event.website && (
-                    <a
-                      href={event.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block mt-3 text-brand-blue hover:text-brand-lime text-sm drop-shadow-sm transition-colors"
-                    >
-                      Mehr Infos →
-                    </a>
-                  )}
-                </CardContent>
-              </Card>
+              />
             ))}
         </div>
       </div>
