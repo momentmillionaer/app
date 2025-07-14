@@ -185,16 +185,16 @@ export function EventCard({ event, onClick }: EventCardProps) {
             </div>
           )}
           
-          {/* Date badge overlay - top left corner */}
+          {/* Date badge overlay - liquid glass design */}
           {eventDate && (
-            <div className="absolute top-2 left-2 bg-white/90 text-gray-800 rounded-lg p-2 text-center min-w-[50px] backdrop-blur-sm border border-white/30 shadow-lg">
-              <div className="text-xs font-medium uppercase leading-tight">
+            <div className="absolute top-2 left-2 bg-white/15 text-white rounded-2xl p-3 text-center min-w-[60px] backdrop-blur-xl backdrop-saturate-150 backdrop-brightness-110 border border-white/25 shadow-2xl drop-shadow-lg">
+              <div className="text-xs font-medium uppercase leading-tight drop-shadow-sm">
                 {format(eventDate, "EE", { locale: de }).toUpperCase()}
               </div>
-              <div className="text-lg font-bold leading-tight">
+              <div className="text-lg font-bold leading-tight drop-shadow-sm">
                 {format(eventDate, "dd")}
               </div>
-              <div className="text-xs leading-tight">
+              <div className="text-xs leading-tight drop-shadow-sm">
                 {format(eventDate, "MMM", { locale: de }).toUpperCase()}
               </div>
             </div>
