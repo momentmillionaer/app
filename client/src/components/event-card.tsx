@@ -99,7 +99,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
               </h3>
               <div className="flex items-center gap-2 flex-shrink-0">
                 {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
-                  <span className="text-xl" title="Kostenlos">
+                  <span className="text-lg flex items-center" title="Kostenlos">
                     🆓
                   </span>
                 )}
