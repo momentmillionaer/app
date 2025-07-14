@@ -5,9 +5,12 @@ async function checkMomenteDatabase() {
     console.log('Looking for "momente" database...');
     const databases = await getNotionDatabases();
     
-    const momenteDb = databases.find(db => 
-      db.title?.[0]?.plain_text?.toLowerCase().includes('momente')
-    );
+    const momenteDb = databases.find(db => {
+      const title = db.title?.[0]?.plain_text || '';
+      return title.toLowerCase().includes('momente') || 
+             title.toLowerCase().includes('moment') ||
+             title.toLowerCase() === 'momente';
+    });
     
     if (!momenteDb) {
       console.log('Available databases:');
