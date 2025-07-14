@@ -46,7 +46,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
       />
       
       {/* Modal Content */}
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto liquid-glass-strong rounded-[2rem] border-0">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto ios-glass-popup rounded-[2rem] border-0">
         <div className="p-8">
           {/* Header */}
           <div className="flex items-start justify-between mb-6">

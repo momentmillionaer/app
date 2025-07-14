@@ -262,3 +262,75 @@
 .dual-range-slider::-moz-range-track {
   background: transparent;
 }
+
+/* iOS Control Center Glass Popup Styles */
+.ios-glass-popup {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(40px) saturate(1.8) brightness(1.2);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8) brightness(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* iOS Calendar Styling */
+.ios-calendar {
+  background: transparent;
+}
+
+.ios-calendar .rdp-day_button {
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: white;
+  font-weight: 500;
+}
+
+.ios-calendar .rdp-day_button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+}
+
+.ios-calendar .rdp-day_button[aria-selected="true"] {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ios-calendar .rdp-day_range_start,
+.ios-calendar .rdp-day_range_end {
+  background: rgba(0, 0, 255, 0.6);
+  color: white;
+}
+
+.ios-calendar .rdp-day_range_middle {
+  background: rgba(0, 0, 255, 0.2);
+  color: white;
+}
+
+.ios-calendar .rdp-head_cell {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.ios-calendar .rdp-caption {
+  color: white;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.ios-calendar .rdp-nav_button {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.ios-calendar .rdp-nav_button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}

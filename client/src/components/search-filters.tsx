@@ -133,10 +133,10 @@ export function SearchFilters({
             <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20">
               <SelectValue placeholder="Alle Kategorien" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-0 liquid-glass-strong">
-              <SelectItem value="all">🎭 Alle Kategorien</SelectItem>
+            <SelectContent className="rounded-2xl border-0 ios-glass-popup">
+              <SelectItem value="all" className="rounded-xl focus:bg-white/10 text-white">🎭 Alle Kategorien</SelectItem>
               {categories.map((category) => (
-                <SelectItem key={category} value={category}>
+                <SelectItem key={category} value={category} className="rounded-xl focus:bg-white/10 text-white">
                   {category}
                 </SelectItem>
               ))}
@@ -151,9 +151,9 @@ export function SearchFilters({
             <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20">
               <SelectValue placeholder="Alle Zielgruppen" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-0 liquid-glass-strong">
+            <SelectContent className="rounded-2xl border-0 ios-glass-popup">
               {audienceOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem key={option.value} value={option.value} className="rounded-xl focus:bg-white/10 text-white">
                   {option.label}
                 </SelectItem>
               ))}

@@ -140,30 +140,36 @@ export function DateRangePicker({
           </span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 liquid-glass-strong border-0 rounded-2xl" align="start">
-        <div className="p-4 space-y-4">
+      <PopoverContent className="w-auto p-0 border-0 rounded-3xl overflow-hidden ios-glass-popup" align="start">
+        <div className="p-6 space-y-4">
           {/* Mode Toggle */}
-          <div className="flex gap-2">
+          <div className="flex gap-3 p-1 bg-white/10 rounded-2xl backdrop-blur-xl">
             <Button
-              variant={mode === "single" ? "default" : "outline"}
+              variant="ghost"
               size="sm"
               onClick={() => {
                 setMode("single");
-                setTempToDate(undefined); // Clear end date when switching to single mode
+                setTempToDate(undefined);
               }}
-              className="text-xs rounded-xl"
+              className={`flex-1 text-xs rounded-xl transition-all duration-300 ${
+                mode === "single" 
+                  ? "bg-white/20 text-white shadow-lg backdrop-blur-xl" 
+                  : "text-white/70 hover:bg-white/10"
+              }`}
             >
               📅 Einzelnes Datum
             </Button>
             <Button
-              variant={mode === "range" ? "default" : "outline"}
+              variant="ghost"
               size="sm"
               onClick={() => {
                 setMode("range");
-                // Don't auto-clear dates when switching to range mode
-                // User might want to extend their single date to a range
               }}
-              className="text-xs rounded-xl"
+              className={`flex-1 text-xs rounded-xl transition-all duration-300 ${
+                mode === "range" 
+                  ? "bg-white/20 text-white shadow-lg backdrop-blur-xl" 
+                  : "text-white/70 hover:bg-white/10"
+              }`}
             >
               📅 Zeitraum
             </Button>
@@ -183,7 +189,7 @@ export function DateRangePicker({
               onSelect={handleDateSelect}
               initialFocus
               locale={de}
-              className="rounded-xl border-0"
+              className="rounded-2xl border-0 ios-calendar"
             />
           ) : (
             <Calendar
@@ -192,42 +198,42 @@ export function DateRangePicker({
               onSelect={handleDateSelect}
               initialFocus
               locale={de}
-              className="rounded-xl border-0"
+              className="rounded-2xl border-0 ios-calendar"
             />
           )}
 
           {/* Quick Actions */}
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={handleToday}
-              className="text-xs rounded-xl"
+              className="flex-1 text-xs rounded-2xl bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
             >
-              Heute
+              ☀️ Heute
             </Button>
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={handleClear}
-              className="text-xs rounded-xl"
+              className="flex-1 text-xs rounded-2xl bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
             >
-              Löschen
+              🗑️ Löschen
             </Button>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2 pt-2">
+          <div className="flex gap-3 pt-2">
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={handleCancel}
-              className="flex-1 rounded-xl"
+              className="flex-1 rounded-2xl bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
             >
               Abbrechen
             </Button>
             <Button
               onClick={handleApply}
-              className="flex-1 rounded-xl bg-brand-blue hover:bg-brand-blue/90"
+              className="flex-1 rounded-2xl bg-brand-blue/80 hover:bg-brand-blue text-white backdrop-blur-xl transition-all duration-300 shadow-lg"
             >
               Anwenden
             </Button>
