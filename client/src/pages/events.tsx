@@ -192,6 +192,14 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen">
+      {/* Global Debug info */}
+      <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded z-50 text-sm">
+        <p>ViewMode: {viewMode}</p>
+        <p>Events: {events.length}</p>
+        <p>Filtered: {filteredEvents.length}</p>
+        <p>Loading: {isLoading ? 'YES' : 'NO'}</p>
+      </div>
+      
       <Header eventCount={events.length} lastUpdated={getLastUpdated()} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
