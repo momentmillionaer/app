@@ -80,7 +80,7 @@ export function CalendarView({ events }: CalendarViewProps) {
     <div className="space-y-6">
       {/* Calendar Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="text-2xl font-bold text-gray-900 font-helvetica-neue">
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
         </h2>
         <div className="flex space-x-2">
@@ -171,7 +171,7 @@ export function CalendarView({ events }: CalendarViewProps) {
 
       {/* Events List for Selected Month */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-gray-900 font-helvetica-neue">
           Alle Events im {monthNames[currentDate.getMonth()]}
         </h3>
         
