@@ -51,9 +51,49 @@ export default function EventsPage() {
   console.log('Is loading:', isLoading);
   console.log('Error:', error);
 
+  // Merge events with identical titles first
+  const mergedEvents = useMemo(() => {
+    const eventMap = new Map<string, Event>();
+    
+    events.forEach(event => {
+      const title = event.title;
+      if (eventMap.has(title)) {
+        const existing = eventMap.get(title)!;
+        // Merge logic: keep first event but combine dates if different
+        if (existing.date !== event.date && event.date) {
+          // If dates are different, create a multi-date description
+          if (!existing.description.includes('Termine:')) {
+            existing.description = `Termine: ${existing.date}${event.date ? `, ${event.date}` : ''}${existing.description ? `\n\n${existing.description}` : ''}`;
+          } else {
+            // Add to existing dates list
+            const termineMatch = existing.description.match(/^Termine: ([^\n]+)/);
+            if (termineMatch) {
+              existing.description = existing.description.replace(
+                /^Termine: ([^\n]+)/, 
+                `Termine: ${termineMatch[1]}, ${event.date}`
+              );
+            }
+          }
+        }
+        // Use image from first event with valid image
+        if (!existing.imageUrl && event.imageUrl) {
+          existing.imageUrl = event.imageUrl;
+        }
+        // Combine attendees if different
+        if (event.attendees && !existing.attendees.includes(event.attendees)) {
+          existing.attendees = existing.attendees ? `${existing.attendees}, ${event.attendees}` : event.attendees;
+        }
+      } else {
+        eventMap.set(title, { ...event });
+      }
+    });
+
+    return Array.from(eventMap.values());
+  }, [events]);
+
   // Filtered and sorted events
   const filteredEvents = useMemo(() => {
-    let filtered = events;
+    let filtered = mergedEvents;
 
     // Apply filters
     if (searchQuery) {
@@ -129,7 +169,7 @@ export default function EventsPage() {
     }
 
     return filtered;
-  }, [events, searchQuery, selectedCategory, selectedAudience, dateFrom, dateTo, priceMin, priceMax, sortOption]);
+  }, [mergedEvents, searchQuery, selectedCategory, selectedAudience, dateFrom, dateTo, priceMin, priceMax, sortOption]);
 
   const clearFilters = () => {
     setSearchQuery("");

@@ -27,7 +27,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         page_size: 100
       });
 
-      const rawEvents = response.results.map((page: any) => {
+      const events = response.results.map((page: any) => {
         const properties = page.properties;
         
 
@@ -88,36 +88,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       });
 
-      // Merge events with identical titles
-      const eventMap = new Map<string, any>();
-      
-      rawEvents.forEach(event => {
-        const title = event.title;
-        if (eventMap.has(title)) {
-          const existing = eventMap.get(title);
-          // Merge logic: keep first event but combine dates if different
-          if (existing.date !== event.date && event.date) {
-            // If dates are different, create a multi-date description
-            if (!existing.description.includes('Termine:')) {
-              existing.description = `Termine: ${existing.date}${event.date ? `, ${event.date}` : ''}${existing.description ? `\n\n${existing.description}` : ''}`;
-            } else {
-              existing.description = existing.description.replace('Termine:', `Termine: ${existing.date}, ${event.date}`);
-            }
-          }
-          // Use image from first event with valid image
-          if (!existing.imageUrl && event.imageUrl) {
-            existing.imageUrl = event.imageUrl;
-          }
-          // Combine attendees if different
-          if (event.attendees && !existing.attendees.includes(event.attendees)) {
-            existing.attendees = existing.attendees ? `${existing.attendees}, ${event.attendees}` : event.attendees;
-          }
-        } else {
-          eventMap.set(title, { ...event });
-        }
-      });
-
-      const events = Array.from(eventMap.values());
       res.json(events);
     } catch (error) {
       console.error("Error fetching events:", error);
