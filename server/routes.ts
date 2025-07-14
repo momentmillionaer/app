@@ -55,11 +55,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Extract image URL from "Dateien" property
         let imageUrl = "";
         if (properties.Dateien?.files && properties.Dateien.files.length > 0) {
-          const firstFile = properties.Dateien.files[0];
-          if (firstFile.type === "file") {
-            imageUrl = firstFile.file.url;
-          } else if (firstFile.type === "external") {
-            imageUrl = firstFile.external.url;
+          // Find first actual image file (not PDF or other documents)
+          for (const file of properties.Dateien.files) {
+            let url = "";
+            if (file.type === "file") {
+              url = file.file.url;
+            } else if (file.type === "external") {
+              url = file.external.url;
+            }
+            
+            // Check if URL points to an actual image file
+            if (url && (url.includes('.jpg') || url.includes('.jpeg') || url.includes('.png') || 
+                       url.includes('.webp') || url.includes('.gif') || url.includes('.svg'))) {
+              imageUrl = url;
+              break; // Use first valid image found
+            }
           }
         }
 
