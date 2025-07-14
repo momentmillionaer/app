@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom font faces */
+@font-face {
+  font-family: 'Connihof';
+  src: url('@assets/Connihof-Regular-2_1752488267520.ttf') format('truetype');
+  font-weight: normal;
+  font-display: swap;
+}
+
 /* Custom Font Faces */
 @font-face {
   font-family: 'Connihof';
@@ -157,4 +165,9 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+}
+
+/* Connihof font utility class */
+.font-connihof {
+  font-family: 'Connihof', serif;
 }
