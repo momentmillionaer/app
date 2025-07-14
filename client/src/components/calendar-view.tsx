@@ -33,10 +33,27 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
     calendarDays.push(day);
   }
 
-  // Group events by date
+  // Group events by date - handle merged events with multiple dates
   const eventsByDate: { [key: string]: Event[] } = {};
   events.forEach(event => {
-    if (event.date) {
+    // Check if this event has multiple dates in description (merged event)
+    if (event.description && event.description.startsWith('Termine:')) {
+      const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+      if (termineMatch) {
+        const dates = termineMatch[1].split(',').map(d => d.trim());
+        dates.forEach(dateStr => {
+          if (dateStr) {
+            const eventDate = new Date(dateStr);
+            const dateKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}-${eventDate.getDate()}`;
+            if (!eventsByDate[dateKey]) {
+              eventsByDate[dateKey] = [];
+            }
+            eventsByDate[dateKey].push(event);
+          }
+        });
+      }
+    } else if (event.date) {
+      // Single date event
       const eventDate = new Date(event.date);
       const dateKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}-${eventDate.getDate()}`;
       if (!eventsByDate[dateKey]) {
