@@ -168,10 +168,11 @@ export function SearchFilters({
 
       {/* Active Filters Display */}
       {hasActiveFilters && (
-        <div className="mt-4 flex flex-wrap gap-2 items-center">
+        <div className="mt-6 flex flex-wrap gap-2 items-center">
+          <span className="text-sm text-white/80 drop-shadow-sm mr-2">Aktive Filter:</span>
           {searchQuery && (
             <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
-              Suche: {searchQuery}
+              🔍 Suche: {searchQuery}
               <button
                 className="ml-2 hover:text-gray-200"
                 onClick={() => removeFilter('search')}
