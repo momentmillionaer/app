@@ -273,6 +273,85 @@
     0 8px 32px rgba(0, 0, 0, 0.3),
     0 1px 2px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: white !important;
+}
+
+/* Ensure all select content has white text */
+.ios-glass-popup * {
+  color: white !important;
+}
+
+/* Select trigger styling - force white text */
+[data-radix-select-trigger] {
+  color: white !important;
+}
+
+[data-radix-select-trigger] * {
+  color: white !important;
+}
+
+/* Select content styling */
+[data-radix-select-content] {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(40px) saturate(1.8) brightness(1.2) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(1.8) brightness(1.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Select item styling */
+[data-radix-select-item] {
+  color: white !important;
+}
+
+[data-radix-select-item] * {
+  color: white !important;
+}
+
+[data-radix-select-item]:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
+[data-radix-select-item][data-highlighted] {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
+/* Select value styling */
+[data-radix-select-value] {
+  color: white !important;
+}
+
+[data-radix-select-value] * {
+  color: white !important;
+}
+
+/* Additional Radix UI Select overrides */
+.liquid-glass [data-radix-select-trigger] {
+  color: white !important;
+}
+
+.liquid-glass [data-radix-select-trigger] * {
+  color: white !important;
+}
+
+.liquid-glass [data-radix-select-value] {
+  color: white !important;
+}
+
+.liquid-glass [data-radix-select-value] * {
+  color: white !important;
+}
+
+/* Force white text for all select components */
+[data-radix-select-trigger]:not([data-placeholder]) {
+  color: white !important;
+}
+
+/* Ensure placeholder text is also white */
+[data-radix-select-trigger][data-placeholder] {
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
 /* iOS Calendar Styling */

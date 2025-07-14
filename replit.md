@@ -10,7 +10,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-**July 14, 2025 - iOS 26 Liquid Glass Design**
+**July 14, 2025 - iOS 26 Liquid Glass Design & Typography Updates**
 - ✓ Updated app to use dynamic "Kategorie" field from Notion database instead of predefined categories
 - ✓ Implemented custom color palette from user's brand colors (#0A0A0A, #0000FF, #D0FE1D, #F3DCFA, #F4F3F2, #FE5C2B, #FEE4C3)
 - ✓ Added /api/categories endpoint to fetch available categories from Notion
@@ -19,6 +19,9 @@ Preferred communication style: Simple, everyday language.
 - ✓ Implemented dynamic gradient background with subtle color transitions
 - ✓ Switched to Helvetica font family throughout the application
 - ✓ All UI elements now feature translucent materials with depth and subtle animations
+- ✓ Converted all text throughout entire application to white with drop shadows for better readability
+- ✓ Fixed all Radix UI Select dropdowns to display white text properly
+- ✓ Enlarged "momentmillionär" title (text-4xl/5xl), reduced letter spacing (tracking-tight), reduced spacing to filter section
 
 ## System Architecture
 

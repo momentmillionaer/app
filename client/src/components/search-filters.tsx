@@ -129,13 +129,13 @@ export function SearchFilters({
         {/* Category Filter */}
         <div className="min-w-[200px]">
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20">
-              <SelectValue placeholder="Alle Kategorien" />
+            <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20 text-white">
+              <SelectValue placeholder="Alle Kategorien" className="text-white" />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-0 ios-glass-popup">
-              <SelectItem value="all" className="rounded-xl focus:bg-white/10 text-white">🎭 Alle Kategorien</SelectItem>
+              <SelectItem value="all" className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
               {categories.map((category) => (
-                <SelectItem key={category} value={category} className="rounded-xl focus:bg-white/10 text-white">
+                <SelectItem key={category} value={category} className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
                   {category}
                 </SelectItem>
               ))}
@@ -146,12 +146,12 @@ export function SearchFilters({
         {/* Audience Filter */}
         <div className="min-w-[200px]">
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
-            <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20">
-              <SelectValue placeholder="Alle Zielgruppen" />
+            <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20 text-white">
+              <SelectValue placeholder="Alle Zielgruppen" className="text-white" />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-0 ios-glass-popup">
               {audienceOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value} className="rounded-xl focus:bg-white/10 text-white">
+                <SelectItem key={option.value} value={option.value} className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
                   {option.label}
                 </SelectItem>
               ))}

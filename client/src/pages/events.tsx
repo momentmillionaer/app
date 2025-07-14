@@ -190,23 +190,25 @@ export default function EventsPage() {
       <Header eventCount={events.length} lastUpdated={getLastUpdated()} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <SearchFilters
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          dateFrom={dateFrom}
-          onDateFromChange={setDateFrom}
-          dateTo={dateTo}
-          onDateToChange={setDateTo}
-          selectedAudience={selectedAudience}
-          onAudienceChange={setSelectedAudience}
-          priceMin={priceMin}
-          onPriceMinChange={setPriceMin}
-          priceMax={priceMax}
-          onPriceMaxChange={setPriceMax}
-          onClearFilters={clearFilters}
-        />
+        <div className="mt-2">
+          <SearchFilters
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            dateFrom={dateFrom}
+            onDateFromChange={setDateFrom}
+            dateTo={dateTo}
+            onDateToChange={setDateTo}
+            selectedAudience={selectedAudience}
+            onAudienceChange={setSelectedAudience}
+            priceMin={priceMin}
+            onPriceMinChange={setPriceMin}
+            priceMax={priceMax}
+            onPriceMaxChange={setPriceMax}
+            onClearFilters={clearFilters}
+          />
+        </div>
 
         {/* View Mode Toggle */}
         <div className="flex items-center justify-between mb-6">
@@ -247,14 +249,14 @@ export default function EventsPage() {
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-white/80 drop-shadow-sm">Sortierung:</span>
                 <Select value={sortOption} onValueChange={setSortOption}>
-                  <SelectTrigger className="w-40 rounded-2xl border-0 liquid-glass bg-white/20">
-                    <SelectValue />
+                  <SelectTrigger className="w-40 rounded-2xl border-0 liquid-glass bg-white/20 text-white">
+                    <SelectValue className="text-white" />
                   </SelectTrigger>
                   <SelectContent className="rounded-2xl border-0 ios-glass-popup">
-                    <SelectItem value="date-asc" className="rounded-xl focus:bg-white/10 text-white">Datum (aufsteigend)</SelectItem>
-                    <SelectItem value="date-desc" className="rounded-xl focus:bg-white/10 text-white">Datum (absteigend)</SelectItem>
-                    <SelectItem value="title" className="rounded-xl focus:bg-white/10 text-white">Titel (A-Z)</SelectItem>
-                    <SelectItem value="category" className="rounded-xl focus:bg-white/10 text-white">Kategorie</SelectItem>
+                    <SelectItem value="date-asc" className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Datum (aufsteigend)</SelectItem>
+                    <SelectItem value="date-desc" className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Datum (absteigend)</SelectItem>
+                    <SelectItem value="title" className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Titel (A-Z)</SelectItem>
+                    <SelectItem value="category" className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Kategorie</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

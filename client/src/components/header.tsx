@@ -7,10 +7,10 @@ interface HeaderProps {
 
 export function Header({ eventCount, lastUpdated }: HeaderProps) {
   return (
-    <header className="mb-8">
-      <div className="container mx-auto px-8 py-6">
+    <header className="mb-4">
+      <div className="container mx-auto px-8 py-4">
         <div className="text-center">
-          <h1 className="text-2xl lg:text-3xl font-normal text-white drop-shadow-lg font-connihof">
+          <h1 className="text-4xl lg:text-5xl font-normal text-white drop-shadow-lg font-connihof tracking-tight">
             momentmillionär
           </h1>
         </div>
