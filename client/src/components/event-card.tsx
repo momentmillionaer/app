@@ -20,7 +20,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
 
   return (
     <div 
-      className="liquid-glass rounded-[2rem] hover:liquid-glass-strong transition-all duration-500 cursor-pointer"
+      className="liquid-glass-strong rounded-[2rem] hover:liquid-glass-button transition-all duration-500 cursor-pointer"
       onClick={onClick}
     >
       <div className="p-8">
@@ -41,7 +41,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
                   </div>
                 </div>
                 {event.time && (
-                  <div className="text-center mt-2 text-sm text-gray-600">
+                  <div className="text-center mt-2 text-sm text-white/70 drop-shadow-sm">
                     {event.time}
                   </div>
                 )}
@@ -60,7 +60,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
                   </span>
                 )}
               </h3>
-              <Badge className={`${getCategoryColor(event.category)} flex-shrink-0`}>
+              <Badge className="bg-white/30 text-white border-white/20 hover:bg-white/40 flex-shrink-0">
                 {event.category}
               </Badge>
             </div>
