@@ -146,8 +146,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
               
               {event.attendees && (
                 <span className="flex items-center">
-                  <Users className="mr-1 text-white/60 h-4 w-4" />
-                  <span>{event.attendees.replace(/👯‍♀️/g, '').replace(/,\s*/g, ' ').trim()}</span>
+                  <span>{event.attendees.replace(/,\s*/g, ' ')}</span>
                 </span>
               )}
             </div>
