@@ -40,17 +40,32 @@ export function SearchFilters({
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  // Target audience options
+  // Fetch audiences from API
+  const { data: audiences = [] } = useQuery<string[]>({
+    queryKey: ["/api/audiences"],
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
+  // Create audience options with emojis
+  const getAudienceEmoji = (audience: string): string => {
+    if (audience.toLowerCase().includes('kind')) return '👶';
+    if (audience.toLowerCase().includes('jugend')) return '🧒';
+    if (audience.toLowerCase().includes('erwachsen')) return '🧑';
+    if (audience.toLowerCase().includes('senior')) return '👴';
+    if (audience.toLowerCase().includes('famili')) return '👨‍👩‍👧‍👦';
+    if (audience.toLowerCase().includes('paar')) return '💑';
+    if (audience.toLowerCase().includes('single')) return '🙋';
+    if (audience.toLowerCase().includes('student')) return '🎓';
+    return '🎯';
+  };
+
   const audienceOptions = [
     { value: "all", label: "🎯 Alle Zielgruppen", emoji: "🎯" },
-    { value: "kinder", label: "👶 Kinder", emoji: "👶" },
-    { value: "jugendliche", label: "🧒 Jugendliche", emoji: "🧒" },
-    { value: "erwachsene", label: "🧑 Erwachsene", emoji: "🧑" },
-    { value: "senioren", label: "👴 Senioren", emoji: "👴" },
-    { value: "familien", label: "👨‍👩‍👧‍👦 Familien", emoji: "👨‍👩‍👧‍👦" },
-    { value: "paare", label: "💑 Paare", emoji: "💑" },
-    { value: "singles", label: "🙋 Singles", emoji: "🙋" },
-    { value: "studenten", label: "🎓 Studenten", emoji: "🎓" },
+    ...audiences.map(audience => ({
+      value: audience,
+      label: `${getAudienceEmoji(audience)} ${audience}`,
+      emoji: getAudienceEmoji(audience)
+    }))
   ];
 
   const hasActiveFilters = (selectedCategory && selectedCategory !== "all") || 

@@ -66,7 +66,9 @@ export default function EventsPage() {
     if (selectedAudience && selectedAudience !== "all") {
       filtered = filtered.filter(event => {
         if (!event.attendees) return false;
-        return event.attendees.toLowerCase().includes(selectedAudience.toLowerCase());
+        // Split attendees by comma and check if any matches the selected audience
+        const eventAudiences = event.attendees.split(',').map(a => a.trim());
+        return eventAudiences.includes(selectedAudience);
       });
     }
 

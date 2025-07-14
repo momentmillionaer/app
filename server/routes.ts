@@ -60,7 +60,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           time: eventTime,
           price: properties.Preis?.number ? properties.Preis.number.toString() : "",
           website: properties.URL?.url || "",
-          attendees: "", // Not tracked in your database
+          attendees: properties.Zielgruppe?.multi_select?.map((audience: any) => audience.name).join(", ") || ""
         };
       });
 
@@ -197,6 +197,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error searching events:", error);
       res.status(500).json({ 
         message: "Failed to search events",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Get all available audience values from Notion database
+  app.get("/api/audiences", async (req, res) => {
+    try {
+      if (!process.env.NOTION_INTEGRATION_SECRET || !process.env.NOTION_PAGE_URL) {
+        return res.json([]);
+      }
+
+      const databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
+
+      const response = await notion.databases.query({
+        database_id: databaseId,
+        page_size: 100
+      });
+
+      const audienceSet = new Set<string>();
+      
+      response.results.forEach((page: any) => {
+        const properties = page.properties;
+        const audiences = properties.Zielgruppe?.multi_select?.map((audience: any) => audience.name) || [];
+        audiences.forEach((audience: string) => audienceSet.add(audience));
+      });
+
+      const uniqueAudiences = Array.from(audienceSet).sort();
+      res.json(uniqueAudiences);
+    } catch (error) {
+      console.error("Error fetching audiences:", error);
+      res.status(500).json({ 
+        message: "Failed to fetch audiences from Notion",
         error: error instanceof Error ? error.message : "Unknown error"
       });
     }
