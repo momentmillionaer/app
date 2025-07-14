@@ -54,6 +54,11 @@ export function EventCard({ event, onClick }: EventCardProps) {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
               <h3 className="text-lg font-semibold text-white drop-shadow-sm line-clamp-2">
                 {event.title}
+                {event.price === "0" && (
+                  <span className="ml-2 text-sm bg-brand-lime/90 text-brand-black px-2 py-1 rounded-full font-bold">
+                    🎉 GRATIS
+                  </span>
+                )}
               </h3>
               <Badge className={`${getCategoryColor(event.category)} flex-shrink-0`}>
                 {event.category}

@@ -202,8 +202,12 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                     {dayEvents.slice(0, 3).map((event, eventIndex) => (
                       <div
                         key={`${day}-event-${eventIndex}`}
-                        className="text-xs px-2 py-1 rounded-full truncate liquid-glass bg-white/40 text-gray-900 border border-white/20 cursor-pointer hover:bg-white/50 transition-colors"
-                        title={`${event.title} - ${event.time || 'Ganztägig'}`}
+                        className={`text-xs px-2 py-1 rounded-full truncate liquid-glass text-gray-900 border cursor-pointer hover:bg-white/50 transition-colors ${
+                          event.price === "0" 
+                            ? "bg-brand-lime/80 border-brand-lime text-brand-black font-bold" 
+                            : "bg-white/40 border-white/20"
+                        }`}
+                        title={`${event.title} - ${event.time || 'Ganztägig'}${event.price === "0" ? " • GRATIS" : ""}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           onEventClick?.(event);
@@ -211,6 +215,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                       >
                         <span className="mr-1">{getEventEmoji(event)}</span>
                         {event.title}
+                        {event.price === "0" && <span className="ml-1">🎉</span>}
                       </div>
                     ))}
                     
@@ -254,6 +259,11 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                     <h4 className="font-semibold text-white drop-shadow-sm line-clamp-2">
                       <span className="mr-2">{getEventEmoji(event)}</span>
                       {event.title}
+                      {event.price === "0" && (
+                        <span className="ml-2 text-sm bg-brand-lime/90 text-brand-black px-2 py-1 rounded-full font-bold">
+                          🎉 GRATIS
+                        </span>
+                      )}
                     </h4>
                     <Badge className={getCategoryColor(event.category)}>
                       {event.category}

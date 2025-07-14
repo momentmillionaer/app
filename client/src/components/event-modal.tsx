@@ -55,6 +55,11 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
               <div>
                 <h2 className="text-2xl font-bold text-white drop-shadow-lg line-clamp-2">
                   {event.title}
+                  {event.price === "0" && (
+                    <span className="ml-3 text-lg bg-brand-lime/90 text-brand-black px-3 py-1 rounded-full font-bold">
+                      🎉 GRATIS
+                    </span>
+                  )}
                 </h2>
                 {event.category && (
                   <Badge className="mt-2 bg-white/30 text-white border-white/20 hover:bg-white/40">
