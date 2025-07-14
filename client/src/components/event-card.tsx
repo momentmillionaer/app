@@ -6,6 +6,7 @@ import type { Event } from "@shared/schema";
 
 interface EventCardProps {
   event: Event;
+  onClick?: () => void;
 }
 
 const getCategoryColor = (category: string) => {
@@ -14,11 +15,14 @@ const getCategoryColor = (category: string) => {
 
 
 
-export function EventCard({ event }: EventCardProps) {
+export function EventCard({ event, onClick }: EventCardProps) {
   const eventDate = event.date ? parseISO(event.date) : null;
 
   return (
-    <div className="liquid-glass rounded-[2rem] hover:liquid-glass-strong transition-all duration-500">
+    <div 
+      className="liquid-glass rounded-[2rem] hover:liquid-glass-strong transition-all duration-500 cursor-pointer"
+      onClick={onClick}
+    >
       <div className="p-8">
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
           {/* Date Column */}

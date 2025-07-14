@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/header";
 import { SearchFilters } from "@/components/search-filters";
 import { CalendarView } from "@/components/calendar-view";
+import { EventCard } from "@/components/event-card";
+import { EventModal } from "@/components/event-modal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -17,6 +19,18 @@ export default function EventsPage() {
   const [dateTo, setDateTo] = useState("");
   const [sortOption, setSortOption] = useState("date-asc");
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleEventClick = (event: Event) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedEvent(null);
+  };
 
   // Fetch events from API
   const { 
@@ -227,79 +241,43 @@ export default function EventsPage() {
           </div>
         ) : filteredEvents.length === 0 ? (
           <div className="text-center py-12">
-            <CalendarX className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Keine Events gefunden</h3>
-            <p className="text-gray-600 mb-6">
+            <CalendarX className="mx-auto h-12 w-12 text-white/50 mb-4" />
+            <h3 className="text-lg font-medium text-white drop-shadow-sm mb-2">Keine Events gefunden</h3>
+            <p className="text-white/80 drop-shadow-sm mb-6">
               {events.length === 0 
                 ? "Es sind noch keine Events in der Datenbank verfügbar."
                 : "Versuchen Sie, Ihre Suchkriterien oder Filter anzupassen."
               }
             </p>
             {(searchQuery || selectedCategory || dateFrom || dateTo) && (
-              <button
-                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              <Button
+                className="bg-brand-blue hover:bg-brand-lime text-white rounded-2xl transition-colors"
                 onClick={clearFilters}
               >
                 Filter zurücksetzen
-              </button>
+              </Button>
             )}
           </div>
         ) : viewMode === "calendar" ? (
-          <CalendarView events={filteredEvents} />
+          <CalendarView events={filteredEvents} onEventClick={handleEventClick} />
         ) : (
           <div className="space-y-4">
             {filteredEvents.map((event) => (
-              <div key={event.notionId} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">{event.title}</h3>
-                  <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                    {event.category}
-                  </span>
-                </div>
-                
-                {event.description && (
-                  <p className="text-gray-600 mb-4">{event.description}</p>
-                )}
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500">
-                  {event.date && (
-                    <div>
-                      <strong>Datum:</strong> {new Date(event.date).toLocaleDateString('de-DE')}
-                    </div>
-                  )}
-                  {event.time && (
-                    <div>
-                      <strong>Zeit:</strong> {event.time}
-                    </div>
-                  )}
-                  {event.location && (
-                    <div>
-                      <strong>Ort:</strong> {event.location}
-                    </div>
-                  )}
-                  {event.price && (
-                    <div>
-                      <strong>Preis:</strong> €{event.price}
-                    </div>
-                  )}
-                </div>
-                
-                {event.website && (
-                  <div className="mt-4">
-                    <a
-                      href={event.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 text-sm"
-                    >
-                      Mehr Informationen →
-                    </a>
-                  </div>
-                )}
-              </div>
+              <EventCard 
+                key={event.notionId} 
+                event={event} 
+                onClick={() => handleEventClick(event)}
+              />
             ))}
           </div>
         )}
+
+        {/* Event Modal */}
+        <EventModal 
+          event={selectedEvent}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
 
         {/* Footer */}
         <footer className="bg-white border-t border-gray-200 mt-16 rounded-lg">

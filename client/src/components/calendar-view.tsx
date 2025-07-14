@@ -7,9 +7,10 @@ import { Event } from "@shared/schema";
 
 interface CalendarViewProps {
   events: Event[];
+  onEventClick?: (event: Event) => void;
 }
 
-export function CalendarView({ events }: CalendarViewProps) {
+export function CalendarView({ events, onEventClick }: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   // Get the first day of the month and calculate calendar grid
@@ -201,8 +202,12 @@ export function CalendarView({ events }: CalendarViewProps) {
                     {dayEvents.slice(0, 3).map((event, eventIndex) => (
                       <div
                         key={`${day}-event-${eventIndex}`}
-                        className="text-xs px-2 py-1 rounded-full truncate liquid-glass bg-white/40 text-gray-900 border border-white/20"
+                        className="text-xs px-2 py-1 rounded-full truncate liquid-glass bg-white/40 text-gray-900 border border-white/20 cursor-pointer hover:bg-white/50 transition-colors"
                         title={`${event.title} - ${event.time || 'Ganztägig'}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEventClick?.(event);
+                        }}
                       >
                         <span className="mr-1">{getEventEmoji(event)}</span>
                         {event.title}
@@ -239,7 +244,11 @@ export function CalendarView({ events }: CalendarViewProps) {
             })
             .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())
             .map((event, index) => (
-              <Card key={`monthly-event-${index}-${event.notionId}`} className="liquid-glass rounded-2xl border-0 hover:liquid-glass-strong transition-all duration-300">
+              <Card 
+                key={`monthly-event-${index}-${event.notionId}`} 
+                className="liquid-glass rounded-2xl border-0 hover:liquid-glass-strong transition-all duration-300 cursor-pointer"
+                onClick={() => onEventClick?.(event)}
+              >
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-semibold text-white drop-shadow-sm line-clamp-2">
