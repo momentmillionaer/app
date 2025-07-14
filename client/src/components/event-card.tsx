@@ -9,18 +9,12 @@ interface EventCardProps {
   onClick?: () => void;
 }
 
-const getCategoryColor = (category: string) => {
-  return "px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200";
-};
-
-
-
 export function EventCard({ event, onClick }: EventCardProps) {
   const eventDate = event.date ? parseISO(event.date) : null;
 
   return (
     <div 
-      className="rounded-[2rem] transition-all duration-500 cursor-pointer shadow-xl"
+      className="rounded-[2rem] transition-all duration-500 cursor-pointer shadow-xl overflow-hidden"
       style={{
         background: 'rgba(255, 255, 255, 0.15)',
         backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
@@ -40,6 +34,20 @@ export function EventCard({ event, onClick }: EventCardProps) {
       }}
       onClick={onClick}
     >
+      {/* Event Image */}
+      {event.imageUrl && (
+        <div className="w-full h-48 overflow-hidden">
+          <img 
+            src={event.imageUrl} 
+            alt={event.title}
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        </div>
+      )}
+      
       <div className="p-8">
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
           {/* Date Column */}
@@ -102,29 +110,18 @@ export function EventCard({ event, onClick }: EventCardProps) {
                   <span>{event.price}</span>
                 </span>
               )}
+              
               {event.attendees && (
                 <span className="flex items-center">
                   <Users className="mr-1 text-white/60 h-4 w-4" />
                   <span>{event.attendees}</span>
                 </span>
               )}
-              {!event.time && eventDate && (
-                <span className="flex items-center">
-                  <Clock className="mr-1 text-white/60 h-4 w-4" />
-                  <span>Ganztägig</span>
-                </span>
-              )}
+              
               {event.website && (
                 <span className="flex items-center">
                   <ExternalLink className="mr-1 text-white/60 h-4 w-4" />
-                  <a 
-                    href={event.website} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-white/90 hover:text-white hover:underline transition-colors"
-                  >
-                    Mehr Details
-                  </a>
+                  <span>Website</span>
                 </span>
               )}
             </div>

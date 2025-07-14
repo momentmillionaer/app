@@ -50,6 +50,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
 
+        // Extract image URL from "Datein" property
+        let imageUrl = "";
+        if (properties.Datein?.files && properties.Datein.files.length > 0) {
+          const firstFile = properties.Datein.files[0];
+          if (firstFile.type === "file") {
+            imageUrl = firstFile.file.url;
+          } else if (firstFile.type === "external") {
+            imageUrl = firstFile.external.url;
+          }
+        }
+
         return {
           notionId: page.id,
           title: properties.Name?.title?.[0]?.plain_text || "Untitled Event",
@@ -60,7 +71,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           time: eventTime,
           price: properties.Preis?.number ? properties.Preis.number.toString() : "",
           website: properties.URL?.url || "",
-          attendees: properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name).join(", ") || ""
+          attendees: properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name).join(", ") || "",
+          imageUrl: imageUrl
         };
       });
 
