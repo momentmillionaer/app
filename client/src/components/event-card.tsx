@@ -160,9 +160,9 @@ export function EventCard({ event, onClick }: EventCardProps) {
         </div>
       )}
       
-      <div className="p-6 flex gap-4 h-full">
+      <div className="pl-6 pr-6 pt-6 pb-6 flex gap-4 h-full">
         {/* Event Image - Left side with date overlay */}
-        <div className="flex-shrink-0 w-32 sm:w-40 h-48 relative">
+        <div className="flex-shrink-0 w-32 sm:w-40 relative h-full">
           {event.imageUrl && !imageError ? (
             <div className="w-full h-full overflow-hidden rounded-xl bg-white/10">
               <img 
@@ -187,7 +187,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
           
           {/* Date badge overlay - liquid glass design */}
           {eventDate && (
-            <div className="absolute top-2 left-2 bg-white/15 text-white rounded-2xl p-3 text-center min-w-[60px] backdrop-blur-xl backdrop-saturate-150 backdrop-brightness-110 border border-white/25 shadow-2xl drop-shadow-lg">
+            <div className="absolute top-3 left-3 bg-white/15 text-white rounded-2xl p-3 text-center min-w-[60px] backdrop-blur-xl backdrop-saturate-150 backdrop-brightness-110 border border-white/25 shadow-2xl drop-shadow-lg">
               <div className="text-xs font-medium uppercase leading-tight drop-shadow-sm">
                 {format(eventDate, "EE", { locale: de }).toUpperCase()}
               </div>
