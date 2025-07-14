@@ -84,25 +84,117 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
 
   // Function to generate emoji based on event content
   const getEventEmoji = (event: Event): string => {
-    const title = event.title.toLowerCase();
+    const title = event.title?.toLowerCase() || '';
     const category = event.category?.toLowerCase() || '';
+    const description = event.description?.toLowerCase() || '';
+    const location = event.location?.toLowerCase() || '';
     
-    // Check for specific keywords and categories
-    if (category.includes('dating') || category.includes('❤️')) return '❤️';
-    if (category.includes('festivals') || category.includes('🃏')) return '🎉';
-    if (category.includes('musik') || title.includes('konzert') || title.includes('musik')) return '🎵';
-    if (category.includes('sport') || title.includes('sport')) return '⚽';
-    if (category.includes('kunst') || title.includes('kunst') || title.includes('galerie')) return '🎨';
-    if (category.includes('theater') || title.includes('theater')) return '🎭';
-    if (category.includes('kino') || title.includes('film')) return '🎬';
-    if (category.includes('essen') || title.includes('restaurant') || title.includes('food')) return '🍽️';
-    if (category.includes('nacht') || title.includes('party') || title.includes('club')) return '🌙';
-    if (category.includes('markt') || title.includes('markt')) return '🛍️';
-    if (category.includes('workshop') || title.includes('workshop')) return '🛠️';
-    if (category.includes('konferenz') || title.includes('meeting')) return '👥';
-    if (title.includes('weihnacht') || title.includes('christmas')) return '🎄';
-    if (title.includes('silvester') || title.includes('new year')) return '🎆';
-    if (title.includes('outdoor') || title.includes('wandern')) return '🏞️';
+    // Combine all text for comprehensive analysis
+    const fullText = `${title} ${category} ${description} ${location}`;
+    
+    // Food & Drinks - very specific matching
+    if (fullText.includes('brunch') || fullText.includes('breakfast')) return '🥐';
+    if (fullText.includes('pizza')) return '🍕';
+    if (fullText.includes('burger')) return '🍔';
+    if (fullText.includes('sushi') || fullText.includes('japanisch')) return '🍣';
+    if (fullText.includes('pasta') || fullText.includes('italienisch')) return '🍝';
+    if (fullText.includes('taco') || fullText.includes('mexikanisch')) return '🌮';
+    if (fullText.includes('coffee') || fullText.includes('kaffee') || fullText.includes('café')) return '☕';
+    if (fullText.includes('wein') || fullText.includes('wine') || fullText.includes('weinprobe')) return '🍷';
+    if (fullText.includes('bier') || fullText.includes('beer') || fullText.includes('brewery')) return '🍺';
+    if (fullText.includes('cocktail') || fullText.includes('bar')) return '🍸';
+    if (fullText.includes('restaurant') || fullText.includes('dinner') || fullText.includes('essen') || category.includes('kulinarik')) return '🍽️';
+    
+    // Music & Entertainment
+    if (fullText.includes('konzert') || fullText.includes('live music') || fullText.includes('band')) return '🎤';
+    if (fullText.includes('dj') || fullText.includes('electronic') || fullText.includes('techno')) return '🎧';
+    if (fullText.includes('klassik') || fullText.includes('orchester') || fullText.includes('symphony')) return '🎼';
+    if (fullText.includes('jazz')) return '🎷';
+    if (fullText.includes('rock') || fullText.includes('metal')) return '🎸';
+    if (fullText.includes('karaoke')) return '🎙️';
+    if (category.includes('musik') || title.includes('musik')) return '🎵';
+    
+    // Arts & Culture
+    if (fullText.includes('theater') || fullText.includes('schauspiel') || fullText.includes('drama')) return '🎭';
+    if (fullText.includes('kino') || fullText.includes('film') || fullText.includes('movie')) return '🎬';
+    if (fullText.includes('ausstellung') || fullText.includes('galerie') || fullText.includes('kunst')) return '🎨';
+    if (fullText.includes('museum')) return '🏛️';
+    if (fullText.includes('fotografie') || fullText.includes('photo')) return '📸';
+    if (fullText.includes('literatur') || fullText.includes('buch') || fullText.includes('lesung')) return '📚';
+    
+    // Sports & Fitness
+    if (fullText.includes('fußball') || fullText.includes('football')) return '⚽';
+    if (fullText.includes('tennis')) return '🎾';
+    if (fullText.includes('basketball')) return '🏀';
+    if (fullText.includes('volleyball')) return '🏐';
+    if (fullText.includes('schwimmen') || fullText.includes('pool')) return '🏊';
+    if (fullText.includes('laufen') || fullText.includes('marathon') || fullText.includes('running')) return '🏃';
+    if (fullText.includes('yoga') || fullText.includes('meditation')) return '🧘';
+    if (fullText.includes('fitness') || fullText.includes('gym')) return '💪';
+    if (fullText.includes('wandern') || fullText.includes('hiking')) return '🥾';
+    if (fullText.includes('ski') || fullText.includes('snowboard')) return '⛷️';
+    if (fullText.includes('bike') || fullText.includes('rad') || fullText.includes('cycling')) return '🚴';
+    
+    // Nightlife & Entertainment
+    if (fullText.includes('party') || fullText.includes('club') || fullText.includes('nightclub')) return '🎉';
+    if (fullText.includes('disco') || fullText.includes('dance')) return '💃';
+    if (fullText.includes('pub') || fullText.includes('kneipe')) return '🍻';
+    
+    // Dating & Social
+    if (category.includes('dating') || category.includes('❤️') || fullText.includes('dating')) return '💕';
+    if (fullText.includes('singles') || fullText.includes('flirt')) return '😍';
+    if (fullText.includes('speed dating')) return '⚡';
+    
+    // Business & Networking
+    if (fullText.includes('networking') || fullText.includes('business')) return '🤝';
+    if (fullText.includes('workshop') || fullText.includes('seminar')) return '🛠️';
+    if (fullText.includes('konferenz') || fullText.includes('conference')) return '👥';
+    if (fullText.includes('startup') || fullText.includes('pitch')) return '💼';
+    
+    // Shopping & Markets
+    if (fullText.includes('markt') || fullText.includes('market') || category.includes('märkte')) return '🛍️';
+    if (fullText.includes('flohmarkt') || fullText.includes('flea market')) return '🧸';
+    if (fullText.includes('weihnachtsmarkt') || fullText.includes('christmas market')) return '🎄';
+    
+    // Festivals & Events
+    if (category.includes('festivals') || category.includes('🃏') || fullText.includes('festival')) return '🎪';
+    if (fullText.includes('straßenfest') || fullText.includes('street festival')) return '🏮';
+    if (fullText.includes('volksfest')) return '🎠';
+    
+    // Wellness & Health
+    if (fullText.includes('spa') || fullText.includes('wellness')) return '💆';
+    if (fullText.includes('massage')) return '🧘';
+    if (fullText.includes('sauna')) return '🧖';
+    
+    // Nature & Outdoor
+    if (fullText.includes('park') || fullText.includes('garden')) return '🌳';
+    if (fullText.includes('beach') || fullText.includes('strand')) return '🏖️';
+    if (fullText.includes('outdoor') || fullText.includes('nature')) return '🏞️';
+    if (fullText.includes('picknick') || fullText.includes('picnic')) return '🧺';
+    
+    // Seasonal & Holiday
+    if (fullText.includes('weihnacht') || fullText.includes('christmas')) return '🎄';
+    if (fullText.includes('silvester') || fullText.includes('new year')) return '🎆';
+    if (fullText.includes('ostern') || fullText.includes('easter')) return '🐰';
+    if (fullText.includes('halloween')) return '🎃';
+    if (fullText.includes('valentine')) return '💝';
+    
+    // Education & Learning
+    if (fullText.includes('kurs') || fullText.includes('course') || fullText.includes('class')) return '📖';
+    if (fullText.includes('sprache') || fullText.includes('language')) return '🗣️';
+    if (fullText.includes('computer') || fullText.includes('tech')) return '💻';
+    
+    // Travel & Tourism
+    if (fullText.includes('reise') || fullText.includes('travel') || fullText.includes('tour')) return '✈️';
+    if (fullText.includes('stadtführung') || fullText.includes('city tour')) return '🗺️';
+    
+    // Default based on category
+    if (category.includes('❤️')) return '💕';
+    if (category.includes('🃏')) return '🎪';
+    if (category.includes('🍽️')) return '🍽️';
+    if (category.includes('🎵')) return '🎵';
+    if (category.includes('🎨')) return '🎨';
+    if (category.includes('⚽')) return '⚽';
     
     return '📅'; // Default calendar emoji
   };
@@ -197,11 +289,18 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                   key={`day-${day}`}
                   className={`p-3 h-32 border-0 rounded-2xl relative overflow-hidden transition-all duration-300 ${
                     isToday 
-                      ? 'bg-brand-lime/80 liquid-glass-strong ring-2 ring-brand-blue/50' 
-                      : isSpecialDay
+                      ? 'liquid-glass-strong ring-2 ring-brand-blue/50' 
+                      : weekend
+                        ? 'liquid-glass bg-black/30 hover:liquid-glass-strong'
+                        : holiday
                         ? 'liquid-glass bg-brand-purple/20 hover:liquid-glass-strong'
                         : 'liquid-glass hover:liquid-glass-strong'
                   }`}
+                  style={isToday ? { 
+                    backgroundColor: 'rgba(157, 255, 0, 0.3)', // Pastel version of #9DFF00
+                    backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
+                    WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
+                  } : {}}
                 >
                   <div className={`text-sm font-bold mb-1 ${
                     isToday 
