@@ -73,13 +73,13 @@ export function EventCard({ event, onClick }: EventCardProps) {
               <>
                 <div className="bg-brand-blue/90 text-white rounded-2xl p-4 text-center min-w-[80px] liquid-glass-button border-0">
                   <div className="text-xs font-medium uppercase">
-                    {format(eventDate, "MMM", { locale: de })}
+                    {format(eventDate, "EE", { locale: de }).toUpperCase()}
                   </div>
                   <div className="text-xl font-bold">
                     {format(eventDate, "dd")}
                   </div>
                   <div className="text-xs">
-                    {format(eventDate, "EEE", { locale: de }).toUpperCase()}
+                    {format(eventDate, "MMM", { locale: de }).toUpperCase()}
                   </div>
                 </div>
                 {event.time && (
