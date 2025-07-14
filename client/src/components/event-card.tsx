@@ -2,6 +2,7 @@ import { format, parseISO } from "date-fns";
 import { de } from "date-fns/locale";
 import { MapPin, Euro, Users, ExternalLink, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 import type { Event } from "@shared/schema";
 
 interface EventCardProps {
@@ -10,6 +11,8 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, onClick }: EventCardProps) {
+  const [imageError, setImageError] = useState(false);
+  
   const eventDate = (() => {
     try {
       return event.date ? parseISO(event.date) : null;
@@ -159,7 +162,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
       <div className="p-8">
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
           {/* Event Image - Left side, square */}
-          {event.imageUrl ? (
+          {event.imageUrl && !imageError ? (
             <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 overflow-hidden rounded-2xl bg-white/10">
               <img 
                 src={event.imageUrl} 
@@ -168,8 +171,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
                 crossOrigin="anonymous"
                 onError={(e) => {
                   console.error('Image failed to load:', event.imageUrl);
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.parentElement!.innerHTML = '<div class="w-full h-full bg-red-500/20 flex items-center justify-center text-white text-xs">No Image</div>';
+                  setImageError(true);
                 }}
                 onLoad={() => {
                   console.log('Image loaded successfully:', event.imageUrl);
