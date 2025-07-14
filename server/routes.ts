@@ -13,36 +13,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json([]);
       }
 
-      const eventsDb = await findDatabaseByTitle("Events");
-      
-      if (!eventsDb) {
-        return res.json([]);
-      }
+      // Use the Momentmillionär Entries database directly
+      const databaseId = "22ffd137-5c6e-8043-ad8e-efd20cbb70c1";
 
       const response = await notion.databases.query({
-        database_id: eventsDb.id,
+        database_id: databaseId,
         sorts: [
           {
-            property: "Date",
+            property: "Datum",
             direction: "ascending"
           }
-        ]
+        ],
+        page_size: 100
       });
 
       const events = response.results.map((page: any) => {
         const properties = page.properties;
         
+        // Map categories from your database to frontend format
+        const categories = properties.Kategorie?.multi_select?.map((cat: any) => cat.name) || [];
+        const primaryCategory = categories.length > 0 ? mapCategoryToFrontend(categories[0]) : "other";
+
         return {
           notionId: page.id,
-          title: properties.Title?.title?.[0]?.plain_text || "Untitled Event",
-          description: properties.Description?.rich_text?.[0]?.plain_text || "",
-          category: properties.Category?.select?.name?.toLowerCase() || "other",
-          location: properties.Location?.rich_text?.[0]?.plain_text || "",
-          date: properties.Date?.date?.start || null,
-          time: properties.Time?.rich_text?.[0]?.plain_text || "",
-          price: properties.Price?.rich_text?.[0]?.plain_text || "",
-          website: properties.Website?.url || "",
-          attendees: properties.Attendees?.rich_text?.[0]?.plain_text || "",
+          title: properties.Eventname?.title?.[0]?.plain_text || "Untitled Event",
+          description: properties.Beschreibung?.rich_text?.[0]?.plain_text || "",
+          category: primaryCategory,
+          location: properties.Ort?.rich_text?.[0]?.plain_text || "",
+          date: properties.Datum?.date?.start || null,
+          time: properties.Uhrzeit?.rich_text?.[0]?.plain_text || "",
+          price: properties.Preis?.number ? properties.Preis.number.toString() : "",
+          website: properties.URL?.url || "",
+          attendees: "", // Not tracked in your database
         };
       });
 
@@ -55,6 +57,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
+  function mapCategoryToFrontend(category: string): string {
+    const mapping: { [key: string]: string } = {
+      "Essen": "food",
+      "Frühshoppen": "food",
+      "Party": "musik",
+      "Sport": "sport",
+      "Musik": "musik",
+      "Kreativ": "kunst",
+      "Workshop / Input": "workshop",
+      "Natur": "other"
+    };
+    return mapping[category] || "other";
+  }
 
   // Search and filter events
   app.get("/api/events/search", async (req, res) => {

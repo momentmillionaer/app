@@ -7,12 +7,35 @@ export const notion = new Client({
 
 // Extract the page ID from the Notion page URL
 function extractPageIdFromUrl(pageUrl: string): string {
-    const match = pageUrl.match(/([a-f0-9]{32})(?:[?#]|$)/i);
-    if (match && match[1]) {
-        return match[1];
+    // For URLs like https://momentmillionaer.notion.site/?v=22dfd1375c6e807d8fa4000cc0b4eda1
+    // we need to extract the page ID from the subdomain or use a different approach
+    
+    // Try different patterns for Notion URLs
+    const patterns = [
+        /([a-f0-9]{32})(?:[?#]|$)/i,
+        /([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i,
+        /\/([a-f0-9]{32})/i,
+        /\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i,
+        /v=([a-f0-9]{32})/i,
+        /v=([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i
+    ];
+    
+    for (const pattern of patterns) {
+        const match = pageUrl.match(pattern);
+        if (match && match[1]) {
+            return match[1].replace(/-/g, '');
+        }
     }
 
-    throw Error("Failed to extract page ID");
+    // For notion.site URLs, try to extract from subdomain
+    const subdomainMatch = pageUrl.match(/https:\/\/([^.]+)\.notion\.site/);
+    if (subdomainMatch) {
+        // This is a workspace URL, we need to find the actual page ID
+        // For now, let's return null and handle this in the database search
+        return null;
+    }
+
+    throw Error(`Failed to extract page ID from URL: ${pageUrl}`);
 }
 
 export const NOTION_PAGE_ID = process.env.NOTION_PAGE_URL ? extractPageIdFromUrl(process.env.NOTION_PAGE_URL) : null;
@@ -22,52 +45,64 @@ export const NOTION_PAGE_ID = process.env.NOTION_PAGE_URL ? extractPageIdFromUrl
  * @returns {Promise<Array<{id: string, title: string}>>} - Array of database objects with id and title
  */
 export async function getNotionDatabases() {
-    if (!NOTION_PAGE_ID) {
-        throw new Error("NOTION_PAGE_URL environment variable is not set");
-    }
-
-    // Array to store the child databases
-    const childDatabases = [];
-
+    // First, try to search for all accessible databases
     try {
-        // Query all child blocks in the specified page
-        let hasMore = true;
-        let startCursor: string | undefined = undefined;
+        const response = await notion.search({
+            filter: {
+                property: "object",
+                value: "database"
+            },
+            page_size: 100
+        });
 
-        while (hasMore) {
-            const response = await notion.blocks.children.list({
-                block_id: NOTION_PAGE_ID,
-                start_cursor: startCursor,
-            });
-
-            // Process the results
-            for (const block of response.results) {
-                // Check if the block is a child database
-                if (block.type === "child_database") {
-                    const databaseId = block.id;
-
-                    // Retrieve the database title
-                    try {
-                        const databaseInfo = await notion.databases.retrieve({
-                            database_id: databaseId,
-                        });
-
-                        // Add the database to our list
-                        childDatabases.push(databaseInfo);
-                    } catch (error) {
-                        console.error(`Error retrieving database ${databaseId}:`, error);
-                    }
-                }
-            }
-
-            // Check if there are more results to fetch
-            hasMore = response.has_more;
-            startCursor = response.next_cursor || undefined;
-        }
-
-        return childDatabases;
+        return response.results;
     } catch (error) {
-        console.error("Error listing child databases:", error);
+        console.error("Error searching for databases:", error);
+        
+        // If we have a page ID, try to get child databases as fallback
+        if (NOTION_PAGE_ID) {
+            try {
+                const childDatabases = [];
+                let hasMore = true;
+                let startCursor: string | undefined = undefined;
+
+                while (hasMore) {
+                    const response = await notion.blocks.children.list({
+                        block_id: NOTION_PAGE_ID,
+                        start_cursor: startCursor,
+                    });
+
+                    // Process the results
+                    for (const block of response.results) {
+                        // Check if the block is a child database
+                        if (block.type === "child_database") {
+                            const databaseId = block.id;
+
+                            // Retrieve the database title
+                            try {
+                                const databaseInfo = await notion.databases.retrieve({
+                                    database_id: databaseId,
+                                });
+
+                                // Add the database to our list
+                                childDatabases.push(databaseInfo);
+                            } catch (error) {
+                                console.error(`Error retrieving database ${databaseId}:`, error);
+                            }
+                        }
+                    }
+
+                    // Check if there are more results to fetch
+                    hasMore = response.has_more;
+                    startCursor = response.next_cursor || undefined;
+                }
+
+                return childDatabases;
+            } catch (error) {
+                console.error("Error listing child databases:", error);
+            }
+        }
+        
         throw error;
     }
 }
