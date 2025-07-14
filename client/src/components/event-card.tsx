@@ -38,17 +38,28 @@ export function EventCard({ event, onClick }: EventCardProps) {
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
           {/* Event Image - Left side, square */}
           {event.imageUrl && (
-            <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 overflow-hidden rounded-2xl">
+            <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 overflow-hidden rounded-2xl bg-white/10">
               <img 
                 src={event.imageUrl} 
                 alt={event.title}
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 onError={(e) => {
+                  console.log('Image failed to load:', event.imageUrl);
                   e.currentTarget.style.display = 'none';
+                }}
+                onLoad={() => {
+                  console.log('Image loaded successfully:', event.imageUrl);
                 }}
               />
             </div>
           )}
+          
+          {/* Debug: Always show debug info */}
+          <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-green-500/20 rounded-2xl flex items-center justify-center">
+            <span className="text-white text-xs">
+              {event.imageUrl ? 'Has URL' : 'No URL'}
+            </span>
+          </div>
 
           {/* Date Column */}
           <div className="flex-shrink-0">
