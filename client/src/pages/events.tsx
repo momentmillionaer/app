@@ -210,7 +210,7 @@ export default function EventsPage() {
 
         {/* View Mode Toggle */}
         <div className="flex items-center justify-between mb-6">
-          <div className="text-black/80 drop-shadow-sm">
+          <div className="text-white/80 drop-shadow-sm">
             {isLoading ? (
               <Skeleton className="h-4 w-32" />
             ) : (
@@ -245,7 +245,7 @@ export default function EventsPage() {
             
             {viewMode === "list" && (
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-black/80 drop-shadow-sm">Sortierung:</span>
+                <span className="text-sm text-white/80 drop-shadow-sm">Sortierung:</span>
                 <Select value={sortOption} onValueChange={setSortOption}>
                   <SelectTrigger className="w-40 rounded-2xl border-0 liquid-glass bg-white/20">
                     <SelectValue />
@@ -280,9 +280,9 @@ export default function EventsPage() {
           </div>
         ) : filteredEvents.length === 0 ? (
           <div className="text-center py-12">
-            <CalendarX className="mx-auto h-12 w-12 text-black/50 mb-4" />
-            <h3 className="text-lg font-medium text-black drop-shadow-sm mb-2">Keine Events gefunden</h3>
-            <p className="text-black/80 drop-shadow-sm mb-6">
+            <CalendarX className="mx-auto h-12 w-12 text-white/50 mb-4" />
+            <h3 className="text-lg font-medium text-white drop-shadow-sm mb-2">Keine Events gefunden</h3>
+            <p className="text-white/80 drop-shadow-sm mb-6">
               {events.length === 0 
                 ? "Es sind noch keine Events in der Datenbank verfügbar."
                 : "Versuchen Sie, Ihre Suchkriterien oder Filter anzupassen."

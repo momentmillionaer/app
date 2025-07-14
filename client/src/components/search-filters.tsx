@@ -113,11 +113,11 @@ export function SearchFilters({
       {/* Search Bar */}
       <div className="mb-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black/60 h-4 w-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-4 w-4" />
           <Input
             type="text"
             placeholder="Events, Veranstaltungsorte oder Beschreibungen durchsuchen..."
-            className="pl-10 py-4 rounded-2xl border-0 liquid-glass bg-white/20 text-black placeholder:text-black/50"
+            className="pl-10 py-4 rounded-2xl border-0 liquid-glass bg-white/20 text-white placeholder:text-white/50"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -186,12 +186,12 @@ export function SearchFilters({
             </div>
             <div className="flex justify-between items-center">
               <div className="px-2 py-1 rounded-md bg-white/10 backdrop-blur-sm">
-                <span className="text-xs text-black/70 font-light">
+                <span className="text-xs text-white/70 font-light">
                   {priceMin || "0"}€
                 </span>
               </div>
               <div className="px-2 py-1 rounded-md bg-white/10 backdrop-blur-sm">
-                <span className="text-xs text-black/70 font-light">
+                <span className="text-xs text-white/70 font-light">
                   {priceMax || "1000"}€
                 </span>
               </div>
@@ -205,7 +205,7 @@ export function SearchFilters({
             <Button
               variant="outline"
               onClick={onClearFilters}
-              className="rounded-2xl border-black/20 bg-white/20 text-black hover:bg-white/30 px-6"
+              className="rounded-2xl border-white/20 bg-white/20 text-white hover:bg-white/30 px-6"
             >
               🗑️ Filter löschen
             </Button>
@@ -216,7 +216,7 @@ export function SearchFilters({
       {/* Active Filters Display */}
       {hasActiveFilters && (
         <div className="mt-6 flex flex-wrap gap-2 items-center">
-          <span className="text-sm text-black/80 drop-shadow-sm mr-2">Aktive Filter:</span>
+          <span className="text-sm text-white/80 drop-shadow-sm mr-2">Aktive Filter:</span>
           {searchQuery && (
             <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
               🔍 Suche: {searchQuery}

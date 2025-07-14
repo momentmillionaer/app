@@ -53,7 +53,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
             <div className="flex items-center space-x-3">
               <span className="text-4xl">{getEventEmoji(event)}</span>
               <div>
-                <h2 className="text-2xl font-bold text-black drop-shadow-lg line-clamp-2">
+                <h2 className="text-2xl font-bold text-white drop-shadow-lg line-clamp-2">
                   {event.title}
                   {event.price === "0" && (
                     <span className="ml-3 text-lg bg-brand-lime/90 text-brand-black px-3 py-1 rounded-full font-bold">
@@ -62,7 +62,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                   )}
                 </h2>
                 {event.category && (
-                  <Badge className="mt-2 bg-black/20 text-black border-black/20 hover:bg-black/30">
+                  <Badge className="mt-2 bg-white/20 text-white border-white/20 hover:bg-white/30">
                     {event.category}
                   </Badge>
                 )}
@@ -72,7 +72,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="liquid-glass-button p-3 rounded-2xl border-0 text-black hover:bg-black/10"
+              className="liquid-glass-button p-3 rounded-2xl border-0 text-white hover:bg-white/10"
             >
               <X className="h-5 w-5" />
             </Button>
@@ -83,10 +83,10 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
             {/* Description */}
             {event.description && (
               <div className="liquid-glass p-6 rounded-2xl">
-                <h3 className="text-lg font-semibold text-black mb-3 drop-shadow-sm">
+                <h3 className="text-lg font-semibold text-white mb-3 drop-shadow-sm">
                   Beschreibung
                 </h3>
-                <p className="text-black/90 drop-shadow-sm leading-relaxed">
+                <p className="text-white/90 drop-shadow-sm leading-relaxed">
                   {event.description}
                 </p>
               </div>
@@ -100,8 +100,8 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                   <div className="flex items-center space-x-3">
                     <Calendar className="h-5 w-5 text-brand-lime" />
                     <div>
-                      <p className="text-sm text-black/70 drop-shadow-sm">Datum</p>
-                      <p className="text-black font-medium drop-shadow-sm">
+                      <p className="text-sm text-white/70 drop-shadow-sm">Datum</p>
+                      <p className="text-white font-medium drop-shadow-sm">
                         {new Date(event.date).toLocaleDateString('de-DE', {
                           weekday: 'long',
                           year: 'numeric',
@@ -120,8 +120,8 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                   <div className="flex items-center space-x-3">
                     <Clock className="h-5 w-5 text-brand-blue" />
                     <div>
-                      <p className="text-sm text-black/70 drop-shadow-sm">Uhrzeit</p>
-                      <p className="text-black font-medium drop-shadow-sm">
+                      <p className="text-sm text-white/70 drop-shadow-sm">Uhrzeit</p>
+                      <p className="text-white font-medium drop-shadow-sm">
                         {event.time}
                       </p>
                     </div>
@@ -135,8 +135,8 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                   <div className="flex items-center space-x-3">
                     <MapPin className="h-5 w-5 text-brand-orange" />
                     <div>
-                      <p className="text-sm text-black/70 drop-shadow-sm">Ort</p>
-                      <p className="text-black font-medium drop-shadow-sm">
+                      <p className="text-sm text-white/70 drop-shadow-sm">Ort</p>
+                      <p className="text-white font-medium drop-shadow-sm">
                         {event.location}
                       </p>
                     </div>
@@ -150,8 +150,8 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                   <div className="flex items-center space-x-3">
                     <Euro className="h-5 w-5 text-brand-lime" />
                     <div>
-                      <p className="text-sm text-black/70 drop-shadow-sm">Preis</p>
-                      <p className="text-black font-medium drop-shadow-sm">
+                      <p className="text-sm text-white/70 drop-shadow-sm">Preis</p>
+                      <p className="text-white font-medium drop-shadow-sm">
                         €{event.price}
                       </p>
                     </div>
@@ -165,8 +165,8 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                   <div className="flex items-center space-x-3">
                     <Users className="h-5 w-5 text-brand-purple" />
                     <div>
-                      <p className="text-sm text-black/70 drop-shadow-sm">Teilnehmer</p>
-                      <p className="text-black font-medium drop-shadow-sm">
+                      <p className="text-sm text-white/70 drop-shadow-sm">Teilnehmer</p>
+                      <p className="text-white font-medium drop-shadow-sm">
                         {event.attendees}
                       </p>
                     </div>
@@ -186,8 +186,8 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                 >
                   <ExternalLink className="h-5 w-5 group-hover:scale-110 transition-transform" />
                   <div>
-                    <p className="text-sm text-black/70 drop-shadow-sm">Website</p>
-                    <p className="font-medium drop-shadow-sm text-black">
+                    <p className="text-sm text-white/70 drop-shadow-sm">Website</p>
+                    <p className="font-medium drop-shadow-sm text-white">
                       Mehr Informationen & Tickets
                     </p>
                   </div>
@@ -201,7 +201,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
             <Button
               variant="outline"
               onClick={onClose}
-              className="liquid-glass-button border-0 text-black hover:bg-black/10 rounded-2xl"
+              className="liquid-glass-button border-0 text-white hover:bg-white/10 rounded-2xl"
             >
               Schließen
             </Button>
