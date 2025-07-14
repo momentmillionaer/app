@@ -307,22 +307,35 @@
   transform: scale(1.05);
 }
 
-.ios-calendar .rdp-day_button[aria-selected="true"] {
+/* Single date mode - only border, no background */
+.ios-calendar-single .rdp-day_button[aria-selected="true"] {
+  color: white !important;
+  font-weight: 600;
+  background: transparent !important;
+  border: 2px solid rgba(0, 0, 255, 0.8) !important;
+  border-radius: 12px !important;
+}
+
+/* Range mode - use background colors for clear range indication */
+.ios-calendar-range .rdp-day_button[aria-selected="true"] {
   background: rgba(0, 0, 255, 0.8) !important;
   color: white !important;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: none !important;
+  border-radius: 12px !important;
 }
 
 .ios-calendar .rdp-day_range_start,
 .ios-calendar .rdp-day_range_end {
   background: rgba(0, 0, 255, 0.8) !important;
   color: white !important;
+  border: none !important;
 }
 
 .ios-calendar .rdp-day_range_middle {
   background: rgba(0, 0, 255, 0.3) !important;
   color: white !important;
+  border: none !important;
 }
 
 /* Override any default calendar styling that might cause green background */

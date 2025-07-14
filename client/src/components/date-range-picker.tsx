@@ -189,7 +189,7 @@ export function DateRangePicker({
               onSelect={handleDateSelect}
               initialFocus
               locale={de}
-              className="rounded-2xl border-0 ios-calendar"
+              className="rounded-2xl border-0 ios-calendar ios-calendar-range"
             />
           ) : (
             <Calendar
@@ -198,7 +198,7 @@ export function DateRangePicker({
               onSelect={handleDateSelect}
               initialFocus
               locale={de}
-              className="rounded-2xl border-0 ios-calendar"
+              className="rounded-2xl border-0 ios-calendar ios-calendar-single"
             />
           )}
 
