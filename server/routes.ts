@@ -30,6 +30,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const events = response.results.map((page: any) => {
         const properties = page.properties;
         
+        // Debug: Log all available properties
+        console.log("Available properties:", Object.keys(properties));
+        
         // Use categories directly from your Notion database
         const categories = properties.Kategorie?.multi_select?.map((cat: any) => cat.name) || [];
         const primaryCategory = categories.length > 0 ? categories[0] : "Sonstiges";
@@ -50,14 +53,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
 
-        // Extract image URL from "Datein" property
+        // Extract image URL from file properties - trying different possible names
         let imageUrl = "";
-        if (properties.Datein?.files && properties.Datein.files.length > 0) {
-          const firstFile = properties.Datein.files[0];
-          if (firstFile.type === "file") {
-            imageUrl = firstFile.file.url;
-          } else if (firstFile.type === "external") {
-            imageUrl = firstFile.external.url;
+        
+        // Try different property names for files/images
+        const fileProperties = ['Datein', 'Files', 'Bilder', 'Image', 'Bild', 'Foto', 'Photo'];
+        
+        for (const propName of fileProperties) {
+          if (properties[propName]?.files && properties[propName].files.length > 0) {
+            const firstFile = properties[propName].files[0];
+            if (firstFile.type === "file") {
+              imageUrl = firstFile.file.url;
+            } else if (firstFile.type === "external") {
+              imageUrl = firstFile.external.url;
+            }
+            if (imageUrl) {
+              console.log(`Found image in property "${propName}":`, imageUrl);
+              break;
+            }
           }
         }
 
