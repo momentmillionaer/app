@@ -161,28 +161,45 @@ export function EventCard({ event, onClick }: EventCardProps) {
       )}
       
       <div className="p-6 flex gap-4 h-full">
-        {/* Event Image - Left side */}
-        {event.imageUrl && !imageError ? (
-          <div className="flex-shrink-0 w-32 sm:w-40 h-48 overflow-hidden rounded-xl bg-white/10">
-            <img 
-              src={event.imageUrl} 
-              alt={event.title}
-              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-              crossOrigin="anonymous"
-              onError={(e) => {
-                console.error('Image failed to load:', event.imageUrl);
-                setImageError(true);
-              }}
-              onLoad={() => {
-                console.log('Image loaded successfully:', event.imageUrl);
-              }}
-            />
-          </div>
-        ) : (
-          <div className="flex-shrink-0 w-32 sm:w-40 h-48 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
-            <span className="text-6xl">{getEventEmoji(event)}</span>
-          </div>
-        )}
+        {/* Event Image - Left side with date overlay */}
+        <div className="flex-shrink-0 w-32 sm:w-40 h-48 relative">
+          {event.imageUrl && !imageError ? (
+            <div className="w-full h-full overflow-hidden rounded-xl bg-white/10">
+              <img 
+                src={event.imageUrl} 
+                alt={event.title}
+                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                crossOrigin="anonymous"
+                onError={(e) => {
+                  console.error('Image failed to load:', event.imageUrl);
+                  setImageError(true);
+                }}
+                onLoad={() => {
+                  console.log('Image loaded successfully:', event.imageUrl);
+                }}
+              />
+            </div>
+          ) : (
+            <div className="w-full h-full bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
+              <span className="text-6xl">{getEventEmoji(event)}</span>
+            </div>
+          )}
+          
+          {/* Date badge overlay - top left corner */}
+          {eventDate && (
+            <div className="absolute top-2 left-2 bg-white/90 text-gray-800 rounded-lg p-2 text-center min-w-[50px] backdrop-blur-sm border border-white/30 shadow-lg">
+              <div className="text-xs font-medium uppercase leading-tight">
+                {format(eventDate, "EE", { locale: de }).toUpperCase()}
+              </div>
+              <div className="text-lg font-bold leading-tight">
+                {format(eventDate, "dd")}
+              </div>
+              <div className="text-xs leading-tight">
+                {format(eventDate, "MMM", { locale: de }).toUpperCase()}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Content section - Right side */}
         <div className="flex-grow flex flex-col justify-between min-w-0">
@@ -226,22 +243,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
             )}
           </div>
 
-          {/* Date badge */}
-          <div className="flex items-center gap-3 mb-3">
-            {eventDate && (
-              <div className="bg-white/10 text-white rounded-lg p-2 text-center min-w-[60px] backdrop-blur-sm border border-white/20">
-                <div className="text-xs font-medium uppercase leading-tight">
-                  {format(eventDate, "EE", { locale: de }).toUpperCase()}
-                </div>
-                <div className="text-lg font-bold leading-tight">
-                  {format(eventDate, "dd")}
-                </div>
-                <div className="text-xs leading-tight">
-                  {format(eventDate, "MMM", { locale: de }).toUpperCase()}
-                </div>
-              </div>
-            )}
-          </div>
+
 
           {/* Additional dates section */}
           {event.description && event.description.startsWith('Termine:') && (
