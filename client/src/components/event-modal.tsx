@@ -2,6 +2,8 @@ import { X, Calendar, MapPin, Clock, Euro, ExternalLink, Users } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Event } from "@shared/schema";
+import { format } from "date-fns";
+import { de } from "date-fns/locale";
 
 interface EventModalProps {
   event: Event | null;
@@ -86,9 +88,61 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                 <h3 className="text-lg font-semibold text-white mb-3 drop-shadow-sm">
                   Beschreibung
                 </h3>
-                <p className="text-white/90 drop-shadow-sm leading-relaxed">
-                  {event.description}
-                </p>
+                {/* Check if description contains multiple dates (merged event) */}
+                {event.description.startsWith('Termine:') ? (
+                  <div>
+                    <div className="text-white/90 text-sm mb-3 drop-shadow-sm font-medium">
+                      📅 Alle Termine:
+                    </div>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {(() => {
+                        const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+                        if (termineMatch) {
+                          const dates = termineMatch[1].split(',').map(d => d.trim());
+                          return dates.map((dateStr, index) => {
+                            try {
+                              const dateObj = new Date(dateStr);
+                              return (
+                                <Badge 
+                                  key={index} 
+                                  className="bg-brand-blue/30 text-white border-brand-blue/40 hover:bg-brand-blue/40 px-4 py-2"
+                                >
+                                  {format(dateObj, "EE, dd.MM.yyyy", { locale: de })}
+                                </Badge>
+                              );
+                            } catch (error) {
+                              return (
+                                <Badge 
+                                  key={index} 
+                                  className="bg-brand-blue/30 text-white border-brand-blue/40 hover:bg-brand-blue/40 px-4 py-2"
+                                >
+                                  {dateStr}
+                                </Badge>
+                              );
+                            }
+                          });
+                        }
+                        return null;
+                      })()}
+                    </div>
+                    {/* Show remaining description after the Termine: line */}
+                    {(() => {
+                      const remainingDescription = event.description.split('\n').slice(1).join('\n').trim();
+                      if (remainingDescription) {
+                        return (
+                          <p className="text-white/90 drop-shadow-sm leading-relaxed">
+                            {remainingDescription}
+                          </p>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </div>
+                ) : (
+                  <p className="text-white/90 drop-shadow-sm leading-relaxed">
+                    {event.description}
+                  </p>
+                )}
               </div>
             )}
 

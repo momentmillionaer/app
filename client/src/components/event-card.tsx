@@ -235,9 +235,64 @@ export function EventCard({ event, onClick }: EventCardProps) {
             )}
 
             {event.description && (
-              <p className="text-white/75 text-sm line-clamp-3 mb-4 drop-shadow-sm font-normal">
-                {event.description}
-              </p>
+              <>
+                {/* Check if description contains multiple dates (merged event) */}
+                {event.description.startsWith('Termine:') ? (
+                  <div className="mb-4">
+                    <div className="text-white/80 text-sm mb-2 drop-shadow-sm font-medium">
+                      📅 Weitere Termine:
+                    </div>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {(() => {
+                        const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+                        if (termineMatch) {
+                          const dates = termineMatch[1].split(',').map(d => d.trim());
+                          // Skip first date as it's already shown in the main date column
+                          return dates.slice(1).map((dateStr, index) => {
+                            try {
+                              const dateObj = new Date(dateStr);
+                              return (
+                                <Badge 
+                                  key={index} 
+                                  className="bg-brand-blue/20 text-white border-brand-blue/30 hover:bg-brand-blue/30 text-xs px-3 py-1"
+                                >
+                                  {format(dateObj, "dd.MM", { locale: de })}
+                                </Badge>
+                              );
+                            } catch (error) {
+                              return (
+                                <Badge 
+                                  key={index} 
+                                  className="bg-brand-blue/20 text-white border-brand-blue/30 hover:bg-brand-blue/30 text-xs px-3 py-1"
+                                >
+                                  {dateStr}
+                                </Badge>
+                              );
+                            }
+                          });
+                        }
+                        return null;
+                      })()}
+                    </div>
+                    {/* Show remaining description after the Termine: line */}
+                    {(() => {
+                      const remainingDescription = event.description.split('\n').slice(1).join('\n').trim();
+                      if (remainingDescription) {
+                        return (
+                          <p className="text-white/75 text-sm line-clamp-2 drop-shadow-sm font-normal">
+                            {remainingDescription}
+                          </p>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </div>
+                ) : (
+                  <p className="text-white/75 text-sm line-clamp-3 mb-4 drop-shadow-sm font-normal">
+                    {event.description}
+                  </p>
+                )}
+              </>
             )}
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-white/70 drop-shadow-sm">
