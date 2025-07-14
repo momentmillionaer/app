@@ -71,7 +71,7 @@ export function CalendarView({ events }: CalendarViewProps) {
     <div className="space-y-6">
       {/* Calendar Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="text-2xl font-bold text-white drop-shadow-lg">
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
         </h2>
         <div className="flex space-x-2">
@@ -95,12 +95,12 @@ export function CalendarView({ events }: CalendarViewProps) {
       </div>
 
       {/* Calendar Grid */}
-      <Card className="rounded-3xl border-0 liquid-glass-strong">
+      <Card className="rounded-[2rem] border-0 liquid-glass-strong">
         <CardContent className="p-8">
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1 mb-4">
             {dayNames.map(day => (
-              <div key={day} className="p-2 text-center text-sm font-semibold text-gray-500">
+              <div key={day} className="p-2 text-center text-sm font-semibold text-white/80 drop-shadow-sm">
                 {day}
               </div>
             ))}
@@ -127,7 +127,7 @@ export function CalendarView({ events }: CalendarViewProps) {
                     isToday ? 'bg-brand-lime/90 liquid-glass-strong ring-2 ring-brand-blue/50' : 'liquid-glass hover:liquid-glass-strong'
                   }`}
                 >
-                  <div className={`text-sm font-medium ${isToday ? 'text-brand-black' : 'text-gray-900'}`}>
+                  <div className={`text-sm font-medium ${isToday ? 'text-brand-black' : 'text-white drop-shadow-sm'}`}>
                     {day}
                   </div>
                   
@@ -136,7 +136,7 @@ export function CalendarView({ events }: CalendarViewProps) {
                     {dayEvents.slice(0, 2).map((event, eventIndex) => (
                       <div
                         key={`${day}-event-${eventIndex}`}
-                        className="text-xs px-2 py-1 rounded-full truncate liquid-glass bg-white/30 text-gray-800"
+                        className="text-xs px-2 py-1 rounded-full truncate liquid-glass bg-white/30 text-gray-900"
                         title={`${event.title} - ${event.time || 'Ganztägig'}`}
                       >
                         {event.time && (

@@ -56,15 +56,15 @@ export function SearchFilters({
   };
 
   return (
-    <div className="liquid-glass-strong rounded-3xl p-8 mb-8 border-0">
+    <div className="liquid-glass-strong rounded-[2rem] p-8 mb-8 border-0">
       {/* Search Bar */}
       <div className="mb-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-4 w-4" />
           <Input
             type="text"
             placeholder="Events, Veranstaltungsorte oder Beschreibungen durchsuchen..."
-            className="pl-10 py-4 rounded-2xl border-0 liquid-glass bg-white/20"
+            className="pl-10 py-4 rounded-2xl border-0 liquid-glass bg-white/20 text-white placeholder:text-white/50"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -75,7 +75,7 @@ export function SearchFilters({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Category Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Kategorie</label>
+          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">Kategorie</label>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
             <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20">
               <SelectValue placeholder="Alle Kategorien" />
@@ -93,23 +93,23 @@ export function SearchFilters({
 
         {/* Date From */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Von Datum</label>
+          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">Von Datum</label>
           <Input
             type="date"
             value={dateFrom}
             onChange={(e) => onDateFromChange(e.target.value)}
-            className="rounded-2xl border-0 liquid-glass bg-white/20"
+            className="rounded-2xl border-0 liquid-glass bg-white/20 text-white"
           />
         </div>
 
         {/* Date To */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Bis Datum</label>
+          <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow-sm">Bis Datum</label>
           <Input
             type="date"
             value={dateTo}
             onChange={(e) => onDateToChange(e.target.value)}
-            className="rounded-2xl border-0 liquid-glass bg-white/20"
+            className="rounded-2xl border-0 liquid-glass bg-white/20 text-white"
           />
         </div>
       </div>

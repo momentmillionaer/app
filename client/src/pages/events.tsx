@@ -157,7 +157,7 @@ export default function EventsPage() {
 
         {/* View Mode Toggle */}
         <div className="flex items-center justify-between mb-6">
-          <div className="text-gray-600">
+          <div className="text-white/80 drop-shadow-sm">
             {isLoading ? (
               <Skeleton className="h-4 w-32" />
             ) : (
@@ -192,7 +192,7 @@ export default function EventsPage() {
             
             {viewMode === "list" && (
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">Sortierung:</span>
+                <span className="text-sm text-white/80 drop-shadow-sm">Sortierung:</span>
                 <Select value={sortOption} onValueChange={setSortOption}>
                   <SelectTrigger className="w-40 rounded-2xl border-0 liquid-glass bg-white/20">
                     <SelectValue />
@@ -213,7 +213,7 @@ export default function EventsPage() {
         {isLoading ? (
           <div className="space-y-4">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="liquid-glass rounded-3xl p-8">
+              <div key={i} className="liquid-glass rounded-[2rem] p-8">
                 <div className="flex space-x-4">
                   <Skeleton className="w-20 h-20 rounded-lg" />
                   <div className="flex-1 space-y-2">

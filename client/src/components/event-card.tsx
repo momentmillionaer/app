@@ -18,7 +18,7 @@ export function EventCard({ event }: EventCardProps) {
   const eventDate = event.date ? parseISO(event.date) : null;
 
   return (
-    <div className="liquid-glass rounded-3xl hover:liquid-glass-strong transition-all duration-500">
+    <div className="liquid-glass rounded-[2rem] hover:liquid-glass-strong transition-all duration-500">
       <div className="p-8">
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
           {/* Date Column */}
@@ -48,7 +48,7 @@ export function EventCard({ event }: EventCardProps) {
           {/* Event Details */}
           <div className="flex-grow min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-              <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+              <h3 className="text-lg font-semibold text-white drop-shadow-sm line-clamp-2">
                 {event.title}
               </h3>
               <Badge className={`${getCategoryColor(event.category)} flex-shrink-0`}>
@@ -57,45 +57,45 @@ export function EventCard({ event }: EventCardProps) {
             </div>
 
             {event.location && (
-              <div className="flex items-center text-sm text-gray-600 mb-3">
-                <MapPin className="mr-2 text-gray-400 h-4 w-4" />
+              <div className="flex items-center text-sm text-white/80 mb-3 drop-shadow-sm">
+                <MapPin className="mr-2 text-white/60 h-4 w-4" />
                 <span>{event.location}</span>
               </div>
             )}
 
             {event.description && (
-              <p className="text-gray-700 text-sm line-clamp-3 mb-4">
+              <p className="text-white/75 text-sm line-clamp-3 mb-4 drop-shadow-sm">
                 {event.description}
               </p>
             )}
 
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-white/70 drop-shadow-sm">
               {event.price && (
                 <span className="flex items-center">
-                  <Euro className="mr-1 text-gray-400 h-4 w-4" />
+                  <Euro className="mr-1 text-white/60 h-4 w-4" />
                   <span>{event.price}</span>
                 </span>
               )}
               {event.attendees && (
                 <span className="flex items-center">
-                  <Users className="mr-1 text-gray-400 h-4 w-4" />
+                  <Users className="mr-1 text-white/60 h-4 w-4" />
                   <span>{event.attendees}</span>
                 </span>
               )}
               {!event.time && eventDate && (
                 <span className="flex items-center">
-                  <Clock className="mr-1 text-gray-400 h-4 w-4" />
+                  <Clock className="mr-1 text-white/60 h-4 w-4" />
                   <span>Ganztägig</span>
                 </span>
               )}
               {event.website && (
                 <span className="flex items-center">
-                  <ExternalLink className="mr-1 text-gray-400 h-4 w-4" />
+                  <ExternalLink className="mr-1 text-white/60 h-4 w-4" />
                   <a 
                     href={event.website} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-primary hover:underline"
+                    className="text-white/90 hover:text-white hover:underline transition-colors"
                   >
                     Mehr Details
                   </a>
