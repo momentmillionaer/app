@@ -217,7 +217,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
                 </h3>
                 {event.organizer && (
                   <p className="text-sm text-white/70 drop-shadow-sm">
-                    von {event.organizer}
+                    {event.organizer}
                   </p>
                 )}
               </div>

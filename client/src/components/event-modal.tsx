@@ -66,7 +66,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                   </h2>
                   {event.organizer && (
                     <p className="text-lg text-white/80 drop-shadow-sm">
-                      von {event.organizer}
+                      {event.organizer}
                     </p>
                   )}
                 </div>

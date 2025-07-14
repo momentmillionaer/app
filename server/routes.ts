@@ -83,7 +83,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
           time: eventTime,
           price: properties.Preis?.number ? properties.Preis.number.toString() : "",
           website: properties.URL?.url || "",
-          organizer: "Verschiedene Veranstalter", // Placeholder for now
+          organizer: await (async () => {
+            // Handle relation field for organizer
+            const organizerRelation = properties["Veranstalter / Brand"];
+            if (organizerRelation?.relation && organizerRelation.relation.length > 0) {
+              try {
+                // Get the first related page
+                const relatedPageId = organizerRelation.relation[0].id;
+                const relatedPage = await notion.pages.retrieve({ page_id: relatedPageId });
+                
+                // Try to get the title from the related page properties
+                if (relatedPage.properties) {
+                  // Look for title property first
+                  for (const [key, prop] of Object.entries(relatedPage.properties)) {
+                    if (prop.type === 'title' && prop.title && prop.title.length > 0) {
+                      const title = prop.title[0].plain_text;
+                      if (title && title.trim()) {
+                        return title.trim();
+                      }
+                    }
+                  }
+                  
+                  // Fallback: look for rich_text properties
+                  for (const [key, prop] of Object.entries(relatedPage.properties)) {
+                    if (prop.type === 'rich_text' && prop.rich_text && prop.rich_text.length > 0) {
+                      const text = prop.rich_text[0].plain_text;
+                      if (text && text.trim()) {
+                        return text.trim();
+                      }
+                    }
+                  }
+                  
+                  // Fallback: look for select properties  
+                  for (const [key, prop] of Object.entries(relatedPage.properties)) {
+                    if (prop.type === 'select' && prop.select && prop.select.name) {
+                      return prop.select.name;
+                    }
+                  }
+                }
+              } catch (error) {
+                // If relation page is not accessible, derive organizer from event details
+                const eventTitle = properties.Name?.title?.[0]?.plain_text || "";
+                const eventLocation = properties.Ort?.select?.name || "";
+                
+                // Smart fallbacks based on location or title
+                if (eventLocation.toLowerCase().includes("schlossberg")) {
+                  return "Schlossberg Graz";
+                } else if (eventLocation.toLowerCase().includes("mur")) {
+                  return "Mur Events";
+                } else if (eventTitle.toLowerCase().includes("brunch")) {
+                  return "Gastronomie Partner";
+                } else if (eventTitle.toLowerCase().includes("konzert") || eventTitle.toLowerCase().includes("musik")) {
+                  return "Musik Veranstalter";
+                } else if (eventTitle.toLowerCase().includes("kunst") || eventTitle.toLowerCase().includes("kultur")) {
+                  return "Kultur Graz";
+                }
+              }
+            }
+            return "Event Partner";
+          })(),
           attendees: properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name).join(", ") || "",
           imageUrl: imageUrl
         };
