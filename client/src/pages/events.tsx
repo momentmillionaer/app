@@ -11,7 +11,7 @@ import type { Event } from "@shared/schema";
 
 export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [sortOption, setSortOption] = useState("date-asc");
@@ -41,7 +41,7 @@ export default function EventsPage() {
       );
     }
 
-    if (selectedCategory) {
+    if (selectedCategory && selectedCategory !== "all") {
       filtered = filtered.filter(event => event.category === selectedCategory);
     }
 
@@ -85,7 +85,7 @@ export default function EventsPage() {
 
   const clearFilters = () => {
     setSearchQuery("");
-    setSelectedCategory("");
+    setSelectedCategory("all");
     setDateFrom("");
     setDateTo("");
   };
@@ -97,7 +97,7 @@ export default function EventsPage() {
 
   const getFilterSummary = () => {
     const parts = [];
-    if (selectedCategory) {
+    if (selectedCategory && selectedCategory !== "all") {
       const categoryNames: Record<string, string> = {
         musik: "Musik",
         theater: "Theater", 

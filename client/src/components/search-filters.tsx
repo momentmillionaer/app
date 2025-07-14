@@ -18,7 +18,7 @@ interface SearchFiltersProps {
 }
 
 const CATEGORIES = [
-  { value: "", label: "Alle Kategorien" },
+  { value: "all", label: "Alle Kategorien" },
   { value: "musik", label: "Musik" },
   { value: "theater", label: "Theater" },
   { value: "kunst", label: "Kunst" },
@@ -39,7 +39,7 @@ export function SearchFilters({
   onDateToChange,
   onClearFilters,
 }: SearchFiltersProps) {
-  const hasActiveFilters = selectedCategory || dateFrom || dateTo || searchQuery;
+  const hasActiveFilters = (selectedCategory && selectedCategory !== "all") || dateFrom || dateTo || searchQuery;
 
   const getCategoryLabel = (value: string) => {
     return CATEGORIES.find(cat => cat.value === value)?.label || value;
@@ -48,7 +48,7 @@ export function SearchFilters({
   const removeFilter = (filterType: string) => {
     switch (filterType) {
       case 'category':
-        onCategoryChange("");
+        onCategoryChange("all");
         break;
       case 'dateFrom':
         onDateFromChange("");

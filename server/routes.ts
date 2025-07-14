@@ -8,12 +8,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all events from Notion database
   app.get("/api/events", async (req, res) => {
     try {
+      // Check if Notion is configured
+      if (!process.env.NOTION_INTEGRATION_SECRET || !process.env.NOTION_PAGE_URL) {
+        return res.json([]);
+      }
+
       const eventsDb = await findDatabaseByTitle("Events");
       
       if (!eventsDb) {
-        return res.status(404).json({ 
-          message: "Events database not found. Please run setup first." 
-        });
+        return res.json([]);
       }
 
       const response = await notion.databases.query({
@@ -69,7 +72,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Build Notion query filters
       const filters: any[] = [];
       
-      if (category && category !== "") {
+      if (category && category !== "" && category !== "all") {
         filters.push({
           property: "Category",
           select: {

@@ -15,13 +15,16 @@ function extractPageIdFromUrl(pageUrl: string): string {
     throw Error("Failed to extract page ID");
 }
 
-export const NOTION_PAGE_ID = extractPageIdFromUrl(process.env.NOTION_PAGE_URL!);
+export const NOTION_PAGE_ID = process.env.NOTION_PAGE_URL ? extractPageIdFromUrl(process.env.NOTION_PAGE_URL) : null;
 
 /**
  * Lists all child databases contained within NOTION_PAGE_ID
  * @returns {Promise<Array<{id: string, title: string}>>} - Array of database objects with id and title
  */
 export async function getNotionDatabases() {
+    if (!NOTION_PAGE_ID) {
+        throw new Error("NOTION_PAGE_URL environment variable is not set");
+    }
 
     // Array to store the child databases
     const childDatabases = [];
@@ -91,6 +94,10 @@ export async function createDatabaseIfNotExists(title, properties) {
     if (existingDb) {
         return existingDb;
     }
+    if (!NOTION_PAGE_ID) {
+        throw new Error("NOTION_PAGE_URL environment variable is not set");
+    }
+    
     return await notion.databases.create({
         parent: {
             type: "page_id",
