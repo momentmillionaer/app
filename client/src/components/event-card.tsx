@@ -20,7 +20,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
 
   return (
     <div 
-      className="liquid-glass-strong rounded-[2rem] hover:liquid-glass-button transition-all duration-500 cursor-pointer"
+      className="bg-black/20 backdrop-blur-lg rounded-[2rem] border border-white/20 hover:bg-black/30 hover:border-white/30 transition-all duration-500 cursor-pointer shadow-lg"
       onClick={onClick}
     >
       <div className="p-8">
