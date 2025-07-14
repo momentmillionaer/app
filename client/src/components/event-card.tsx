@@ -161,88 +161,86 @@ export function EventCard({ event, onClick }: EventCardProps) {
       )}
       
       <div className="p-6">
-        <div className="flex items-start gap-4">
-          {/* Event Image - Left side, compact */}
-          {event.imageUrl && !imageError ? (
-            <div className="flex-shrink-0 w-20 h-20 overflow-hidden rounded-xl bg-white/10">
-              <img 
-                src={event.imageUrl} 
-                alt={event.title}
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                crossOrigin="anonymous"
-                onError={(e) => {
-                  console.error('Image failed to load:', event.imageUrl);
-                  setImageError(true);
-                }}
-                onLoad={() => {
-                  console.log('Image loaded successfully:', event.imageUrl);
-                }}
-              />
-            </div>
-          ) : (
-            <div className="flex-shrink-0 w-20 h-20 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
-              <span className="text-4xl">{getEventEmoji(event)}</span>
-            </div>
-          )}
+        {/* Event Image - Top section */}
+        {event.imageUrl && !imageError ? (
+          <div className="w-full h-48 overflow-hidden rounded-xl mb-4 bg-white/10">
+            <img 
+              src={event.imageUrl} 
+              alt={event.title}
+              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+              crossOrigin="anonymous"
+              onError={(e) => {
+                console.error('Image failed to load:', event.imageUrl);
+                setImageError(true);
+              }}
+              onLoad={() => {
+                console.log('Image loaded successfully:', event.imageUrl);
+              }}
+            />
+          </div>
+        ) : (
+          <div className="w-full h-48 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm mb-4">
+            <span className="text-6xl">{getEventEmoji(event)}</span>
+          </div>
+        )}
 
-          {/* Main Content */}
-          <div className="flex-grow min-w-0">
-            {/* Header with title and date */}
-            <div className="flex items-start justify-between gap-3 mb-3">
-              <div className="flex-grow min-w-0">
-                <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight mb-1">
-                  {event.title}
-                </h3>
-                {event.organizer && (
-                  <p className="text-sm text-white/70 drop-shadow-sm mb-2">
-                    {event.organizer}
-                  </p>
-                )}
-              </div>
-              
-              {/* Date badge - compact */}
-              <div className="flex-shrink-0">
-                {eventDate && (
-                  <div className="bg-brand-blue/90 text-white rounded-xl p-3 text-center min-w-[70px] liquid-glass-button border-0">
-                    <div className="text-xs font-medium uppercase leading-tight">
-                      {format(eventDate, "EE", { locale: de }).toUpperCase()}
-                    </div>
-                    <div className="text-lg font-bold leading-tight">
-                      {format(eventDate, "dd")}
-                    </div>
-                    <div className="text-xs leading-tight">
-                      {format(eventDate, "MMM", { locale: de }).toUpperCase()}
-                    </div>
-                  </div>
-                )}
-              </div>
+        {/* Content section */}
+        <div className="space-y-4">
+          {/* Header with title and date */}
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-grow min-w-0">
+              <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight mb-1">
+                {event.title}
+              </h3>
+              {event.organizer && (
+                <p className="text-sm text-white/70 drop-shadow-sm">
+                  {event.organizer}
+                </p>
+              )}
             </div>
+            
+            {/* Date badge */}
+            <div className="flex-shrink-0">
+              {eventDate && (
+                <div className="bg-brand-blue/90 text-white rounded-xl p-3 text-center min-w-[70px] liquid-glass-button border-0">
+                  <div className="text-xs font-medium uppercase leading-tight">
+                    {format(eventDate, "EE", { locale: de }).toUpperCase()}
+                  </div>
+                  <div className="text-lg font-bold leading-tight">
+                    {format(eventDate, "dd")}
+                  </div>
+                  <div className="text-xs leading-tight">
+                    {format(eventDate, "MMM", { locale: de }).toUpperCase()}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
-            {/* Info row - location, time, category, price */}
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-4 text-sm text-white/80">
-                {event.location && (
-                  <div className="flex items-center">
-                    <MapPin className="mr-1 h-4 w-4 text-white/60" />
-                    <span className="line-clamp-1">{event.location}</span>
-                  </div>
-                )}
-                {event.time && (
-                  <div className="flex items-center">
-                    <Clock className="mr-1 h-4 w-4 text-white/60" />
-                    <span>{event.time}</span>
-                  </div>
-                )}
-              </div>
-              
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
-                  <span className="text-lg" title="Kostenlos">🆓</span>
-                )}
-                <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
-                  {event.category}
-                </Badge>
-              </div>
+          {/* Info row - location, time, category, price */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-4 text-sm text-white/80">
+              {event.location && (
+                <div className="flex items-center">
+                  <MapPin className="mr-1 h-4 w-4 text-white/60" />
+                  <span className="line-clamp-1">{event.location}</span>
+                </div>
+              )}
+              {event.time && (
+                <div className="flex items-center">
+                  <Clock className="mr-1 h-4 w-4 text-white/60" />
+                  <span>{event.time}</span>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
+                <span className="text-lg" title="Kostenlos">🆓</span>
+              )}
+              <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
+                {event.category}
+              </Badge>
             </div>
           </div>
         </div>
