@@ -43,10 +43,12 @@ export function DualRangeSlider({
   const setToggleAccessible = () => {
     if (!minSliderRef.current || !maxSliderRef.current) return;
     
-    if (maxValue <= min + step) {
+    if (maxValue <= minValue + step) {
       maxSliderRef.current.style.zIndex = "2";
+      minSliderRef.current.style.zIndex = "1";
     } else {
       maxSliderRef.current.style.zIndex = "1";
+      minSliderRef.current.style.zIndex = "2";
     }
   };
 
@@ -57,14 +59,14 @@ export function DualRangeSlider({
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
-    if (value < maxValue) {
+    if (value <= maxValue) {
       onMinChange(value);
     }
   };
 
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
-    if (value > minValue) {
+    if (value >= minValue) {
       onMaxChange(value);
     }
   };
