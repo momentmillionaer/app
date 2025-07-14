@@ -195,13 +195,13 @@ export function SearchFilters({
               />
             </div>
             <div className="flex justify-between items-center">
-              <div className="liquid-glass bg-brand-lime/20 px-3 py-1 rounded-full">
-                <span className="text-sm text-white font-medium">
+              <div className="px-2 py-1 rounded-md bg-white/10 backdrop-blur-sm">
+                <span className="text-xs text-white/70 font-light">
                   {priceMin || "0"}€
                 </span>
               </div>
-              <div className="liquid-glass bg-brand-lime/20 px-3 py-1 rounded-full">
-                <span className="text-sm text-white font-medium">
+              <div className="px-2 py-1 rounded-md bg-white/10 backdrop-blur-sm">
+                <span className="text-xs text-white/70 font-light">
                   {priceMax || "1000"}€
                 </span>
               </div>
