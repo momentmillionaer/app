@@ -92,6 +92,10 @@ export function SearchFilters({
       case 'dateTo':
         onDateToChange("");
         break;
+      case 'date':
+        onDateFromChange("");
+        onDateToChange("");
+        break;
       case 'search':
         onSearchChange("");
         break;
@@ -250,23 +254,17 @@ export function SearchFilters({
               </button>
             </Badge>
           )}
-          {dateFrom && (
+          {(dateFrom || dateTo) && (
             <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
-              Von: {dateFrom}
+              📅 {dateFrom && dateTo 
+                ? `${new Date(dateFrom).toLocaleDateString('de-DE')} - ${new Date(dateTo).toLocaleDateString('de-DE')}`
+                : dateFrom 
+                ? new Date(dateFrom).toLocaleDateString('de-DE')
+                : new Date(dateTo).toLocaleDateString('de-DE')
+              }
               <button
                 className="ml-2 hover:text-gray-200"
-                onClick={() => removeFilter('dateFrom')}
-              >
-                ×
-              </button>
-            </Badge>
-          )}
-          {dateTo && (
-            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
-              Bis: {dateTo}
-              <button
-                className="ml-2 hover:text-gray-200"
-                onClick={() => removeFilter('dateTo')}
+                onClick={() => removeFilter('date')}
               >
                 ×
               </button>
