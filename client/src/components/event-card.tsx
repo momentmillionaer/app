@@ -98,8 +98,8 @@ export function EventCard({ event, onClick }: EventCardProps) {
                 {event.title}
               </h3>
               <div className="flex items-center gap-2 flex-shrink-0">
-                {/* Show FREE badge for one event to test - remove when working */}
-                {event.title.includes("Stammtisch") && (
+                {/* Debug: Show on first event to test */}
+                {event.title === "Grenzenloser Brunch" && (
                   <Badge className="bg-brand-blue/90 text-white border-brand-blue hover:bg-brand-blue flex items-center gap-1 font-bold">
                     🆓 FREE
                   </Badge>
