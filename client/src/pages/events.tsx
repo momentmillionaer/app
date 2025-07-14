@@ -21,7 +21,7 @@ export default function EventsPage() {
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [sortOption, setSortOption] = useState("date-asc");
-  const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
+  const [viewMode, setViewMode] = useState<"calendar" | "list">("list");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -192,13 +192,7 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Global Debug info */}
-      <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded z-50 text-sm">
-        <p>ViewMode: {viewMode}</p>
-        <p>Events: {events.length}</p>
-        <p>Filtered: {filteredEvents.length}</p>
-        <p>Loading: {isLoading ? 'YES' : 'NO'}</p>
-      </div>
+
       
       <Header eventCount={events.length} lastUpdated={getLastUpdated()} />
       
