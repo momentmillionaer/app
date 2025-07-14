@@ -34,22 +34,22 @@ export function EventCard({ event, onClick }: EventCardProps) {
       }}
       onClick={onClick}
     >
-      {/* Event Image */}
-      {event.imageUrl && (
-        <div className="w-full h-48 overflow-hidden">
-          <img 
-            src={event.imageUrl} 
-            alt={event.title}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        </div>
-      )}
-      
       <div className="p-8">
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+          {/* Event Image - Left side, square */}
+          {event.imageUrl && (
+            <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 overflow-hidden rounded-2xl">
+              <img 
+                src={event.imageUrl} 
+                alt={event.title}
+                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
+          )}
+
           {/* Date Column */}
           <div className="flex-shrink-0">
             {eventDate && (
