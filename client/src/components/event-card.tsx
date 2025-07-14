@@ -211,9 +211,16 @@ export function EventCard({ event, onClick }: EventCardProps) {
           {/* Event Details */}
           <div className="flex-grow min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-              <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight">
-                {event.title}
-              </h3>
+              <div className="space-y-1">
+                <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight">
+                  {event.title}
+                </h3>
+                {event.attendees && (
+                  <p className="text-sm text-white/70 drop-shadow-sm">
+                    von {event.attendees}
+                  </p>
+                )}
+              </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
                   <span className="text-lg flex items-center" title="Kostenlos">
