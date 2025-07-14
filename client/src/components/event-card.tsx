@@ -96,15 +96,17 @@ export function EventCard({ event, onClick }: EventCardProps) {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
               <h3 className="text-lg font-semibold text-white drop-shadow-sm line-clamp-2">
                 {event.title}
-                {event.price === "0" && (
-                  <span className="ml-2 text-sm bg-brand-lime/90 text-brand-black px-2 py-1 rounded-full font-bold">
-                    🎉 GRATIS
-                  </span>
-                )}
               </h3>
-              <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 flex-shrink-0">
-                {event.category}
-              </Badge>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {event.price === "0" && (
+                  <Badge className="bg-brand-lime/90 text-brand-black border-brand-lime hover:bg-brand-lime flex items-center gap-1 font-bold">
+                    🎉 FREE
+                  </Badge>
+                )}
+                <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30">
+                  {event.category}
+                </Badge>
+              </div>
             </div>
 
             {event.location && (
