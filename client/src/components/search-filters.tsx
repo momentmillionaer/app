@@ -182,32 +182,51 @@ export function SearchFilters({
         <div className="space-y-3">
           <label className="text-sm text-white/80 drop-shadow-sm">💰 Preisspanne</label>
           <div className="space-y-4">
-            <div className="px-3">
-              <Slider
-                value={[
-                  priceMin ? parseInt(priceMin) : 0,
-                  priceMax ? parseInt(priceMax) : 1000
-                ]}
-                onValueChange={(values) => {
-                  onPriceMinChange(values[0].toString());
-                  onPriceMaxChange(values[1].toString());
-                }}
-                max={1000}
-                min={0}
-                step={10}
-                className="w-full price-range-slider"
-              />
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="liquid-glass bg-brand-lime/20 px-3 py-1 rounded-full">
-                <span className="text-sm text-white font-medium">
-                  {priceMin || "0"}€
-                </span>
+            {/* Minimum Price Slider */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-white/70">Min</span>
+                <div className="liquid-glass bg-brand-lime/20 px-3 py-1 rounded-full">
+                  <span className="text-sm text-white font-medium">
+                    {priceMin || "0"}€
+                  </span>
+                </div>
               </div>
-              <div className="liquid-glass bg-brand-lime/20 px-3 py-1 rounded-full">
-                <span className="text-sm text-white font-medium">
-                  {priceMax || "1000"}€
-                </span>
+              <div className="px-3">
+                <Slider
+                  value={[priceMin ? parseInt(priceMin) : 0]}
+                  onValueChange={(values) => {
+                    onPriceMinChange(values[0].toString());
+                  }}
+                  max={1000}
+                  min={0}
+                  step={10}
+                  className="w-full price-range-slider"
+                />
+              </div>
+            </div>
+            
+            {/* Maximum Price Slider */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-white/70">Max</span>
+                <div className="liquid-glass bg-brand-lime/20 px-3 py-1 rounded-full">
+                  <span className="text-sm text-white font-medium">
+                    {priceMax || "1000"}€
+                  </span>
+                </div>
+              </div>
+              <div className="px-3">
+                <Slider
+                  value={[priceMax ? parseInt(priceMax) : 1000]}
+                  onValueChange={(values) => {
+                    onPriceMaxChange(values[0].toString());
+                  }}
+                  max={1000}
+                  min={0}
+                  step={10}
+                  className="w-full price-range-slider"
+                />
               </div>
             </div>
           </div>
