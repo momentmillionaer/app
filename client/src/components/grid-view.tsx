@@ -212,8 +212,8 @@ export function GridView({ events, onEventClick }: GridViewProps) {
 
                 {/* Free badge */}
                 {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
-                  <div className="bg-brand-lime/90 text-brand-black px-2 py-1 rounded-lg text-xs font-bold flex items-center">
-                    🆓 FREE
+                  <div className="bg-brand-lime/90 text-brand-black w-8 h-8 rounded-lg flex items-center justify-center text-lg">
+                    🆓
                   </div>
                 )}
               </div>
