@@ -100,16 +100,7 @@ export default function EventsPage() {
   const getFilterSummary = () => {
     const parts = [];
     if (selectedCategory && selectedCategory !== "all") {
-      const categoryNames: Record<string, string> = {
-        musik: "Musik",
-        theater: "Theater", 
-        kunst: "Kunst",
-        sport: "Sport",
-        food: "Food & Drink",
-        workshop: "Workshop",
-        festival: "Festival",
-      };
-      parts.push(categoryNames[selectedCategory] || selectedCategory);
+      parts.push(selectedCategory);
     }
     if (dateFrom && dateTo) {
       parts.push(`${dateFrom} bis ${dateTo}`);

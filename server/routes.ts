@@ -30,9 +30,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const events = response.results.map((page: any) => {
         const properties = page.properties;
         
-        // Map categories from your database to frontend format
+        // Use categories directly from your Notion database
         const categories = properties.Kategorie?.multi_select?.map((cat: any) => cat.name) || [];
-        const primaryCategory = categories.length > 0 ? mapCategoryToFrontend(categories[0]) : "other";
+        const primaryCategory = categories.length > 0 ? categories[0] : "Sonstiges";
 
         // Extract time from datetime if available
         let eventDate = null;
@@ -74,20 +74,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  function mapCategoryToFrontend(category: string): string {
-    const mapping: { [key: string]: string } = {
-      "🍽️ Kulinarik": "food",
-      "🎶 Musik": "musik",
-      "🧘🏼‍♂️ Sport": "sport", 
-      "🎨 Kreatives": "kunst",
-      "📖 Workshops": "workshop",
-      "🍿 Shows": "theater",
-      "❤️ Dating": "other",
-      "🗽 Rundgänge Touren etc.": "other",
-      "🧖🏼‍♀️ Spa / Wellness": "other"
-    };
-    return mapping[category] || "other";
-  }
+  // Get available categories from Notion database
+  app.get("/api/categories", async (req, res) => {
+    try {
+      if (!process.env.NOTION_INTEGRATION_SECRET || !process.env.NOTION_PAGE_URL) {
+        return res.json([]);
+      }
+
+      const databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
+      const response = await notion.databases.query({
+        database_id: databaseId,
+        page_size: 100
+      });
+
+      // Extract all unique categories
+      const categoriesSet = new Set<string>();
+      response.results.forEach((page: any) => {
+        const categories = page.properties.Kategorie?.multi_select?.map((cat: any) => cat.name) || [];
+        categories.forEach((cat: string) => categoriesSet.add(cat));
+      });
+
+      const sortedCategories = Array.from(categoriesSet).sort();
+      res.json(sortedCategories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      res.status(500).json({ 
+        message: "Failed to fetch categories from Notion"
+      });
+    }
+  });
 
   // Search and filter events
   app.get("/api/events/search", async (req, res) => {

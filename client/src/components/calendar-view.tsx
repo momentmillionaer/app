@@ -64,16 +64,22 @@ export function CalendarView({ events }: CalendarViewProps) {
   const dayNames = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 
   const getCategoryColor = (category: string) => {
-    const colors: { [key: string]: string } = {
-      "food": "bg-orange-100 text-orange-800",
-      "musik": "bg-purple-100 text-purple-800",
-      "sport": "bg-green-100 text-green-800",
-      "kunst": "bg-pink-100 text-pink-800",
-      "workshop": "bg-blue-100 text-blue-800",
-      "theater": "bg-red-100 text-red-800",
-      "other": "bg-gray-100 text-gray-800"
-    };
-    return colors[category] || colors.other;
+    // Use a hash function to generate consistent colors for categories
+    let hash = 0;
+    for (let i = 0; i < category.length; i++) {
+      hash = category.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const colors = [
+      "bg-blue-100 text-blue-800",
+      "bg-green-100 text-green-800", 
+      "bg-purple-100 text-purple-800",
+      "bg-pink-100 text-pink-800",
+      "bg-orange-100 text-orange-800",
+      "bg-red-100 text-red-800",
+      "bg-yellow-100 text-yellow-800",
+      "bg-indigo-100 text-indigo-800"
+    ];
+    return colors[Math.abs(hash) % colors.length];
   };
 
   return (

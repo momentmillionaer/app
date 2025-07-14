@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,17 +18,6 @@ interface SearchFiltersProps {
   onClearFilters: () => void;
 }
 
-const CATEGORIES = [
-  { value: "all", label: "Alle Kategorien" },
-  { value: "musik", label: "Musik" },
-  { value: "theater", label: "Theater" },
-  { value: "kunst", label: "Kunst" },
-  { value: "sport", label: "Sport" },
-  { value: "food", label: "Food & Drink" },
-  { value: "workshop", label: "Workshops" },
-  { value: "festival", label: "Festivals" },
-];
-
 export function SearchFilters({
   searchQuery,
   onSearchChange,
@@ -39,11 +29,14 @@ export function SearchFilters({
   onDateToChange,
   onClearFilters,
 }: SearchFiltersProps) {
-  const hasActiveFilters = (selectedCategory && selectedCategory !== "all") || dateFrom || dateTo || searchQuery;
+  
+  // Fetch categories from API
+  const { data: categories = [] } = useQuery<string[]>({
+    queryKey: ["/api/categories"],
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
 
-  const getCategoryLabel = (value: string) => {
-    return CATEGORIES.find(cat => cat.value === value)?.label || value;
-  };
+  const hasActiveFilters = (selectedCategory && selectedCategory !== "all") || dateFrom || dateTo || searchQuery;
 
   const removeFilter = (filterType: string) => {
     switch (filterType) {
@@ -88,9 +81,10 @@ export function SearchFilters({
               <SelectValue placeholder="Alle Kategorien" />
             </SelectTrigger>
             <SelectContent>
-              {CATEGORIES.map((category) => (
-                <SelectItem key={category.value} value={category.value}>
-                  {category.label}
+              <SelectItem value="all">Alle Kategorien</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -132,9 +126,9 @@ export function SearchFilters({
               </button>
             </Badge>
           )}
-          {selectedCategory && (
+          {selectedCategory && selectedCategory !== "all" && (
             <Badge variant="default" className="bg-primary text-white">
-              {getCategoryLabel(selectedCategory)}
+              {selectedCategory}
               <button
                 className="ml-2 hover:text-gray-200"
                 onClick={() => removeFilter('category')}
