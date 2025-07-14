@@ -43,9 +43,17 @@ export function DateRangePicker({
   const handleDateSelect = (date: Date | undefined | { from?: Date; to?: Date }) => {
     if (!date) return;
 
-    if (mode === "single" && date instanceof Date) {
-      setTempFromDate(date);
-      setTempToDate(undefined);
+    if (mode === "single") {
+      if (date instanceof Date) {
+        setTempFromDate(date);
+        setTempToDate(undefined);
+        // Auto-apply for single date selection for better UX
+        setTimeout(() => {
+          onDateFromChange(date.toISOString().split('T')[0]);
+          onDateToChange("");
+          setIsOpen(false);
+        }, 100);
+      }
     } else if (mode === "range") {
       if (date instanceof Date) {
         // Single date click in range mode
@@ -97,6 +105,10 @@ export function DateRangePicker({
     setTempFromDate(today);
     if (mode === "single") {
       setTempToDate(undefined);
+      // Auto-apply today for single date mode
+      onDateFromChange(today.toISOString().split('T')[0]);
+      onDateToChange("");
+      setIsOpen(false);
     }
   };
 
@@ -125,10 +137,13 @@ export function DateRangePicker({
             <Button
               variant={mode === "single" ? "default" : "outline"}
               size="sm"
-              onClick={() => setMode("single")}
+              onClick={() => {
+                setMode("single");
+                setTempToDate(undefined);
+              }}
               className="text-xs rounded-xl"
             >
-              Einzelnes Datum
+              📅 Einzelnes Datum
             </Button>
             <Button
               variant={mode === "range" ? "default" : "outline"}
@@ -136,7 +151,7 @@ export function DateRangePicker({
               onClick={() => setMode("range")}
               className="text-xs rounded-xl"
             >
-              Zeitraum
+              📅 Zeitraum
             </Button>
           </div>
 
