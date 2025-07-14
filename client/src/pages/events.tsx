@@ -19,8 +19,7 @@ export default function EventsPage() {
   const [selectedAudience, setSelectedAudience] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [priceMin, setPriceMin] = useState("");
-  const [priceMax, setPriceMax] = useState("");
+  const [showFreeEventsOnly, setShowFreeEventsOnly] = useState(false);
   const [sortOption, setSortOption] = useState("date-asc");
   const [viewMode, setViewMode] = useState<"calendar" | "list" | "grid">("list");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -129,17 +128,12 @@ export default function EventsPage() {
       });
     }
 
-    // Filter by price range
-    if (priceMin || priceMax) {
+    // Filter by free events only
+    if (showFreeEventsOnly) {
       filtered = filtered.filter(event => {
-        if (!event.price) return false;
+        if (!event.price) return true; // No price means free
         const eventPrice = parseFloat(event.price);
-        if (isNaN(eventPrice)) return false;
-        
-        const minPrice = priceMin ? parseFloat(priceMin) : 0;
-        const maxPrice = priceMax ? parseFloat(priceMax) : Infinity;
-        
-        return eventPrice >= minPrice && eventPrice <= maxPrice;
+        return isNaN(eventPrice) || eventPrice === 0;
       });
     }
 
@@ -179,7 +173,7 @@ export default function EventsPage() {
     }
 
     return filtered;
-  }, [mergedEvents, searchQuery, selectedCategory, selectedAudience, dateFrom, dateTo, priceMin, priceMax, sortOption]);
+  }, [mergedEvents, searchQuery, selectedCategory, selectedAudience, dateFrom, dateTo, showFreeEventsOnly, sortOption]);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -187,8 +181,7 @@ export default function EventsPage() {
     setSelectedAudience("all");
     setDateFrom("");
     setDateTo("");
-    setPriceMin("");
-    setPriceMax("");
+    setShowFreeEventsOnly(false);
   };
 
   const getLastUpdated = () => {
@@ -259,10 +252,8 @@ export default function EventsPage() {
             onDateToChange={setDateTo}
             selectedAudience={selectedAudience}
             onAudienceChange={setSelectedAudience}
-            priceMin={priceMin}
-            onPriceMinChange={setPriceMin}
-            priceMax={priceMax}
-            onPriceMaxChange={setPriceMax}
+            showFreeEventsOnly={showFreeEventsOnly}
+            onFreeEventsChange={setShowFreeEventsOnly}
             onClearFilters={clearFilters}
           />
         </div>

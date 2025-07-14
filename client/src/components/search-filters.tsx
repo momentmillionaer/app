@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DualRangeSlider } from "@/components/dual-range-slider";
+import { Switch } from "@/components/ui/switch";
 import { DateRangePicker } from "@/components/date-range-picker";
 
 interface SearchFiltersProps {
@@ -19,10 +19,8 @@ interface SearchFiltersProps {
   onDateToChange: (date: string) => void;
   selectedAudience: string;
   onAudienceChange: (audience: string) => void;
-  priceMin: string;
-  onPriceMinChange: (price: string) => void;
-  priceMax: string;
-  onPriceMaxChange: (price: string) => void;
+  showFreeEventsOnly: boolean;
+  onFreeEventsChange: (showFree: boolean) => void;
   onClearFilters: () => void;
 }
 
@@ -37,10 +35,8 @@ export function SearchFilters({
   onDateToChange,
   selectedAudience,
   onAudienceChange,
-  priceMin,
-  onPriceMinChange,
-  priceMax,
-  onPriceMaxChange,
+  showFreeEventsOnly,
+  onFreeEventsChange,
   onClearFilters,
 }: SearchFiltersProps) {
   
@@ -76,7 +72,7 @@ export function SearchFilters({
 
   const hasActiveFilters = (selectedCategory && selectedCategory !== "all") || 
                           (selectedAudience && selectedAudience !== "all") || 
-                          dateFrom || dateTo || searchQuery || priceMin || priceMax;
+                          dateFrom || dateTo || searchQuery || showFreeEventsOnly;
 
   const removeFilter = (filterType: string) => {
     switch (filterType) {
@@ -99,11 +95,8 @@ export function SearchFilters({
       case 'search':
         onSearchChange("");
         break;
-      case 'priceMin':
-        onPriceMinChange("");
-        break;
-      case 'priceMax':
-        onPriceMaxChange("");
+      case 'freeEvents':
+        onFreeEventsChange(false);
         break;
     }
   };
@@ -169,34 +162,19 @@ export function SearchFilters({
           />
         </div>
 
-        {/* Price Range Filter */}
-        <div className="min-w-[200px]">
-          <div className="space-y-4">
-            <div className="px-3">
-              <DualRangeSlider
-                min={0}
-                max={1000}
-                step={10}
-                minValue={priceMin ? parseInt(priceMin) : 0}
-                maxValue={priceMax ? parseInt(priceMax) : 1000}
-                onMinChange={(value) => onPriceMinChange(value.toString())}
-                onMaxChange={(value) => onPriceMaxChange(value.toString())}
-                className="w-full"
-              />
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="px-2 py-1 rounded-md bg-white/10 backdrop-blur-sm">
-                <span className="text-xs text-white/70 font-light">
-                  {priceMin || "0"}€
-                </span>
-              </div>
-              <div className="px-2 py-1 rounded-md bg-white/10 backdrop-blur-sm">
-                <span className="text-xs text-white/70 font-light">
-                  {priceMax || "1000"}€
-                </span>
-              </div>
-            </div>
-          </div>
+        {/* Free Events Toggle */}
+        <div className="min-w-[60px]">
+          <Button
+            variant="ghost"
+            onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
+            className={`rounded-2xl border-0 liquid-glass text-2xl px-4 py-3 h-auto ${
+              showFreeEventsOnly 
+                ? 'bg-brand-blue/40 hover:bg-brand-blue/50' 
+                : 'bg-white/20 hover:bg-white/30'
+            }`}
+          >
+            🆓
+          </Button>
         </div>
 
         {/* Clear Filters Button */}
@@ -266,23 +244,12 @@ export function SearchFilters({
               </button>
             </Badge>
           )}
-          {priceMin && (
+          {showFreeEventsOnly && (
             <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
-              💰 Ab: {priceMin}€
+              🆓 Nur kostenlose Events
               <button
                 className="ml-2 hover:text-gray-200"
-                onClick={() => removeFilter('priceMin')}
-              >
-                ×
-              </button>
-            </Badge>
-          )}
-          {priceMax && (
-            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
-              💰 Bis: {priceMax}€
-              <button
-                className="ml-2 hover:text-gray-200"
-                onClick={() => removeFilter('priceMax')}
+                onClick={() => removeFilter('freeEvents')}
               >
                 ×
               </button>
