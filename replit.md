@@ -22,6 +22,9 @@ Preferred communication style: Simple, everyday language.
 - ✓ Converted all text throughout entire application to white with drop shadows for better readability
 - ✓ Fixed all Radix UI Select dropdowns to display white text properly
 - ✓ Enlarged "momentmillionär" title (text-4xl/5xl), reduced letter spacing (tracking-tight), reduced spacing to filter section
+- ✓ Implemented square thumbnail images (96x96px, sm:128x128px) from Notion "Dateien" property
+- ✓ Enhanced calendar view to display EventCard components under calendar with same styling as list view
+- ✓ Added blue 🆓 FREE badge for events with 0€ price, positioned left of category badge
 
 ## System Architecture
 

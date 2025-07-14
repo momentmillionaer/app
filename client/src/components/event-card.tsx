@@ -98,8 +98,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
                 {event.title}
               </h3>
               <div className="flex items-center gap-2 flex-shrink-0">
-                {/* Debug: Show on first event to test */}
-                {event.title === "Grenzenloser Brunch" && (
+                {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
                   <Badge className="bg-brand-blue/90 text-white border-brand-blue hover:bg-brand-blue flex items-center gap-1 font-bold">
                     🆓 FREE
                   </Badge>
