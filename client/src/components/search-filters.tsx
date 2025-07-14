@@ -46,12 +46,20 @@ export function SearchFilters({
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  // Create audience options - emojis are already in the database values
+  // Create audience options with German labels
+  const getAudienceLabel = (audience: string): string => {
+    if (audience.includes('❤️')) return '❤️ Paare';
+    if (audience.includes('👯')) return '👯‍♀️ Freunde';
+    if (audience.includes('🦸')) return '🦸🏼‍♀️ Solo';
+    if (audience.includes('🧑‍🧒‍🧒')) return '🧑‍🧒‍🧒 Familie';
+    return audience; // Fallback to original value
+  };
+
   const audienceOptions = [
     { value: "all", label: "🎯 Alle Zielgruppen", emoji: "🎯" },
     ...audiences.map(audience => ({
       value: audience,
-      label: audience, // Emoji is already included in the audience name from database
+      label: getAudienceLabel(audience),
       emoji: audience.charAt(0) // First character is the emoji
     }))
   ];
