@@ -290,7 +290,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                   key={`day-${day}`}
                   className={`p-3 h-32 border-0 rounded-2xl relative overflow-hidden transition-all duration-300 ${
                     isToday 
-                      ? 'liquid-glass-strong ring-2 ring-brand-blue/50' 
+                      ? 'ring-2 ring-[#9DFF00]/70' 
                       : weekend
                         ? 'liquid-glass bg-black/30 hover:liquid-glass-strong'
                         : holiday
@@ -298,14 +298,16 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                         : 'liquid-glass hover:liquid-glass-strong'
                   }`}
                   style={isToday ? { 
-                    backgroundColor: 'rgba(157, 255, 0, 0.3)', // Pastel version of #9DFF00
-                    backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
-                    WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
+                    backgroundColor: 'rgba(157, 255, 0, 0.25)', // Pastel version of #9DFF00
+                    backdropFilter: 'blur(30px) saturate(140%) brightness(1.2)',
+                    WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.2)',
+                    border: '2px solid rgba(157, 255, 0, 0.6)',
+                    boxShadow: '0 0 20px rgba(157, 255, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
                   } : {}}
                 >
                   <div className={`text-sm font-bold mb-1 ${
                     isToday 
-                      ? 'text-brand-black' 
+                      ? 'text-black drop-shadow-lg font-extrabold' 
                       : isSpecialDay 
                         ? 'text-brand-purple drop-shadow-sm'
                         : 'text-white drop-shadow-sm'
