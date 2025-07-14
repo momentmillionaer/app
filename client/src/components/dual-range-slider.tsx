@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface DualRangeSliderProps {
   min: number;
@@ -43,12 +43,13 @@ export function DualRangeSlider({
   const setToggleAccessible = () => {
     if (!minSliderRef.current || !maxSliderRef.current) return;
     
-    if (maxValue <= minValue + step) {
+    // Always ensure max slider is on top when handles are close
+    if (Math.abs(maxValue - minValue) <= step) {
       maxSliderRef.current.style.zIndex = "2";
       minSliderRef.current.style.zIndex = "1";
     } else {
       maxSliderRef.current.style.zIndex = "1";
-      minSliderRef.current.style.zIndex = "2";
+      minSliderRef.current.style.zIndex = "1";
     }
   };
 
@@ -59,16 +60,14 @@ export function DualRangeSlider({
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
-    if (value <= maxValue) {
-      onMinChange(value);
-    }
+    const newValue = Math.min(value, maxValue);
+    onMinChange(newValue);
   };
 
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
-    if (value >= minValue) {
-      onMaxChange(value);
-    }
+    const newValue = Math.max(value, minValue);
+    onMaxChange(newValue);
   };
 
   return (
@@ -95,31 +94,8 @@ export function DualRangeSlider({
         step={step}
         value={minValue}
         onChange={handleMinChange}
-        className="absolute top-0 left-0 w-full h-2 appearance-none bg-transparent cursor-pointer z-10
-                   [&::-webkit-slider-thumb]:appearance-none 
-                   [&::-webkit-slider-thumb]:w-5 
-                   [&::-webkit-slider-thumb]:h-5 
-                   [&::-webkit-slider-thumb]:rounded-full 
-                   [&::-webkit-slider-thumb]:bg-white 
-                   [&::-webkit-slider-thumb]:border-2 
-                   [&::-webkit-slider-thumb]:border-pink-300 
-                   [&::-webkit-slider-thumb]:shadow-lg 
-                   [&::-webkit-slider-thumb]:cursor-pointer
-                   [&::-webkit-slider-thumb]:transition-all
-                   [&::-webkit-slider-thumb]:duration-200
-                   [&::-webkit-slider-thumb]:hover:scale-110
-                   [&::-webkit-slider-thumb]:hover:shadow-xl
-                   [&::-moz-range-thumb]:appearance-none
-                   [&::-moz-range-thumb]:w-5
-                   [&::-moz-range-thumb]:h-5
-                   [&::-moz-range-thumb]:rounded-full
-                   [&::-moz-range-thumb]:bg-white
-                   [&::-moz-range-thumb]:border-2
-                   [&::-moz-range-thumb]:border-pink-300
-                   [&::-moz-range-thumb]:cursor-pointer
-                   [&::-moz-range-thumb]:transition-all
-                   [&::-moz-range-thumb]:duration-200
-                   [&::-moz-range-track]:bg-transparent"
+        style={{ zIndex: 1 }}
+        className="dual-range-slider"
       />
       
       <input
@@ -130,31 +106,8 @@ export function DualRangeSlider({
         step={step}
         value={maxValue}
         onChange={handleMaxChange}
-        className="absolute top-0 left-0 w-full h-2 appearance-none bg-transparent cursor-pointer z-10
-                   [&::-webkit-slider-thumb]:appearance-none 
-                   [&::-webkit-slider-thumb]:w-5 
-                   [&::-webkit-slider-thumb]:h-5 
-                   [&::-webkit-slider-thumb]:rounded-full 
-                   [&::-webkit-slider-thumb]:bg-white 
-                   [&::-webkit-slider-thumb]:border-2 
-                   [&::-webkit-slider-thumb]:border-pink-300 
-                   [&::-webkit-slider-thumb]:shadow-lg 
-                   [&::-webkit-slider-thumb]:cursor-pointer
-                   [&::-webkit-slider-thumb]:transition-all
-                   [&::-webkit-slider-thumb]:duration-200
-                   [&::-webkit-slider-thumb]:hover:scale-110
-                   [&::-webkit-slider-thumb]:hover:shadow-xl
-                   [&::-moz-range-thumb]:appearance-none
-                   [&::-moz-range-thumb]:w-5
-                   [&::-moz-range-thumb]:h-5
-                   [&::-moz-range-thumb]:rounded-full
-                   [&::-moz-range-thumb]:bg-white
-                   [&::-moz-range-thumb]:border-2
-                   [&::-moz-range-thumb]:border-pink-300
-                   [&::-moz-range-thumb]:cursor-pointer
-                   [&::-moz-range-thumb]:transition-all
-                   [&::-moz-range-thumb]:duration-200
-                   [&::-moz-range-track]:bg-transparent"
+        style={{ zIndex: 2 }}
+        className="dual-range-slider"
       />
     </div>
   );
