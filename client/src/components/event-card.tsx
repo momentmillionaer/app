@@ -160,10 +160,10 @@ export function EventCard({ event, onClick }: EventCardProps) {
         </div>
       )}
       
-      <div className="p-6">
-        {/* Event Image - Top section */}
+      <div className="p-6 flex gap-4 h-full">
+        {/* Event Image - Left side */}
         {event.imageUrl && !imageError ? (
-          <div className="w-full h-48 overflow-hidden rounded-xl mb-4 bg-white/10">
+          <div className="flex-shrink-0 w-32 sm:w-40 h-48 overflow-hidden rounded-xl bg-white/10">
             <img 
               src={event.imageUrl} 
               alt={event.title}
@@ -179,70 +179,109 @@ export function EventCard({ event, onClick }: EventCardProps) {
             />
           </div>
         ) : (
-          <div className="w-full h-48 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm mb-4">
+          <div className="flex-shrink-0 w-32 sm:w-40 h-48 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
             <span className="text-6xl">{getEventEmoji(event)}</span>
           </div>
         )}
 
-        {/* Content section */}
-        <div className="space-y-4">
-          {/* Header with title and date */}
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-grow min-w-0">
-              <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight mb-1">
-                {event.title}
-              </h3>
-              {event.organizer && (
-                <p className="text-sm text-white/70 drop-shadow-sm">
-                  {event.organizer}
-                </p>
-              )}
-            </div>
-            
-            {/* Date badge */}
-            <div className="flex-shrink-0">
-              {eventDate && (
-                <div className="bg-brand-blue/90 text-white rounded-xl p-3 text-center min-w-[70px] liquid-glass-button border-0">
-                  <div className="text-xs font-medium uppercase leading-tight">
-                    {format(eventDate, "EE", { locale: de }).toUpperCase()}
-                  </div>
-                  <div className="text-lg font-bold leading-tight">
-                    {format(eventDate, "dd")}
-                  </div>
-                  <div className="text-xs leading-tight">
-                    {format(eventDate, "MMM", { locale: de }).toUpperCase()}
-                  </div>
-                </div>
-              )}
-            </div>
+        {/* Content section - Right side */}
+        <div className="flex-grow flex flex-col justify-between min-w-0">
+          {/* Top section with badges */}
+          <div className="flex justify-end items-start gap-2 mb-3">
+            {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
+              <Badge className="bg-brand-blue/90 text-white border-brand-blue/30 text-xs font-medium px-2 py-1">
+                FREE
+              </Badge>
+            )}
+            <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
+              {event.category}
+            </Badge>
           </div>
 
-          {/* Info row - location, time, category, price */}
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-4 text-sm text-white/80">
-              {event.location && (
-                <div className="flex items-center">
-                  <MapPin className="mr-1 h-4 w-4 text-white/60" />
-                  <span className="line-clamp-1">{event.location}</span>
-                </div>
-              )}
-              {event.time && (
-                <div className="flex items-center">
-                  <Clock className="mr-1 h-4 w-4 text-white/60" />
-                  <span>{event.time}</span>
-                </div>
-              )}
-            </div>
-            
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
-                <span className="text-lg" title="Kostenlos">🆓</span>
-              )}
-              <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
-                {event.category}
-              </Badge>
-            </div>
+          {/* Title and organizer */}
+          <div className="mb-4">
+            <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight mb-2">
+              {event.title}
+            </h3>
+            {event.organizer && (
+              <p className="text-sm text-white/70 drop-shadow-sm mb-3">
+                {event.organizer}
+              </p>
+            )}
           </div>
+
+          {/* Location and time */}
+          <div className="flex items-center gap-4 text-sm text-white/80 mb-4">
+            {event.location && (
+              <div className="flex items-center">
+                <MapPin className="mr-1 h-4 w-4 text-white/60" />
+                <span className="line-clamp-1">{event.location}</span>
+              </div>
+            )}
+            {event.time && (
+              <div className="flex items-center">
+                <Clock className="mr-1 h-4 w-4 text-white/60" />
+                <span>{event.time}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Date badge */}
+          <div className="flex items-center gap-3 mb-3">
+            {eventDate && (
+              <div className="bg-white/10 text-white rounded-lg p-2 text-center min-w-[60px] backdrop-blur-sm border border-white/20">
+                <div className="text-xs font-medium uppercase leading-tight">
+                  {format(eventDate, "EE", { locale: de }).toUpperCase()}
+                </div>
+                <div className="text-lg font-bold leading-tight">
+                  {format(eventDate, "dd")}
+                </div>
+                <div className="text-xs leading-tight">
+                  {format(eventDate, "MMM", { locale: de }).toUpperCase()}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Additional dates section */}
+          {event.description && event.description.startsWith('Termine:') && (
+            <div className="mb-3">
+              <div className="text-white/80 text-xs mb-2 drop-shadow-sm font-medium">
+                📅 Weitere Termine:
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {(() => {
+                  const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+                  if (termineMatch) {
+                    const dates = termineMatch[1].split(',').map(d => d.trim());
+                    return dates.slice(1, 3).map((dateStr, index) => {
+                      try {
+                        const dateObj = new Date(dateStr);
+                        return (
+                          <Badge 
+                            key={index} 
+                            className="bg-white/15 text-white border-white/25 text-xs px-2 py-1"
+                          >
+                            {format(dateObj, "dd.MM", { locale: de })}
+                          </Badge>
+                        );
+                      } catch (error) {
+                        return (
+                          <Badge 
+                            key={index} 
+                            className="bg-white/15 text-white border-white/25 text-xs px-2 py-1"
+                          >
+                            {dateStr}
+                          </Badge>
+                        );
+                      }
+                    });
+                  }
+                  return null;
+                })()}
+              </div>
+            </div>
+          )}
         </div>
         
         {/* Optional description section */}
