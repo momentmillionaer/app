@@ -21,7 +21,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
 
   return (
     <div 
-      className="rounded-[2rem] transition-all duration-500 cursor-pointer shadow-xl overflow-hidden"
+      className="rounded-[2rem] transition-all duration-500 cursor-pointer shadow-xl overflow-hidden relative"
       style={{
         background: 'rgba(255, 255, 255, 0.15)',
         backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
@@ -41,6 +41,19 @@ export function EventCard({ event, onClick }: EventCardProps) {
       }}
       onClick={onClick}
     >
+      {/* Website Link Button - iOS Control Center Style */}
+      {event.website && (
+        <div 
+          className="absolute bottom-4 right-4 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-200 hover:scale-110 z-10"
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open(event.website, '_blank');
+          }}
+          title="Website öffnen"
+        >
+          <span className="text-lg">🔗</span>
+        </div>
+      )}
       <div className="p-8">
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
           {/* Event Image - Left side, square */}
@@ -135,13 +148,6 @@ export function EventCard({ event, onClick }: EventCardProps) {
                 <span className="flex items-center">
                   <Users className="mr-1 text-white/60 h-4 w-4" />
                   <span>{event.attendees.replace(/👯‍♀️/g, '').replace(/,\s*/g, ' ').trim()}</span>
-                </span>
-              )}
-              
-              {event.website && (
-                <span className="flex items-center">
-                  <ExternalLink className="mr-1 text-white/60 h-4 w-4" />
-                  <span>Website</span>
                 </span>
               )}
             </div>
