@@ -54,11 +54,11 @@ export function EventCard({ event, onClick }: EventCardProps) {
             </div>
           )}
           
-          {/* Debug: Always show debug info */}
-          <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-green-500/20 rounded-2xl flex items-center justify-center">
-            <span className="text-white text-xs">
-              {event.imageUrl ? 'Has URL' : 'No URL'}
-            </span>
+          {/* Debug info - temporarily visible */}
+          <div className="flex-shrink-0 w-32 h-32 bg-red-500 rounded-2xl flex items-center justify-center text-white text-xs p-2 text-center">
+            Event: {event.title?.substring(0, 10)}...
+            <br/>
+            URL: {event.imageUrl ? 'YES' : 'NO'}
           </div>
 
           {/* Date Column */}
