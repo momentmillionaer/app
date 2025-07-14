@@ -55,14 +55,21 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
             <div className="flex items-center space-x-3">
               <span className="text-4xl">{getEventEmoji(event)}</span>
               <div>
-                <h2 className="text-2xl font-bold text-white drop-shadow-lg line-clamp-2">
-                  {event.title}
-                  {event.price === "0" && (
-                    <span className="ml-3 text-lg bg-brand-lime/90 text-brand-black px-3 py-1 rounded-full font-bold">
-                      🎉 GRATIS
-                    </span>
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-bold text-white drop-shadow-lg line-clamp-2">
+                    {event.title}
+                    {event.price === "0" && (
+                      <span className="ml-3 text-lg bg-brand-lime/90 text-brand-black px-3 py-1 rounded-full font-bold">
+                        🎉 GRATIS
+                      </span>
+                    )}
+                  </h2>
+                  {event.organizer && (
+                    <p className="text-lg text-white/80 drop-shadow-sm">
+                      von {event.organizer}
+                    </p>
                   )}
-                </h2>
+                </div>
                 {event.category && (
                   <Badge className="mt-2 bg-white/20 text-white border-white/20 hover:bg-white/30">
                     {event.category}

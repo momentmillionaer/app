@@ -83,6 +83,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           time: eventTime,
           price: properties.Preis?.number ? properties.Preis.number.toString() : "",
           website: properties.URL?.url || "",
+          organizer: properties["Veranstalter / Brand"]?.rich_text?.[0]?.plain_text || "",
           attendees: properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name).join(", ") || "",
           imageUrl: imageUrl
         };

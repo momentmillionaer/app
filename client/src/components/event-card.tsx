@@ -215,9 +215,9 @@ export function EventCard({ event, onClick }: EventCardProps) {
                 <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight">
                   {event.title}
                 </h3>
-                {event.attendees && (
+                {event.organizer && (
                   <p className="text-sm text-white/70 drop-shadow-sm">
-                    von {event.attendees}
+                    von {event.organizer}
                   </p>
                 )}
               </div>

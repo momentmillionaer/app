@@ -232,9 +232,9 @@ export function GridView({ events, onEventClick }: GridViewProps) {
                   <h3 className="text-lg font-semibold text-white line-clamp-2 tracking-tight" style={{textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 1px 3px rgba(0,0,0,0.9)'}}>
                     {event.title}
                   </h3>
-                  {event.attendees && (
+                  {event.organizer && (
                     <p className="text-xs text-white/70" style={{textShadow: '0 1px 4px rgba(0,0,0,0.8)'}}>
-                      von {event.attendees}
+                      von {event.organizer}
                     </p>
                   )}
                 </div>
