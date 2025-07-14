@@ -4,8 +4,12 @@ async function checkPublishedDatabase() {
   try {
     console.log('Checking published database structure...');
     
-    // Try the view ID from the public URL
-    const databaseId = "22ffd1375c6e80bdaddc000c4f4752bc";
+    // Try different possible database IDs from the public URL
+    const possibleIds = [
+      "22ffd1375c6e80bdaddc000c4f4752bc",
+      "22ffd137-5c6e-80bd-addc-000c4f4752bc", 
+      "22ffd137-5c6e-8048-addc-000c4f4752bc"
+    ];
     
     try {
       // First try to get the database info

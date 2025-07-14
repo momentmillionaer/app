@@ -13,8 +13,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json([]);
       }
 
-      // Use the Momentmillionär Entries database (accessible)
-      const databaseId = "22ffd137-5c6e-8043-ad8e-efd20cbb70c1";
+      // Use the correct Momente database
+      const databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
 
       const response = await notion.databases.query({
         database_id: databaseId,
@@ -34,14 +34,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const categories = properties.Kategorie?.multi_select?.map((cat: any) => cat.name) || [];
         const primaryCategory = categories.length > 0 ? mapCategoryToFrontend(categories[0]) : "other";
 
+        // Extract time from datetime if available
+        let eventDate = null;
+        let eventTime = "";
+        if (properties.Datum?.date?.start) {
+          const fullDate = new Date(properties.Datum.date.start);
+          eventDate = fullDate.toISOString().split('T')[0];
+          // If it includes time, extract it
+          if (properties.Datum.date.start.includes('T')) {
+            eventTime = fullDate.toLocaleTimeString('de-DE', { 
+              hour: '2-digit', 
+              minute: '2-digit',
+              timeZone: 'Europe/Vienna'
+            });
+          }
+        }
+
         return {
           notionId: page.id,
-          title: properties.Eventname?.title?.[0]?.plain_text || "Untitled Event",
+          title: properties.Name?.title?.[0]?.plain_text || "Untitled Event",
           description: properties.Beschreibung?.rich_text?.[0]?.plain_text || "",
           category: primaryCategory,
-          location: properties.Ort?.rich_text?.[0]?.plain_text || "",
-          date: properties.Datum?.date?.start || null,
-          time: properties.Uhrzeit?.rich_text?.[0]?.plain_text || "",
+          location: properties.Ort?.select?.name || "",
+          date: eventDate,
+          time: eventTime,
           price: properties.Preis?.number ? properties.Preis.number.toString() : "",
           website: properties.URL?.url || "",
           attendees: "", // Not tracked in your database
@@ -60,14 +76,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   function mapCategoryToFrontend(category: string): string {
     const mapping: { [key: string]: string } = {
-      "Essen": "food",
-      "Frühshoppen": "food",
-      "Party": "musik",
-      "Sport": "sport",
-      "Musik": "musik",
-      "Kreativ": "kunst",
-      "Workshop / Input": "workshop",
-      "Natur": "other"
+      "🍽️ Kulinarik": "food",
+      "🎶 Musik": "musik",
+      "🧘🏼‍♂️ Sport": "sport", 
+      "🎨 Kreatives": "kunst",
+      "📖 Workshops": "workshop",
+      "🍿 Shows": "theater",
+      "❤️ Dating": "other",
+      "🗽 Rundgänge Touren etc.": "other",
+      "🧖🏼‍♀️ Spa / Wellness": "other"
     };
     return mapping[category] || "other";
   }
