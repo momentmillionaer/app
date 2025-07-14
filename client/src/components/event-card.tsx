@@ -284,51 +284,12 @@ export function EventCard({ event, onClick }: EventCardProps) {
           )}
         </div>
         
-        {/* Optional description section */}
-        {event.description && event.description !== "Details" && (
+        {/* Optional description section - only for non-Termine descriptions */}
+        {event.description && event.description !== "Details" && !event.description.startsWith('Termine:') && (
           <div className="mt-4">
-            {event.description.startsWith('Termine:') ? (
-              <div>
-                <div className="text-white/80 text-xs mb-2 drop-shadow-sm font-medium">
-                  📅 Weitere Termine:
-                </div>
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {(() => {
-                    const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
-                    if (termineMatch) {
-                      const dates = termineMatch[1].split(',').map(d => d.trim());
-                      return dates.slice(1, 3).map((dateStr, index) => {
-                        try {
-                          const dateObj = new Date(dateStr);
-                          return (
-                            <Badge 
-                              key={index} 
-                              className="bg-brand-blue/20 text-white border-brand-blue/30 text-xs px-2 py-1"
-                            >
-                              {format(dateObj, "dd.MM", { locale: de })}
-                            </Badge>
-                          );
-                        } catch (error) {
-                          return (
-                            <Badge 
-                              key={index} 
-                              className="bg-brand-blue/20 text-white border-brand-blue/30 text-xs px-2 py-1"
-                            >
-                              {dateStr}
-                            </Badge>
-                          );
-                        }
-                      });
-                    }
-                    return null;
-                  })()}
-                </div>
-              </div>
-            ) : (
-              <p className="text-white/70 text-xs line-clamp-2 drop-shadow-sm">
-                {event.description}
-              </p>
-            )}
+            <p className="text-white/70 text-xs line-clamp-2 drop-shadow-sm">
+              {event.description}
+            </p>
           </div>
         )}
       </div>
