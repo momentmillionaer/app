@@ -9,17 +9,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/events", async (req, res) => {
     try {
       // Check if Notion is configured
-      if (!process.env.NOTION_INTEGRATION_SECRET || !process.env.NOTION_PAGE_URL) {
-        console.log("Notion credentials not configured");
-        return res.json([]);
+      if (!process.env.NOTION_INTEGRATION_SECRET) {
+        console.log("NOTION_INTEGRATION_SECRET not configured");
+        return res.status(503).json({ 
+          error: "Notion integration not configured",
+          message: "NOTION_INTEGRATION_SECRET nicht gesetzt"
+        });
       }
 
-      // Try to find the Momente database
-      let databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
+      // Try to find the Momente database by searching all databases
+      console.log("Searching for Momente database...");
       
-      // First try the hardcoded database ID
+      let databaseId = null;
       let eventsResponse;
+      
       try {
+        // Search for all databases
+        const searchResponse = await notion.search({
+          query: "Momente",
+          filter: {
+            property: "object",
+            value: "database"
+          }
+        });
+        
+        console.log(`Found ${searchResponse.results.length} databases with "Momente" in name`);
+        
+        // Find the Momente database
+        const momenteDb = searchResponse.results.find((db: any) => 
+          db.title && db.title.some((title: any) => 
+            title.plain_text && title.plain_text.toLowerCase().includes("momente")
+          )
+        );
+        
+        if (!momenteDb) {
+          console.log("Momente database not found in search results");
+          return res.status(404).json({ 
+            error: "Momente database not found",
+            message: "Momente-Datenbank nicht gefunden. Bitte prüfen Sie die Notion-Integration."
+          });
+        }
+        
+        databaseId = momenteDb.id;
+        console.log(`Found Momente database with ID: ${databaseId}`);
+        
         eventsResponse = await notion.databases.query({
           database_id: databaseId,
           sorts: [
@@ -30,24 +63,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ],
           page_size: 100
         });
-      } catch (dbError) {
-        console.log("Hardcoded database ID failed, trying to find Momente database...");
-        // If hardcoded ID fails, try to find the database by title
-        const momenteDb = await findDatabaseByTitle("Momente");
-        if (!momenteDb) {
-          console.log("Could not find Momente database");
-          return res.json([]);
-        }
-        databaseId = momenteDb.id;
-        eventsResponse = await notion.databases.query({
-          database_id: databaseId,
-          sorts: [
-            {
-              property: "Datum",
-              direction: "ascending"
-            }
-          ],
-          page_size: 100
+        
+        console.log(`Successfully loaded ${eventsResponse.results.length} events from Momente database`);
+        
+      } catch (searchError) {
+        console.error("Error searching for Momente database:", searchError);
+        return res.status(500).json({ 
+          error: "Database search failed",
+          message: "Fehler beim Suchen der Momente-Datenbank",
+          details: searchError.message
         });
       }
 
@@ -207,32 +231,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get available categories from Notion database
   app.get("/api/categories", async (req, res) => {
     try {
-      if (!process.env.NOTION_INTEGRATION_SECRET || !process.env.NOTION_PAGE_URL) {
-        return res.json([]);
+      if (!process.env.NOTION_INTEGRATION_SECRET) {
+        return res.status(503).json({ 
+          error: "Notion integration not configured",
+          message: "NOTION_INTEGRATION_SECRET nicht gesetzt"
+        });
       }
 
-      // Try to find the Momente database
-      let databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
-      
-      // First try the hardcoded database ID
+      // Search for Momente database
+      let databaseId = null;
       let response;
+      
       try {
+        const searchResponse = await notion.search({
+          query: "Momente",
+          filter: {
+            property: "object",
+            value: "database"
+          }
+        });
+        
+        const momenteDb = searchResponse.results.find((db: any) => 
+          db.title && db.title.some((title: any) => 
+            title.plain_text && title.plain_text.toLowerCase().includes("momente")
+          )
+        );
+        
+        if (!momenteDb) {
+          return res.status(404).json({ 
+            error: "Momente database not found",
+            message: "Momente-Datenbank nicht gefunden"
+          });
+        }
+        
+        databaseId = momenteDb.id;
+        
         response = await notion.databases.query({
           database_id: databaseId,
           page_size: 100
         });
-      } catch (dbError) {
-        console.log("Hardcoded database ID failed for categories, trying to find Momente database...");
-        // If hardcoded ID fails, try to find the database by title
-        const momenteDb = await findDatabaseByTitle("Momente");
-        if (!momenteDb) {
-          console.log("Could not find Momente database for categories");
-          return res.json([]);
-        }
-        databaseId = momenteDb.id;
-        response = await notion.databases.query({
-          database_id: databaseId,
-          page_size: 100
+      } catch (searchError) {
+        console.error("Error searching for Momente database:", searchError);
+        return res.status(500).json({ 
+          error: "Database search failed",
+          message: "Fehler beim Suchen der Momente-Datenbank"
         });
       }
 
@@ -360,32 +402,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all available audience values from Notion database
   app.get("/api/audiences", async (req, res) => {
     try {
-      if (!process.env.NOTION_INTEGRATION_SECRET || !process.env.NOTION_PAGE_URL) {
-        return res.json([]);
+      if (!process.env.NOTION_INTEGRATION_SECRET) {
+        return res.status(503).json({ 
+          error: "Notion integration not configured",
+          message: "NOTION_INTEGRATION_SECRET nicht gesetzt"
+        });
       }
 
-      // Try to find the Momente database
-      let databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
-      
-      // First try the hardcoded database ID
+      // Search for Momente database
+      let databaseId = null;
       let response;
+      
       try {
+        const searchResponse = await notion.search({
+          query: "Momente",
+          filter: {
+            property: "object",
+            value: "database"
+          }
+        });
+        
+        const momenteDb = searchResponse.results.find((db: any) => 
+          db.title && db.title.some((title: any) => 
+            title.plain_text && title.plain_text.toLowerCase().includes("momente")
+          )
+        );
+        
+        if (!momenteDb) {
+          return res.status(404).json({ 
+            error: "Momente database not found",
+            message: "Momente-Datenbank nicht gefunden"
+          });
+        }
+        
+        databaseId = momenteDb.id;
+        
         response = await notion.databases.query({
           database_id: databaseId,
           page_size: 100
         });
-      } catch (dbError) {
-        console.log("Hardcoded database ID failed for audiences, trying to find Momente database...");
-        // If hardcoded ID fails, try to find the database by title
-        const momenteDb = await findDatabaseByTitle("Momente");
-        if (!momenteDb) {
-          console.log("Could not find Momente database for audiences");
-          return res.json([]);
-        }
-        databaseId = momenteDb.id;
-        response = await notion.databases.query({
-          database_id: databaseId,
-          page_size: 100
+      } catch (searchError) {
+        console.error("Error searching for Momente database:", searchError);
+        return res.status(500).json({ 
+          error: "Database search failed",
+          message: "Fehler beim Suchen der Momente-Datenbank"
         });
       }
 
