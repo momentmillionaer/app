@@ -4,8 +4,14 @@ import { checkNotionEventsSync } from "./sync-check";
 export function setupSyncMonitor() {
   console.log("🔄 Starting automatic sync monitoring...");
   
-  // Initial check
-  checkNotionEventsSync();
+  // Initial check (non-blocking for deployment)
+  setImmediate(async () => {
+    try {
+      await checkNotionEventsSync();
+    } catch (error) {
+      console.error("❌ Initial sync check error:", error);
+    }
+  });
   
   // Check every 5 minutes
   const interval = setInterval(async () => {

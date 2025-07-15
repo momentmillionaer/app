@@ -90,9 +90,9 @@ export async function checkNotionEventsSync() {
   }
 }
 
-// Run sync check if called directly
+// Run sync check if called directly (removed process.exit for deployment compatibility)
 if (import.meta.url === `file://${process.argv[1]}`) {
   checkNotionEventsSync().then(() => {
-    process.exit(0);
+    console.log("✅ Sync check completed - keeping process alive");
   });
 }

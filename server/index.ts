@@ -57,8 +57,8 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Start sync monitoring
-  setupSyncMonitor();
+  // Start sync monitoring (non-blocking)
+  const cleanupSync = setupSyncMonitor();
 
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.
@@ -71,4 +71,26 @@ app.use((req, res, next) => {
   }, () => {
     log(`serving on port ${port}`);
   });
-})();
+
+  // Graceful shutdown handlers for deployment
+  const gracefulShutdown = () => {
+    console.log("🛑 Received shutdown signal, closing server gracefully...");
+    cleanupSync();
+    server.close(() => {
+      console.log("✅ Server closed successfully");
+      process.exit(0);
+    });
+    
+    // Force exit after 10 seconds
+    setTimeout(() => {
+      console.log("⚠️ Forcing shutdown after timeout");
+      process.exit(1);
+    }, 10000);
+  };
+
+  process.on('SIGTERM', gracefulShutdown);
+  process.on('SIGINT', gracefulShutdown);
+})().catch((error) => {
+  console.error("❌ Failed to start server:", error);
+  process.exit(1);
+});

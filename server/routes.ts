@@ -5,6 +5,24 @@ import { cache } from "./cache";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoint for deployment monitoring
+  app.get("/", (req, res) => {
+    res.json({ 
+      status: "healthy", 
+      message: "Momentmillionär Event Calendar API", 
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime()
+    });
+  });
+
+  app.get("/health", (req, res) => {
+    res.json({ 
+      status: "healthy", 
+      message: "Service is running", 
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime()
+    });
+  });
   
   // Get all events from Notion database
   app.get("/api/events", async (req, res) => {
