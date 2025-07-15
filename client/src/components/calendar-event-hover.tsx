@@ -59,6 +59,7 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
   };
 
   const handleMouseEnter = (e: React.MouseEvent) => {
+    console.log('Hover enter triggered for event:', event.title);
     const rect = e.currentTarget.getBoundingClientRect();
     setHoverPosition({
       x: rect.left + rect.width / 2,
@@ -68,6 +69,7 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
   };
 
   const handleMouseLeave = () => {
+    console.log('Hover leave triggered for event:', event.title);
     setIsHovered(false);
   };
 
@@ -85,7 +87,7 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
       {/* Hover Preview Card */}
       {isHovered && (
         <div
-          className="fixed z-50 w-80 pointer-events-none"
+          className="fixed z-[9999] w-80 pointer-events-none"
           style={{
             left: `${hoverPosition.x}px`,
             top: `${hoverPosition.y}px`,
@@ -93,7 +95,7 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
           }}
         >
           <div
-            className="rounded-2xl transition-all duration-300 shadow-2xl overflow-hidden"
+            className="rounded-2xl transition-all duration-300 shadow-2xl overflow-hidden animate-in fade-in-0 zoom-in-95"
             style={{
               background: 'rgba(255, 255, 255, 0.2)',
               backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
