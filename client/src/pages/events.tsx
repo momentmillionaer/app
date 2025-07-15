@@ -241,8 +241,69 @@ export default function EventsPage() {
     });
   }, [filteredEvents, hasEventFutureDates]);
 
-  // Events for calendar view - show all events (past events will be grayed out in calendar component)
-  const eventsForCalendar = filteredEvents;
+  // Events for calendar view - show all events with original dates (past events will be grayed out in calendar component)
+  const eventsForCalendar = useMemo(() => {
+    // For calendar view, we want to show ALL dates (including past ones)
+    // So we need to re-process the original events without filtering past dates
+    const eventMap = new Map<string, Event>();
+    
+    events.forEach(event => {
+      const title = event.title;
+      if (eventMap.has(title)) {
+        const existing = eventMap.get(title)!;
+        // Merge logic: keep first event but combine dates if different
+        if (existing.date !== event.date && event.date) {
+          // If dates are different, create a multi-date description
+          if (!existing.description.includes('Termine:')) {
+            existing.description = `Termine: ${existing.date}${event.date ? `, ${event.date}` : ''}${existing.description ? `\n\n${existing.description}` : ''}`;
+          } else {
+            // Add to existing dates list
+            const termineMatch = existing.description.match(/^Termine: ([^\n]+)/);
+            if (termineMatch) {
+              existing.description = existing.description.replace(
+                /^Termine: ([^\n]+)/, 
+                `Termine: ${termineMatch[1]}, ${event.date}`
+              );
+            }
+          }
+        }
+        // Use image from first event with valid image
+        if (!existing.imageUrl && event.imageUrl) {
+          existing.imageUrl = event.imageUrl;
+        }
+        // Combine attendees if different
+        if (event.attendees && !existing.attendees.includes(event.attendees)) {
+          existing.attendees = existing.attendees ? `${existing.attendees}, ${event.attendees}` : event.attendees;
+        }
+      } else {
+        eventMap.set(title, { ...event });
+      }
+    });
+
+    return Array.from(eventMap.values()).filter(event => {
+      // Apply same filtering logic as filteredEvents but keep all dates
+      if (searchQuery && !event.title.toLowerCase().includes(searchQuery.toLowerCase()) && 
+          !event.description.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      if (selectedCategory && selectedCategory !== "all" && event.category !== selectedCategory) {
+        return false;
+      }
+      if (selectedAudience && selectedAudience !== "all" && !event.attendees.includes(selectedAudience)) {
+        return false;
+      }
+      if (showFreeEventsOnly && event.price && event.price !== "0") {
+        return false;
+      }
+      if (dateFrom && event.date && event.date < dateFrom) {
+        return false;
+      }
+      if (dateTo && event.date && event.date > dateTo) {
+        return false;
+      }
+      return true;
+    });
+  }, [events, searchQuery, selectedCategory, selectedAudience, dateFrom, dateTo, showFreeEventsOnly]);
 
   const clearFilters = () => {
     setSearchQuery("");
