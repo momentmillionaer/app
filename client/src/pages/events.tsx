@@ -21,7 +21,7 @@ export default function EventsPage() {
   const [dateTo, setDateTo] = useState("");
   const [showFreeEventsOnly, setShowFreeEventsOnly] = useState(false);
   const [sortOption, setSortOption] = useState("date-asc");
-  const [viewMode, setViewMode] = useState<"calendar" | "list" | "grid">("list");
+  const [viewMode, setViewMode] = useState<"calendar" | "list" | "grid">("calendar");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -389,8 +389,9 @@ export default function EventsPage() {
         </div>
 
         {/* View Mode Toggle */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="text-white/80 drop-shadow-sm">
+        <div className="flex flex-col items-center mb-6 space-y-4">
+          {/* Event Count */}
+          <div className="text-white/80 drop-shadow-sm text-center">
             {isLoading ? (
               <Skeleton className="h-4 w-32" />
             ) : (
@@ -400,8 +401,9 @@ export default function EventsPage() {
               </>
             )}
           </div>
-          <div className="flex items-center space-x-4">
-            {/* View Mode Toggle */}
+          
+          {/* View Mode Toggle - Always Centered */}
+          <div className="flex items-center justify-center space-x-4">
             <div className="flex items-center liquid-glass-button rounded-2xl p-2">
               <Button
                 variant={viewMode === "calendar" ? "default" : "ghost"}

@@ -369,13 +369,13 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
         </div>
       </div>
 
-      {/* Events List for Selected Month */}
+      {/* Events Grid for Selected Month */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-white drop-shadow-sm">
           Alle Events im {monthNames[currentDate.getMonth()]}
         </h3>
         
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events
             .filter(event => {
               if (!event.date) return false;
@@ -394,6 +394,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                 key={`monthly-event-${event.notionId}`}
                 event={event}
                 onClick={() => onEventClick?.(event)}
+                viewMode="grid"
               />
             ))}
         </div>
