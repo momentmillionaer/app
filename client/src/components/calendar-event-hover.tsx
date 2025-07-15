@@ -65,24 +65,29 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
     
     // Preview card dimensions
     const previewWidth = 320; // 80 * 4 (w-80 in Tailwind)
-    const previewHeight = 350; // Estimated height
-    const gap = 8; // Small gap between event and preview
+    const previewHeight = 300; // Estimated height
+    const gap = 2; // Very small gap between event and preview
     
-    // Calculate optimal position
-    let x = rect.left + rect.width / 2;
+    // Start with position right next to the event
+    let x = rect.left + rect.width / 2 - previewWidth / 2;
     let y = rect.top + scrollY + rect.height + gap;
     
-    // Adjust horizontally if preview would go off screen
-    if (x + previewWidth / 2 > window.innerWidth - 20) {
-      x = window.innerWidth - previewWidth - 20;
-    } else if (x - previewWidth / 2 < 20) {
-      x = previewWidth / 2 + 20;
+    // Ensure preview stays within screen bounds horizontally
+    const margin = 10;
+    if (x < margin) {
+      x = margin;
+    } else if (x + previewWidth > window.innerWidth - margin) {
+      x = window.innerWidth - previewWidth - margin;
     }
     
-    // Adjust vertically if preview would go off screen
-    if (y + previewHeight > window.innerHeight + scrollY - 20) {
+    // Ensure preview stays within screen bounds vertically
+    if (y + previewHeight > window.innerHeight + scrollY - margin) {
       // Show above the event instead
       y = rect.top + scrollY - previewHeight - gap;
+      // If still doesn't fit, position at top of screen
+      if (y < scrollY + margin) {
+        y = scrollY + margin;
+      }
     }
     
     setHoverPosition({ x, y });
@@ -90,7 +95,10 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
+    // Small delay to prevent flicker when moving mouse between event and preview
+    setTimeout(() => {
+      setIsHovered(false);
+    }, 100);
   };
 
   const eventDate = event.date ? new Date(event.date) : null;
@@ -109,7 +117,7 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
         <div
           className="fixed z-[99999] w-80 pointer-events-none"
           style={{
-            left: `${hoverPosition.x - 160}px`,
+            left: `${hoverPosition.x}px`,
             top: `${hoverPosition.y}px`,
             transform: 'none'
           }}
