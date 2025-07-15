@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { notion, findDatabaseByTitle } from "./notion";
+import { cache } from "./cache";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -15,6 +16,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           error: "Notion integration not configured",
           message: "NOTION_INTEGRATION_SECRET nicht gesetzt"
         });
+      }
+
+      // Check cache first
+      const cachedEvents = cache.get("events");
+      if (cachedEvents) {
+        console.log("Returning cached events");
+        return res.json(cachedEvents);
       }
 
       // Try to find the Momente database by searching all databases
@@ -91,7 +99,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Handle rate limiting specifically
         if (searchError.code === 'rate_limited') {
-          console.log("Rate limited, returning cached events or empty array");
+          console.log("Rate limited, checking for cached events");
+          const cachedEvents = cache.get("events");
+          if (cachedEvents) {
+            console.log("Returning cached events due to rate limit");
+            return res.json(cachedEvents);
+          }
           return res.status(429).json({ 
             error: "Rate limited",
             message: "Zu viele Anfragen. Die Events werden in wenigen Minuten wieder verfügbar sein.",
@@ -243,6 +256,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       }));
 
+      // Cache the events for 5 minutes
+      cache.set("events", eventsWithRelations, 5);
+      
       res.json(eventsWithRelations);
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -267,6 +283,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           error: "Notion integration not configured",
           message: "NOTION_INTEGRATION_SECRET nicht gesetzt"
         });
+      }
+
+      // Check cache first
+      const cachedCategories = cache.get("categories");
+      if (cachedCategories) {
+        console.log("Returning cached categories");
+        return res.json(cachedCategories);
       }
 
       // Search for Momente database
@@ -317,6 +340,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const sortedCategories = Array.from(categoriesSet).sort();
+      
+      // Cache categories for 10 minutes
+      cache.set("categories", sortedCategories, 10);
+      
       res.json(sortedCategories);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -489,6 +516,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const uniqueAudiences = Array.from(audienceSet).sort();
+      
+      // Cache audiences for 10 minutes
+      cache.set("audiences", uniqueAudiences, 10);
+      
       res.json(uniqueAudiences);
     } catch (error) {
       console.error("Error fetching audiences:", error);
