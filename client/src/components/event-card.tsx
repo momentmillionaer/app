@@ -8,9 +8,10 @@ import type { Event } from "@shared/schema";
 interface EventCardProps {
   event: Event;
   onClick?: () => void;
+  viewMode?: 'list' | 'grid' | 'calendar';
 }
 
-export function EventCard({ event, onClick }: EventCardProps) {
+export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps) {
   const [imageError, setImageError] = useState(false);
   
   const eventDate = (() => {
@@ -20,6 +21,34 @@ export function EventCard({ event, onClick }: EventCardProps) {
       console.error('Date parsing error:', error, event.date);
       return null;
     }
+  })();
+
+  // Check if event has any future dates (main date or additional dates)
+  const hasEventFutureDates = (() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Check main date
+    if (event.date) {
+      const mainDate = new Date(event.date);
+      if (mainDate >= today) return true;
+    }
+    
+    // Check additional dates in description (merged events)
+    if (event.description && event.description.startsWith('Termine:')) {
+      const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+      if (termineMatch) {
+        const dates = termineMatch[1].split(',').map(d => d.trim());
+        for (const dateStr of dates) {
+          if (dateStr) {
+            const eventDate = new Date(dateStr);
+            if (eventDate >= today) return true;
+          }
+        }
+      }
+    }
+    
+    return false;
   })();
 
   // Check if event is in the past
@@ -44,6 +73,11 @@ export function EventCard({ event, onClick }: EventCardProps) {
     if (eventMonth > todayMonth) return false;
     return eventDay < todayDay;
   })();
+
+  // Hide events with no future dates in list and grid views
+  if ((viewMode === 'list' || viewMode === 'grid') && !hasEventFutureDates) {
+    return null;
+  }
 
   // Function to get appropriate emoji based on event content
   const getEventEmoji = (event: Event): string => {

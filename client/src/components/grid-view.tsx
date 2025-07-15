@@ -131,6 +131,39 @@ export function GridView({ events, onEventClick }: GridViewProps) {
           }
         })();
 
+        // Check if event has any future dates (main date or additional dates)
+        const hasEventFutureDates = (() => {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          // Check main date
+          if (event.date) {
+            const mainDate = new Date(event.date);
+            if (mainDate >= today) return true;
+          }
+          
+          // Check additional dates in description (merged events)
+          if (event.description && event.description.startsWith('Termine:')) {
+            const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+            if (termineMatch) {
+              const dates = termineMatch[1].split(',').map(d => d.trim());
+              for (const dateStr of dates) {
+                if (dateStr) {
+                  const eventDate = new Date(dateStr);
+                  if (eventDate >= today) return true;
+                }
+              }
+            }
+          }
+          
+          return false;
+        })();
+
+        // Hide events with no future dates in grid view
+        if (!hasEventFutureDates) {
+          return null;
+        }
+
         // Check if event is in the past
         const isEventPast = (() => {
           if (!event.date) return false;

@@ -406,6 +406,7 @@ export default function EventsPage() {
                 key={event.notionId} 
                 event={event} 
                 onClick={() => handleEventClick(event)}
+                viewMode="list"
               />
             ))}
           </div>
