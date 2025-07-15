@@ -521,7 +521,8 @@ export default function EventsPage() {
               </div>
               <div className="flex items-center space-x-6 text-sm text-white/60">
                 <span>Powered by Notion API</span>
-                <a href="mailto:info@morgen.co.at" className="hover:text-white/80 transition-colors">Kontakt</a>
+                <a href="mailto:cornelia@morgen.co.at" className="hover:text-white/80 transition-colors">Kontakt</a>
+                <a href="https://www.instagram.com/cornelia.morgen" target="_blank" rel="noopener noreferrer" className="hover:text-white/80 transition-colors">@cornelia.morgen</a>
                 <a href="https://www.morgen.co.at/impressum" target="_blank" rel="noopener noreferrer" className="hover:text-white/80 transition-colors">Impressum</a>
               </div>
             </div>
