@@ -10,24 +10,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Check if Notion is configured
       if (!process.env.NOTION_INTEGRATION_SECRET || !process.env.NOTION_PAGE_URL) {
+        console.log("Notion credentials not configured");
         return res.json([]);
       }
 
-      // Use the correct Momente database
-      const databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
+      // Try to find the Momente database
+      let databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
+      
+      // First try the hardcoded database ID
+      let eventsResponse;
+      try {
+        eventsResponse = await notion.databases.query({
+          database_id: databaseId,
+          sorts: [
+            {
+              property: "Datum",
+              direction: "ascending"
+            }
+          ],
+          page_size: 100
+        });
+      } catch (dbError) {
+        console.log("Hardcoded database ID failed, trying to find Momente database...");
+        // If hardcoded ID fails, try to find the database by title
+        const momenteDb = await findDatabaseByTitle("Momente");
+        if (!momenteDb) {
+          console.log("Could not find Momente database");
+          return res.json([]);
+        }
+        databaseId = momenteDb.id;
+        eventsResponse = await notion.databases.query({
+          database_id: databaseId,
+          sorts: [
+            {
+              property: "Datum",
+              direction: "ascending"
+            }
+          ],
+          page_size: 100
+        });
+      }
 
-      const response = await notion.databases.query({
-        database_id: databaseId,
-        sorts: [
-          {
-            property: "Datum",
-            direction: "ascending"
-          }
-        ],
-        page_size: 100
-      });
-
-      const eventsWithRelations = await Promise.all(response.results.map(async (page: any) => {
+      const eventsWithRelations = await Promise.all(eventsResponse.results.map(async (page: any) => {
         const properties = page.properties;
         
 
@@ -167,6 +191,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(eventsWithRelations);
     } catch (error) {
       console.error("Error fetching events:", error);
+      console.error("Error details:", error.message);
+      if (error.code === 'object_not_found') {
+        console.log("Database not found, returning empty array");
+        return res.json([]);
+      }
       res.status(500).json({ 
         message: "Failed to fetch events from Notion",
         error: error instanceof Error ? error.message : "Unknown error"
@@ -182,11 +211,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json([]);
       }
 
-      const databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
-      const response = await notion.databases.query({
-        database_id: databaseId,
-        page_size: 100
-      });
+      // Try to find the Momente database
+      let databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
+      
+      // First try the hardcoded database ID
+      let response;
+      try {
+        response = await notion.databases.query({
+          database_id: databaseId,
+          page_size: 100
+        });
+      } catch (dbError) {
+        console.log("Hardcoded database ID failed for categories, trying to find Momente database...");
+        // If hardcoded ID fails, try to find the database by title
+        const momenteDb = await findDatabaseByTitle("Momente");
+        if (!momenteDb) {
+          console.log("Could not find Momente database for categories");
+          return res.json([]);
+        }
+        databaseId = momenteDb.id;
+        response = await notion.databases.query({
+          database_id: databaseId,
+          page_size: 100
+        });
+      }
 
       // Extract all unique categories
       const categoriesSet = new Set<string>();
@@ -199,8 +247,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(sortedCategories);
     } catch (error) {
       console.error("Error fetching categories:", error);
+      console.error("Error details:", error.message);
+      if (error.code === 'object_not_found') {
+        console.log("Database not found, returning empty array");
+        return res.json([]);
+      }
       res.status(500).json({ 
-        message: "Failed to fetch categories from Notion"
+        message: "Failed to fetch categories from Notion",
+        error: error instanceof Error ? error.message : "Unknown error"
       });
     }
   });
@@ -310,12 +364,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json([]);
       }
 
-      const databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
-
-      const response = await notion.databases.query({
-        database_id: databaseId,
-        page_size: 100
-      });
+      // Try to find the Momente database
+      let databaseId = "22dfd137-5c6e-8058-917a-cbbedff172a3";
+      
+      // First try the hardcoded database ID
+      let response;
+      try {
+        response = await notion.databases.query({
+          database_id: databaseId,
+          page_size: 100
+        });
+      } catch (dbError) {
+        console.log("Hardcoded database ID failed for audiences, trying to find Momente database...");
+        // If hardcoded ID fails, try to find the database by title
+        const momenteDb = await findDatabaseByTitle("Momente");
+        if (!momenteDb) {
+          console.log("Could not find Momente database for audiences");
+          return res.json([]);
+        }
+        databaseId = momenteDb.id;
+        response = await notion.databases.query({
+          database_id: databaseId,
+          page_size: 100
+        });
+      }
 
       const audienceSet = new Set<string>();
       
@@ -329,6 +401,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(uniqueAudiences);
     } catch (error) {
       console.error("Error fetching audiences:", error);
+      console.error("Error details:", error.message);
+      if (error.code === 'object_not_found') {
+        console.log("Database not found for audiences, returning empty array");
+        return res.json([]);
+      }
       res.status(500).json({ 
         message: "Failed to fetch audiences from Notion",
         error: error instanceof Error ? error.message : "Unknown error"
