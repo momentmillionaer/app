@@ -53,21 +53,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         databaseId = momenteDb.id;
         console.log(`Found Momente database with ID: ${databaseId}`);
         
-        eventsResponse = await notion.databases.query({
-          database_id: databaseId,
-          sorts: [
-            {
-              property: "Datum",
-              direction: "ascending"
-            }
-          ],
-          page_size: 100
-        });
+        // Load all events with pagination
+        let allEvents = [];
+        let hasMore = true;
+        let nextCursor = undefined;
         
-        console.log(`Successfully loaded ${eventsResponse.results.length} events from Momente database`);
+        while (hasMore) {
+          const response = await notion.databases.query({
+            database_id: databaseId,
+            sorts: [
+              {
+                property: "Datum",
+                direction: "ascending"
+              }
+            ],
+            page_size: 100,
+            start_cursor: nextCursor
+          });
+          
+          allEvents.push(...response.results);
+          hasMore = response.has_more;
+          nextCursor = response.next_cursor;
+          
+          console.log(`Loaded ${response.results.length} events (batch), total: ${allEvents.length}, hasMore: ${response.has_more}`);
+          
+          // Add delay to prevent rate limiting
+          if (hasMore) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
+        
+        eventsResponse = { results: allEvents };
+        console.log(`Successfully loaded ${allEvents.length} total events from Momente database`);
         
       } catch (searchError) {
         console.error("Error searching for Momente database:", searchError);
+        
+        // Handle rate limiting specifically
+        if (searchError.code === 'rate_limited') {
+          console.log("Rate limited, returning cached events or empty array");
+          return res.status(429).json({ 
+            error: "Rate limited",
+            message: "Zu viele Anfragen. Die Events werden in wenigen Minuten wieder verfügbar sein.",
+            details: "Notion API rate limit erreicht"
+          });
+        }
+        
         return res.status(500).json({ 
           error: "Database search failed",
           message: "Fehler beim Suchen der Momente-Datenbank",
