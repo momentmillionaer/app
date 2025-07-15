@@ -62,10 +62,30 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
   const handleMouseEnter = (e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-    setHoverPosition({
-      x: rect.left + rect.width / 2,
-      y: rect.top + scrollY - 10
-    });
+    
+    // Preview card dimensions
+    const previewWidth = 320; // 80 * 4 (w-80 in Tailwind)
+    const previewHeight = 350; // Estimated height
+    const gap = 8; // Small gap between event and preview
+    
+    // Calculate optimal position
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + scrollY + rect.height + gap;
+    
+    // Adjust horizontally if preview would go off screen
+    if (x + previewWidth / 2 > window.innerWidth - 20) {
+      x = window.innerWidth - previewWidth - 20;
+    } else if (x - previewWidth / 2 < 20) {
+      x = previewWidth / 2 + 20;
+    }
+    
+    // Adjust vertically if preview would go off screen
+    if (y + previewHeight > window.innerHeight + scrollY - 20) {
+      // Show above the event instead
+      y = rect.top + scrollY - previewHeight - gap;
+    }
+    
+    setHoverPosition({ x, y });
     setIsHovered(true);
   };
 
@@ -89,8 +109,8 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
         <div
           className="fixed z-[99999] w-80 pointer-events-none"
           style={{
-            left: `${Math.max(20, Math.min(window.innerWidth - 340, hoverPosition.x - 160))}px`,
-            top: `${Math.max(20, hoverPosition.y - 320)}px`,
+            left: `${hoverPosition.x - 160}px`,
+            top: `${hoverPosition.y}px`,
             transform: 'none'
           }}
         >
