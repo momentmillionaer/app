@@ -131,29 +131,16 @@ export function GridView({ events, onEventClick }: GridViewProps) {
           }
         })();
 
-        // Check if event has any future dates (main date or additional dates)
+        // Check if event has any future dates (simplified since main date is now the next future date)
         const hasEventFutureDates = (() => {
           const today = new Date();
           today.setHours(0, 0, 0, 0);
           
-          // Check main date
+          // Since we now process events to set the main date to the next future date,
+          // we just need to check if the main date is in the future
           if (event.date) {
             const mainDate = new Date(event.date);
-            if (mainDate >= today) return true;
-          }
-          
-          // Check additional dates in description (merged events)
-          if (event.description && event.description.startsWith('Termine:')) {
-            const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
-            if (termineMatch) {
-              const dates = termineMatch[1].split(',').map(d => d.trim());
-              for (const dateStr of dates) {
-                if (dateStr) {
-                  const eventDate = new Date(dateStr);
-                  if (eventDate >= today) return true;
-                }
-              }
-            }
+            return mainDate >= today;
           }
           
           return false;

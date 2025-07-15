@@ -36,13 +36,23 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
   // Group events by date - handle merged events with multiple dates
   const eventsByDate: { [key: string]: Event[] } = {};
   events.forEach(event => {
-    // Check if this event has multiple dates in description (merged event)
+    // Always add the main date (which is now the next future date)
+    if (event.date) {
+      const eventDate = new Date(event.date);
+      const dateKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}-${eventDate.getDate()}`;
+      if (!eventsByDate[dateKey]) {
+        eventsByDate[dateKey] = [];
+      }
+      eventsByDate[dateKey].push(event);
+    }
+    
+    // Also add any additional dates from the description (these are all future dates)
     if (event.description && event.description.startsWith('Termine:')) {
       const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
       if (termineMatch) {
         const dates = termineMatch[1].split(',').map(d => d.trim());
         dates.forEach(dateStr => {
-          if (dateStr) {
+          if (dateStr && dateStr !== event.date) { // Avoid duplicating the main date
             const eventDate = new Date(dateStr);
             const dateKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}-${eventDate.getDate()}`;
             if (!eventsByDate[dateKey]) {
@@ -52,14 +62,6 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
           }
         });
       }
-    } else if (event.date) {
-      // Single date event
-      const eventDate = new Date(event.date);
-      const dateKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}-${eventDate.getDate()}`;
-      if (!eventsByDate[dateKey]) {
-        eventsByDate[dateKey] = [];
-      }
-      eventsByDate[dateKey].push(event);
     }
   });
 

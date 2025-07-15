@@ -51,9 +51,11 @@ export default function EventsPage() {
   console.log('Is loading:', isLoading);
   console.log('Error:', error);
 
-  // Merge events with identical titles first
+  // Merge events with identical titles and process dates
   const mergedEvents = useMemo(() => {
     const eventMap = new Map<string, Event>();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     
     events.forEach(event => {
       const title = event.title;
@@ -88,7 +90,48 @@ export default function EventsPage() {
       }
     });
 
-    return Array.from(eventMap.values());
+    // Process merged events to set next future date as main date and remove past dates
+    const processedEvents = Array.from(eventMap.values()).map(event => {
+      // Check if this event has multiple dates
+      if (event.description && event.description.startsWith('Termine:')) {
+        const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+        if (termineMatch) {
+          const allDates = termineMatch[1].split(',').map(d => d.trim());
+          
+          // Filter to only future dates
+          const futureDates = allDates.filter(dateStr => {
+            if (dateStr) {
+              const eventDate = new Date(dateStr);
+              return eventDate >= today;
+            }
+            return false;
+          });
+          
+          if (futureDates.length > 0) {
+            // Sort future dates and use the earliest as main date
+            futureDates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+            event.date = futureDates[0];
+            
+            // Update description to only show future dates
+            if (futureDates.length > 1) {
+              const originalDescription = event.description.replace(/^Termine: ([^\n]+)\n*/, '');
+              event.description = `Termine: ${futureDates.join(', ')}${originalDescription ? `\n\n${originalDescription}` : ''}`;
+            } else {
+              // Only one future date, remove the "Termine:" prefix
+              const originalDescription = event.description.replace(/^Termine: ([^\n]+)\n*/, '');
+              event.description = originalDescription;
+            }
+          } else {
+            // No future dates, keep original logic but mark as past
+            // This will be filtered out later
+          }
+        }
+      }
+      
+      return event;
+    });
+
+    return processedEvents;
   }, [events]);
 
   // Helper function to check if an event is in the past
@@ -105,24 +148,11 @@ export default function EventsPage() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // Check main date
+    // Since we now process events to set the main date to the next future date,
+    // we just need to check if the main date is in the future
     if (event.date) {
       const mainDate = new Date(event.date);
-      if (mainDate >= today) return true;
-    }
-    
-    // Check additional dates in description (merged events)
-    if (event.description && event.description.startsWith('Termine:')) {
-      const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
-      if (termineMatch) {
-        const dates = termineMatch[1].split(',').map(d => d.trim());
-        for (const dateStr of dates) {
-          if (dateStr) {
-            const eventDate = new Date(dateStr);
-            if (eventDate >= today) return true;
-          }
-        }
-      }
+      return mainDate >= today;
     }
     
     return false;
