@@ -52,7 +52,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
 
-        // Extract image URL from "Dateien" property
+        // Extract image URL from "Dateien" property with better filtering
         let imageUrl = "";
         if (properties.Dateien?.files && properties.Dateien.files.length > 0) {
           // Find first actual image file (not PDF or other documents)
@@ -64,11 +64,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
               url = file.external.url;
             }
             
-            // Check if URL points to an actual image file
-            if (url && (url.includes('.jpg') || url.includes('.jpeg') || url.includes('.png') || 
-                       url.includes('.webp') || url.includes('.gif') || url.includes('.svg'))) {
-              imageUrl = url;
-              break; // Use first valid image found
+            // More robust image detection
+            if (url) {
+              const lowerUrl = url.toLowerCase();
+              const isImageFile = lowerUrl.includes('.jpg') || lowerUrl.includes('.jpeg') || 
+                                lowerUrl.includes('.png') || lowerUrl.includes('.webp') || 
+                                lowerUrl.includes('.gif') || lowerUrl.includes('.svg');
+              
+              // Also check for common image hosting patterns
+              const isImageHost = lowerUrl.includes('prod-files-secure.s3.us-west-2.amazonaws.com') ||
+                                lowerUrl.includes('images.unsplash.com') ||
+                                lowerUrl.includes('imgur.com') ||
+                                lowerUrl.includes('cloudinary.com');
+              
+              // Exclude obvious non-image files
+              const isNonImage = lowerUrl.includes('.pdf') || lowerUrl.includes('.doc') || 
+                               lowerUrl.includes('.txt') || lowerUrl.includes('.zip');
+              
+              if ((isImageFile || isImageHost) && !isNonImage) {
+                imageUrl = url;
+                break; // Use first valid image found
+              }
             }
           }
         }
@@ -76,6 +92,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return {
           notionId: page.id,
           title: properties.Name?.title?.[0]?.plain_text || "Untitled Event",
+          subtitle: properties.Untertitel?.rich_text?.[0]?.plain_text || "",
           description: properties.Beschreibung?.rich_text?.[0]?.plain_text || "",
           category: primaryCategory,
           location: properties.Ort?.select?.name || "",

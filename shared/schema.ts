@@ -23,6 +23,7 @@ export const events = pgTable("events", {
   id: serial("id").primaryKey(),
   notionId: text("notion_id").notNull().unique(),
   title: text("title").notNull(),
+  subtitle: text("subtitle"),
   description: text("description"),
   category: text("category").notNull(),
   location: text("location"),

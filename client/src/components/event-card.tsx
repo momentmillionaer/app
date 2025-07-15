@@ -221,6 +221,7 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
                   alt={event.title}
                   className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                   crossOrigin="anonymous"
+                  referrerPolicy="no-referrer"
                   onError={(e) => {
                     console.error('Image failed to load:', event.imageUrl);
                     setImageError(true);
@@ -262,6 +263,11 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
               <h3 className="text-xl font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight mb-2">
                 {event.title}
               </h3>
+              {event.subtitle && (
+                <p className="text-sm text-white/80 drop-shadow-sm mb-2 italic">
+                  {event.subtitle}
+                </p>
+              )}
               {event.organizer && (
                 <p className="text-sm text-white/70 drop-shadow-sm mb-2">
                   {event.organizer}

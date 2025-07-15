@@ -10,6 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**July 15, 2025 - Advanced Event Features & Interaction Improvements**
+- ✓ Added subtitle support to event schema and display between event name and organizer
+- ✓ Implemented hover preview for calendar events with EventCard-style popup
+- ✓ Added event images as modal headers with gradient overlay
+- ✓ Enhanced image loading with better error handling and referrer policy
+- ✓ Improved Notion image detection with robust URL filtering
+- ✓ Calendar view now shows hover previews on event hover
+- ✓ Event modal displays event image as header when available
+- ✓ Subtitle field from Notion "Untertitel" property displayed in italic styling
+- ✓ Enhanced multi-date event handling with proper past/future date logic
+- ✓ Calendar grays out past events while list/grid hide them completely
+
 **July 14, 2025 - iOS 26 Liquid Glass Design & Typography Updates**
 - ✓ Updated app to use dynamic "Kategorie" field from Notion database instead of predefined categories
 - ✓ Implemented custom color palette from user's brand colors (#0A0A0A, #0000FF, #D0FE1D, #F3DCFA, #F4F3F2, #FE5C2B, #FEE4C3)

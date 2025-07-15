@@ -49,11 +49,27 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
       
       {/* Modal Content */}
       <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto ios-glass-popup rounded-[2rem] border-0">
+        {/* Event Image Header */}
+        {event.imageUrl && (
+          <div className="relative w-full h-48 overflow-hidden rounded-t-[2rem]">
+            <img 
+              src={event.imageUrl} 
+              alt={event.title}
+              className="w-full h-full object-cover"
+              crossOrigin="anonymous"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          </div>
+        )}
+        
         <div className="p-8">
           {/* Header */}
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center space-x-3">
-              <span className="text-4xl">{getEventEmoji(event)}</span>
+              {!event.imageUrl && (
+                <span className="text-4xl">{getEventEmoji(event)}</span>
+              )}
               <div>
                 <div className="space-y-1">
                   <h2 className="text-2xl font-bold text-white drop-shadow-lg line-clamp-2">
@@ -64,8 +80,13 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                       </span>
                     )}
                   </h2>
+                  {event.subtitle && (
+                    <p className="text-lg text-white/80 drop-shadow-sm italic">
+                      {event.subtitle}
+                    </p>
+                  )}
                   {event.organizer && (
-                    <p className="text-lg text-white/80 drop-shadow-sm">
+                    <p className="text-lg text-white/70 drop-shadow-sm">
                       {event.organizer}
                     </p>
                   )}

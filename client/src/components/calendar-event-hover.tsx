@@ -1,0 +1,179 @@
+import { useState } from 'react';
+import { Event } from '@/../../shared/schema';
+import { MapPin, Clock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
+import { de } from 'date-fns/locale';
+
+interface CalendarEventHoverProps {
+  event: Event;
+  children: React.ReactNode;
+  onEventClick: (event: Event) => void;
+}
+
+export function CalendarEventHover({ event, children, onEventClick }: CalendarEventHoverProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
+
+  const getEventEmoji = (event: Event): string => {
+    const fullText = `${event.title} ${event.description} ${event.category}`.toLowerCase();
+    
+    // Food & Drinks
+    if (fullText.includes('brunch') || fullText.includes('essen') || fullText.includes('food') || 
+        fullText.includes('restaurant') || fullText.includes('kulinarik')) {
+      return '🍽️';
+    }
+    
+    // Music & Entertainment
+    if (fullText.includes('konzert') || fullText.includes('musik') || fullText.includes('jazz') || 
+        fullText.includes('band') || fullText.includes('dj')) {
+      return '🎵';
+    }
+    
+    // Art & Culture
+    if (fullText.includes('kunst') || fullText.includes('galerie') || fullText.includes('museum') || 
+        fullText.includes('ausstellung') || fullText.includes('kultur')) {
+      return '🎨';
+    }
+    
+    // Sports & Activities
+    if (fullText.includes('sport') || fullText.includes('fitness') || fullText.includes('laufen') || 
+        fullText.includes('yoga') || fullText.includes('wandern')) {
+      return '🏃';
+    }
+    
+    // Nightlife & Entertainment
+    if (fullText.includes('bar') || fullText.includes('club') || fullText.includes('party') || 
+        fullText.includes('cocktail') || fullText.includes('nightlife')) {
+      return '🍸';
+    }
+    
+    // Festivals & Events
+    if (fullText.includes('festival') || fullText.includes('fest') || fullText.includes('markt') || 
+        fullText.includes('feier')) {
+      return '🎪';
+    }
+    
+    // Default fallback emoji
+    return '🎉';
+  };
+
+  const handleMouseEnter = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setHoverPosition({
+      x: rect.left + rect.width / 2,
+      y: rect.top - 10
+    });
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const eventDate = event.date ? new Date(event.date) : null;
+  const isEventPast = eventDate ? eventDate < new Date() : false;
+
+  return (
+    <div 
+      className="relative"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {children}
+      
+      {/* Hover Preview Card */}
+      {isHovered && (
+        <div
+          className="fixed z-50 w-80 pointer-events-none"
+          style={{
+            left: `${hoverPosition.x}px`,
+            top: `${hoverPosition.y}px`,
+            transform: 'translate(-50%, -100%)'
+          }}
+        >
+          <div
+            className="rounded-2xl transition-all duration-300 shadow-2xl overflow-hidden"
+            style={{
+              background: 'rgba(255, 255, 255, 0.2)',
+              backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
+              WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3), 0 3px 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.25)'
+            }}
+          >
+            <div className="p-4">
+              {/* Event Image */}
+              <div className="w-full h-32 mb-3 overflow-hidden rounded-xl">
+                {event.imageUrl ? (
+                  <img 
+                    src={event.imageUrl} 
+                    alt={event.title}
+                    className="w-full h-full object-cover"
+                    crossOrigin="anonymous"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-white/10 rounded-xl flex items-center justify-center">
+                    <span className="text-4xl">{getEventEmoji(event)}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Event Info */}
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold text-white drop-shadow-sm line-clamp-2">
+                  {event.title}
+                </h3>
+                
+                {event.subtitle && (
+                  <p className="text-sm text-white/80 drop-shadow-sm italic">
+                    {event.subtitle}
+                  </p>
+                )}
+                
+                {event.organizer && (
+                  <p className="text-sm text-white/70 drop-shadow-sm">
+                    {event.organizer}
+                  </p>
+                )}
+
+                {/* Location and Time */}
+                <div className="flex items-center gap-3 text-sm text-white/80">
+                  {event.location && (
+                    <div className="flex items-center">
+                      <MapPin className="mr-1 h-3 w-3 text-white/60" />
+                      <span className="line-clamp-1">{event.location}</span>
+                    </div>
+                  )}
+                  {event.time && (
+                    <div className="flex items-center">
+                      <Clock className="mr-1 h-3 w-3 text-white/60" />
+                      <span>{event.time}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Category and Price */}
+                <div className="flex items-center justify-between">
+                  <Badge className="bg-white/20 text-white border-white/20 text-xs">
+                    {event.category}
+                  </Badge>
+                  
+                  <div className="flex items-center gap-2">
+                    {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
+                      <span className="text-sm">🆓</span>
+                    )}
+                    {event.price && event.price !== "0" && event.price !== "" && parseFloat(event.price) > 0 && (
+                      <span className="text-sm text-white/80">€{event.price}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
