@@ -256,11 +256,10 @@ export function EventCard({ event, onClick }: EventCardProps) {
             </div>
             
             {/* Badges - right side */}
-            <div className="flex gap-2 flex-shrink-0">
-              {(event.price === "0" || event.price === "" || !event.price || event.price === 0 || event.price === "0.00" || (event.price && parseFloat(event.price) === 0)) && (
-                <Badge className="bg-brand-blue/90 text-white border-brand-blue/30 text-xs font-medium px-2 py-1">
-                  FREE
-                </Badge>
+            <div className="flex gap-2 flex-shrink-0 items-center">
+              {/* Free event emoji - only show for events with price explicitly set to 0 */}
+              {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
+                <span className="text-xl">🆓</span>
               )}
               <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
                 {event.category}

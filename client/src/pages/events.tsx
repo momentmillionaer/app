@@ -131,9 +131,9 @@ export default function EventsPage() {
     // Filter by free events only
     if (showFreeEventsOnly) {
       filtered = filtered.filter(event => {
-        if (!event.price) return true; // No price means free
+        if (!event.price) return false; // No price field does NOT mean free
         const eventPrice = parseFloat(event.price);
-        return isNaN(eventPrice) || eventPrice === 0;
+        return !isNaN(eventPrice) && eventPrice === 0;
       });
     }
 

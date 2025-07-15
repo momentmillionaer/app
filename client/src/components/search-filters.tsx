@@ -164,17 +164,16 @@ export function SearchFilters({
 
         {/* Free Events Toggle */}
         <div className="min-w-[60px]">
-          <Button
-            variant="ghost"
+          <button
             onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
-            className={`rounded-2xl border-0 liquid-glass text-2xl px-4 py-3 h-auto ${
+            className={`text-2xl px-4 py-3 h-auto rounded-2xl border-0 transition-all duration-200 ${
               showFreeEventsOnly 
-                ? 'bg-brand-blue/40 hover:bg-brand-blue/50' 
-                : 'bg-white/20 hover:bg-white/30'
+                ? 'shadow-inner bg-white/10 scale-95 transform' 
+                : 'bg-transparent hover:bg-white/10'
             }`}
           >
             🆓
-          </Button>
+          </button>
         </div>
 
         {/* Clear Filters Button */}
