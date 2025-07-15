@@ -181,7 +181,7 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
           WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
           border: isEventPast ? '1px solid rgba(128, 128, 128, 0.25)' : '1px solid rgba(255, 255, 255, 0.25)',
           boxShadow: '0 8px 25px rgba(0, 0, 0, 0.25), 0 3px 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
-          minHeight: '400px' // Ensure enough height for all content
+          minHeight: '320px' // Smaller height for banner layout
         }}
         onMouseEnter={(e) => {
           if (!isEventPast) {
@@ -213,10 +213,10 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
           </div>
         )}
         
-        <div className="p-6 flex flex-col h-full">
-          {/* Image at top - 4:5 aspect ratio */}
+        <div className="p-4 flex flex-col h-full">
+          {/* Image at top - Banner aspect ratio (16:9) */}
           <div className="relative mb-4">
-            <div className="aspect-[4/5] w-full">
+            <div className="aspect-[16/9] w-full">
               {event.imageUrl && !imageError ? (
                 <div className="w-full h-full overflow-hidden rounded-xl bg-white/10">
                   <img 
@@ -236,18 +236,18 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
                 </div>
               ) : (
                 <div className="w-full h-full bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                  <span className="text-6xl">{getEventEmoji(event)}</span>
+                  <span className="text-4xl">{getEventEmoji(event)}</span>
                 </div>
               )}
             </div>
             
             {/* Date badge overlay */}
             {eventDate && (
-              <div className="absolute top-3 left-3 bg-white/15 text-white rounded-2xl p-3 text-center min-w-[60px] backdrop-blur-xl backdrop-saturate-150 backdrop-brightness-110 border border-white/25 shadow-2xl drop-shadow-lg">
+              <div className="absolute top-3 left-3 bg-white/15 text-white rounded-2xl p-2 text-center min-w-[50px] backdrop-blur-xl backdrop-saturate-150 backdrop-brightness-110 border border-white/25 shadow-2xl drop-shadow-lg">
                 <div className="text-xs font-medium uppercase leading-tight drop-shadow-sm">
                   {format(eventDate, "EE", { locale: de }).toUpperCase()}
                 </div>
-                <div className="text-lg font-bold leading-tight drop-shadow-sm">
+                <div className="text-sm font-bold leading-tight drop-shadow-sm">
                   {format(eventDate, "dd")}
                 </div>
                 <div className="text-xs leading-tight drop-shadow-sm">
@@ -258,10 +258,10 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
           </div>
 
           {/* Category Badge above title */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-2">
             {/* Free event emoji */}
             {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
-              <span className="text-xl">🆓</span>
+              <span className="text-lg">🆓</span>
             )}
             <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
               {event.category}
@@ -269,23 +269,23 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
           </div>
 
           {/* Title and content */}
-          <div className="flex-grow pb-16"> {/* Extra padding bottom for link button */}
-            <h3 className="text-lg font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight mb-2">
+          <div className="flex-grow pb-12"> {/* Padding bottom for link button */}
+            <h3 className="text-base font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight mb-1">
               {event.title}
             </h3>
             {event.subtitle && (
-              <p className="text-sm text-white/80 drop-shadow-sm mb-2 italic line-clamp-1">
+              <p className="text-sm text-white/80 drop-shadow-sm mb-1 italic line-clamp-1">
                 {event.subtitle}
               </p>
             )}
             {event.organizer && (
-              <p className="text-sm text-white/70 drop-shadow-sm mb-3 line-clamp-1">
+              <p className="text-sm text-white/70 drop-shadow-sm mb-2 line-clamp-1">
                 {event.organizer}
               </p>
             )}
             
             {/* Location, time and price */}
-            <div className="space-y-2 text-sm text-white/80 mb-3">
+            <div className="space-y-1 text-sm text-white/80 mb-2">
               {event.location && (
                 <div className="flex items-center">
                   <MapPin className="mr-1 h-4 w-4 text-white/60 flex-shrink-0" />
