@@ -319,11 +319,11 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                   {/* Events for this day */}
                   <div className="space-y-1">
                     {dayEvents.slice(0, 3).map((event, eventIndex) => {
-                      // Check if THIS SPECIFIC event instance is in the past
-                      const eventDate = new Date(event.date || '');
+                      // Check if THIS SPECIFIC DATE is in the past
+                      const specificDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
                       const todayMidnight = new Date();
                       todayMidnight.setHours(0, 0, 0, 0);
-                      const isEventPast = eventDate < todayMidnight;
+                      const isEventPast = specificDate < todayMidnight;
                       
                       return (
                         <div

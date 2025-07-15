@@ -100,6 +100,34 @@ export default function EventsPage() {
     return eventDate < today;
   };
 
+  // Helper function to check if an event has any future dates
+  const hasEventFutureDates = (event: Event): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Check main date
+    if (event.date) {
+      const mainDate = new Date(event.date);
+      if (mainDate >= today) return true;
+    }
+    
+    // Check additional dates in description (merged events)
+    if (event.description && event.description.startsWith('Termine:')) {
+      const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+      if (termineMatch) {
+        const dates = termineMatch[1].split(',').map(d => d.trim());
+        for (const dateStr of dates) {
+          if (dateStr) {
+            const eventDate = new Date(dateStr);
+            if (eventDate >= today) return true;
+          }
+        }
+      }
+    }
+    
+    return false;
+  };
+
   // Filtered and sorted events (includes all events, past events will be grayed out in components)
   const filteredEvents = useMemo(() => {
     let filtered = mergedEvents;
@@ -174,6 +202,17 @@ export default function EventsPage() {
 
     return filtered;
   }, [mergedEvents, searchQuery, selectedCategory, selectedAudience, dateFrom, dateTo, showFreeEventsOnly, sortOption]);
+
+  // Events for list and grid views - hide completely past events, but show events with future dates
+  const eventsForListAndGrid = useMemo(() => {
+    return filteredEvents.filter(event => {
+      // Show events that have any future dates (main date or additional dates)
+      return hasEventFutureDates(event);
+    });
+  }, [filteredEvents, hasEventFutureDates]);
+
+  // Events for calendar view - show all events (past events will be grayed out in calendar component)
+  const eventsForCalendar = filteredEvents;
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -265,7 +304,7 @@ export default function EventsPage() {
               <Skeleton className="h-4 w-32" />
             ) : (
               <>
-                <span>{filteredEvents.length}</span> Events gefunden
+                <span>{viewMode === "calendar" ? eventsForCalendar.length : eventsForListAndGrid.length}</span> Events gefunden
                 <span className="hidden sm:inline">{getFilterSummary()}</span>
               </>
             )}
@@ -337,7 +376,7 @@ export default function EventsPage() {
               </div>
             ))}
           </div>
-        ) : filteredEvents.length === 0 ? (
+        ) : (viewMode === "calendar" ? eventsForCalendar.length : eventsForListAndGrid.length) === 0 ? (
           <div className="text-center py-12">
             <CalendarX className="mx-auto h-12 w-12 text-white/50 mb-4" />
             <h3 className="text-lg font-medium text-white drop-shadow-sm mb-2">Keine Events gefunden</h3>
@@ -357,12 +396,12 @@ export default function EventsPage() {
             )}
           </div>
         ) : viewMode === "calendar" ? (
-          <CalendarView events={filteredEvents} onEventClick={handleEventClick} />
+          <CalendarView events={eventsForCalendar} onEventClick={handleEventClick} />
         ) : viewMode === "grid" ? (
-          <GridView events={filteredEvents} onEventClick={handleEventClick} />
+          <GridView events={eventsForListAndGrid} onEventClick={handleEventClick} />
         ) : (
           <div className="space-y-4">
-            {filteredEvents.map((event) => (
+            {eventsForListAndGrid.map((event) => (
               <EventCard 
                 key={event.notionId} 
                 event={event} 
