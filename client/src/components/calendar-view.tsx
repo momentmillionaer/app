@@ -78,6 +78,10 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
     });
   };
 
+  const goToToday = () => {
+    setCurrentDate(new Date());
+  };
+
   const monthNames = [
     "Januar", "Februar", "März", "April", "Mai", "Juni",
     "Juli", "August", "September", "Oktober", "November", "Dezember"
@@ -239,6 +243,14 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
         </h2>
         <div className="flex space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToToday}
+            className="bg-white/20 text-white border-white/20 hover:bg-white/30"
+          >
+            Heute
+          </Button>
           <Button
             variant="outline"
             size="sm"

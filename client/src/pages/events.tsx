@@ -513,17 +513,22 @@ export default function EventsPage() {
         />
 
         {/* Footer */}
-        <footer className="bg-white border-t border-gray-200 mt-16 rounded-lg">
+        <footer className="bg-white/10 border-t border-white/20 mt-16 rounded-lg backdrop-blur-sm">
           <div className="px-4 sm:px-6 lg:px-8 py-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="flex items-center mb-4 md:mb-0">
-                <span className="text-gray-600">Momentmillionär</span>
+                <span className="text-white/80 drop-shadow-sm">Momentmillionär</span>
               </div>
-              <div className="flex items-center space-x-6 text-sm text-gray-500">
+              <div className="flex items-center space-x-6 text-sm text-white/60">
                 <span>Powered by Notion API</span>
-                <a href="#" className="hover:text-gray-700">Kontakt</a>
-                <a href="#" className="hover:text-gray-700">Impressum</a>
+                <a href="mailto:info@morgen.co.at" className="hover:text-white/80 transition-colors">Kontakt</a>
+                <a href="https://www.morgen.co.at/impressum" target="_blank" rel="noopener noreferrer" className="hover:text-white/80 transition-colors">Impressum</a>
               </div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-white/20">
+              <p className="text-xs text-white/50 text-center">
+                Ich hafte nicht für die Inhalte auf dieser Seite / die Inhalte auf den verlinkten Seiten.
+              </p>
             </div>
           </div>
         </footer>

@@ -21,6 +21,12 @@ Preferred communication style: Simple, everyday language.
 - ✓ Subtitle field from Notion "Untertitel" property displayed in italic styling
 - ✓ Enhanced multi-date event handling with proper past/future date logic
 - ✓ Calendar grays out past events while list/grid hide them completely
+- ✓ Implemented banner-proportion images (16:9) for EventCards instead of square format
+- ✓ Made EventCards more compact with reduced heights and optimized spacing
+- ✓ Added automatic sync monitoring system with /api/sync-check endpoint
+- ✓ Created comprehensive sync-check tool to monitor Notion database synchronization
+- ✓ Implemented automatic sync checking every 5 minutes for live event updates
+- ✓ Verified correct database connection showing 100 events in Notion database
 
 **July 14, 2025 - iOS 26 Liquid Glass Design & Typography Updates**
 - ✓ Updated app to use dynamic "Kategorie" field from Notion database instead of predefined categories

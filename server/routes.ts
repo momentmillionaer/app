@@ -336,6 +336,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Sync check endpoint
+  app.get("/api/sync-check", async (req, res) => {
+    try {
+      const syncResult = await import("./sync-check").then(module => module.checkNotionEventsSync());
+      res.json(syncResult);
+    } catch (error) {
+      console.error("Error in sync check:", error);
+      res.status(500).json({ 
+        message: "Sync check failed",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
