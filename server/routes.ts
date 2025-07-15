@@ -5,20 +5,11 @@ import { cache } from "./cache";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Health check endpoint for deployment monitoring
-  app.get("/", (req, res) => {
-    res.json({ 
-      status: "healthy", 
-      message: "Momentmillionär Event Calendar API", 
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime()
-    });
-  });
-
+  // Health check endpoint for deployment monitoring (only /health, not root)
   app.get("/health", (req, res) => {
     res.json({ 
       status: "healthy", 
-      message: "Service is running", 
+      message: "Momentmillionär Event Calendar API", 
       timestamp: new Date().toISOString(),
       uptime: process.uptime()
     });
