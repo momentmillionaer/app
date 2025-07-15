@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Event } from '@/../../shared/schema';
 import { MapPin, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -83,22 +84,24 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
     >
       {children}
       
-      {/* Hover Preview Card */}
-      {isHovered && (
+      {/* Hover Preview Card - Portal to body */}
+      {isHovered && createPortal(
         <div
-          className="fixed z-[9999] w-80 pointer-events-none"
+          className="fixed z-[99999] w-80 pointer-events-none"
           style={{
-            left: `${Math.max(20, Math.min(window.innerWidth - 340, hoverPosition.x))}px`,
-            top: `${Math.max(20, hoverPosition.y - 200)}px`,
+            left: `${Math.max(20, Math.min(window.innerWidth - 340, hoverPosition.x - 160))}px`,
+            top: `${Math.max(20, hoverPosition.y - 320)}px`,
             transform: 'none'
           }}
         >
           <div
-            className="rounded-2xl transition-all duration-300 shadow-2xl overflow-hidden bg-white/20 backdrop-blur-[30px] border border-white/25"
+            className="rounded-2xl shadow-2xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200"
             style={{
-              backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
-              WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
-              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3), 0 3px 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.25)'
+              background: 'rgba(255, 255, 255, 0.25)',
+              backdropFilter: 'blur(30px) saturate(140%) brightness(1.2)',
+              WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.2)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4), 0 8px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
             }}
           >
             <div className="p-4">
@@ -171,7 +174,8 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
