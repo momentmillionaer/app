@@ -168,6 +168,157 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
     return '🎉';
   };
 
+  // Grid layout for calendar view - vertical card
+  if (viewMode === 'grid') {
+    return (
+      <div 
+        className={`rounded-[2rem] transition-all duration-500 cursor-pointer shadow-xl overflow-hidden relative ${
+          isEventPast ? 'opacity-60' : ''
+        }`}
+        style={{
+          background: isEventPast ? 'rgba(128, 128, 128, 0.15)' : 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
+          WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
+          border: isEventPast ? '1px solid rgba(128, 128, 128, 0.25)' : '1px solid rgba(255, 255, 255, 0.25)',
+          boxShadow: '0 8px 25px rgba(0, 0, 0, 0.25), 0 3px 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
+          minHeight: '400px' // Ensure enough height for all content
+        }}
+        onMouseEnter={(e) => {
+          if (!isEventPast) {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
+            e.currentTarget.style.backdropFilter = 'blur(35px) saturate(160%) brightness(1.15)';
+            e.currentTarget.style.WebkitBackdropFilter = 'blur(35px) saturate(160%) brightness(1.15)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isEventPast) {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+            e.currentTarget.style.backdropFilter = 'blur(30px) saturate(140%) brightness(1.1)';
+            e.currentTarget.style.WebkitBackdropFilter = 'blur(30px) saturate(140%) brightness(1.1)';
+          }
+        }}
+        onClick={onClick}
+      >
+        {/* Website Link Button - iOS Control Center Style */}
+        {event.website && (
+          <div 
+            className="absolute bottom-4 right-4 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-200 hover:scale-110 z-10"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(event.website, '_blank');
+            }}
+            title="Website öffnen"
+          >
+            <span className="text-lg">🔗</span>
+          </div>
+        )}
+        
+        <div className="p-6 flex flex-col h-full">
+          {/* Image at top - 4:5 aspect ratio */}
+          <div className="relative mb-4">
+            <div className="aspect-[4/5] w-full">
+              {event.imageUrl && !imageError ? (
+                <div className="w-full h-full overflow-hidden rounded-xl bg-white/10">
+                  <img 
+                    src={event.imageUrl} 
+                    alt={event.title}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    crossOrigin="anonymous"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      console.error('Image failed to load:', event.imageUrl);
+                      setImageError(true);
+                    }}
+                    onLoad={() => {
+                      console.log('Image loaded successfully:', event.imageUrl);
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-full bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                  <span className="text-6xl">{getEventEmoji(event)}</span>
+                </div>
+              )}
+            </div>
+            
+            {/* Date badge overlay */}
+            {eventDate && (
+              <div className="absolute top-3 left-3 bg-white/15 text-white rounded-2xl p-3 text-center min-w-[60px] backdrop-blur-xl backdrop-saturate-150 backdrop-brightness-110 border border-white/25 shadow-2xl drop-shadow-lg">
+                <div className="text-xs font-medium uppercase leading-tight drop-shadow-sm">
+                  {format(eventDate, "EE", { locale: de }).toUpperCase()}
+                </div>
+                <div className="text-lg font-bold leading-tight drop-shadow-sm">
+                  {format(eventDate, "dd")}
+                </div>
+                <div className="text-xs leading-tight drop-shadow-sm">
+                  {format(eventDate, "MMM", { locale: de }).toUpperCase()}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Category Badge above title */}
+          <div className="flex items-center gap-2 mb-3">
+            {/* Free event emoji */}
+            {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
+              <span className="text-xl">🆓</span>
+            )}
+            <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
+              {event.category}
+            </Badge>
+          </div>
+
+          {/* Title and content */}
+          <div className="flex-grow pb-16"> {/* Extra padding bottom for link button */}
+            <h3 className="text-lg font-semibold text-white drop-shadow-sm line-clamp-2 tracking-tight mb-2">
+              {event.title}
+            </h3>
+            {event.subtitle && (
+              <p className="text-sm text-white/80 drop-shadow-sm mb-2 italic line-clamp-1">
+                {event.subtitle}
+              </p>
+            )}
+            {event.organizer && (
+              <p className="text-sm text-white/70 drop-shadow-sm mb-3 line-clamp-1">
+                {event.organizer}
+              </p>
+            )}
+            
+            {/* Location, time and price */}
+            <div className="space-y-2 text-sm text-white/80 mb-3">
+              {event.location && (
+                <div className="flex items-center">
+                  <MapPin className="mr-1 h-4 w-4 text-white/60 flex-shrink-0" />
+                  <span className="line-clamp-1">{event.location}</span>
+                </div>
+              )}
+              {event.time && (
+                <div className="flex items-center">
+                  <Clock className="mr-1 h-4 w-4 text-white/60 flex-shrink-0" />
+                  <span>{event.time}</span>
+                </div>
+              )}
+              {event.price && event.price !== "0" && event.price !== "" && parseFloat(event.price) > 0 && (
+                <div className="flex items-center">
+                  <span className="mr-1 text-white/60">€</span>
+                  <span>{event.price}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Description */}
+            {event.description && event.description !== "Details" && !event.description.startsWith('Termine:') && (
+              <p className="text-white/70 text-xs line-clamp-2 drop-shadow-sm">
+                {event.description}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Original horizontal layout for list view
   return (
     <div 
       className={`rounded-[2rem] transition-all duration-500 cursor-pointer shadow-xl overflow-hidden relative ${

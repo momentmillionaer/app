@@ -403,7 +403,7 @@ export default function EventsPage() {
           </div>
           
           {/* View Mode Toggle - Always Centered */}
-          <div className="flex items-center justify-center space-x-4">
+          <div className="flex flex-col items-center space-y-4">
             <div className="flex items-center liquid-glass-button rounded-2xl p-2">
               <Button
                 variant={viewMode === "calendar" ? "default" : "ghost"}
