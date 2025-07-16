@@ -143,6 +143,13 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
                     className="w-full h-full object-cover"
                     crossOrigin="anonymous"
                     referrerPolicy="no-referrer"
+                    loading="lazy"
+                    onError={(e) => {
+                      console.error('Image failed to load:', event.imageUrl);
+                    }}
+                    onLoad={() => {
+                      console.log('Image loaded successfully:', event.imageUrl);
+                    }}
                   />
                 ) : (
                   <div className="w-full h-full bg-white/10 rounded-xl flex items-center justify-center">

@@ -205,19 +205,7 @@ export function GridView({ events, onEventClick }: GridViewProps) {
             }}
             onClick={() => onEventClick?.(event)}
           >
-            {/* Website Link Button - iOS Control Center Style */}
-            {event.website && (
-              <div 
-                className="absolute top-3 right-3 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-200 hover:scale-110 z-10 opacity-0 group-hover:opacity-100"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.open(event.website, '_blank');
-                }}
-                title="Website öffnen"
-              >
-                <span className="text-sm">🔗</span>
-              </div>
-            )}
+
 
             {/* Event Image Background */}
             <div className="absolute inset-0">
@@ -227,7 +215,12 @@ export function GridView({ events, onEventClick }: GridViewProps) {
                   alt={event.title}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 blur-[1px] group-hover:blur-0"
                   crossOrigin="anonymous"
-                  onError={() => handleImageError(event.notionId || '')}
+                  referrerPolicy="no-referrer"
+                  loading="lazy"
+                  onError={() => {
+                    console.error('Image failed to load:', event.imageUrl);
+                    handleImageError(event.notionId || '');
+                  }}
                   onLoad={() => {
                     console.log('Image loaded successfully:', event.imageUrl);
                   }}

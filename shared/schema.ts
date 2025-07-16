@@ -35,6 +35,7 @@ export const events = pgTable("events", {
   organizer: text("organizer"),
   attendees: text("attendees"),
   imageUrl: text("image_url"),
+  documentsUrls: text("documents_urls").array(), // For documents from Notion files property
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

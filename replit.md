@@ -38,6 +38,18 @@ Preferred communication style: Simple, everyday language.
 - ✓ Created comprehensive sync-check tool to monitor Notion database synchronization
 - ✓ Implemented automatic sync checking every 5 minutes for live event updates
 
+**July 16, 2025 - Enhanced Image Loading & Document Support**
+- ✓ Fixed complex emoji parsing issues by implementing direct category mapping for known categories
+- ✓ Added robust character-by-character emoji extraction with Unicode range checking
+- ✓ Removed problematic hover link button from grid view that overlapped with free emoji
+- ✓ Removed redundant Website field from event modal (blue button already handles links)
+- ✓ Added document support from Notion "Dateien" property in event cards and modal
+- ✓ Enhanced image loading with referrerPolicy="no-referrer" and loading="lazy" across all components
+- ✓ Implemented comprehensive error logging for image loading failures
+- ✓ Added documentsUrls field to event schema for PDF and document file support
+- ✓ Documents displayed as clickable badges in event cards with file type icons
+- ✓ Event modal shows documents section with file name extraction from URLs
+
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
 - ✓ Added health check endpoints at / and /health for deployment monitoring

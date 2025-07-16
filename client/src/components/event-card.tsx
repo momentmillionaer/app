@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 import { de } from "date-fns/locale";
-import { MapPin, Clock } from "lucide-react";
+import { MapPin, Clock, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import type { Event } from "@shared/schema";
@@ -377,6 +377,7 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
                   className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                   crossOrigin="anonymous"
                   referrerPolicy="no-referrer"
+                  loading="lazy"
                   onError={(e) => {
                     console.error('Image failed to load:', event.imageUrl);
                     setImageError(true);
@@ -475,6 +476,33 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
           </div>
 
 
+
+          {/* Documents section */}
+          {event.documentsUrls && event.documentsUrls.length > 0 && (
+            <div className="mb-3">
+              <div className="text-white/80 text-xs mb-2 drop-shadow-sm font-medium">
+                📄 Dokumente:
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {event.documentsUrls.slice(0, 2).map((docUrl, index) => {
+                  const fileName = docUrl.split('/').pop()?.split('?')[0] || `Dokument ${index + 1}`;
+                  return (
+                    <a
+                      key={index}
+                      href={docUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center space-x-1 bg-white/15 hover:bg-white/25 text-white rounded-lg px-2 py-1 text-xs transition-colors border border-white/25"
+                    >
+                      <FileText className="h-3 w-3" />
+                      <span className="truncate max-w-20">{fileName.length > 15 ? fileName.substring(0, 15) + '...' : fileName}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Additional dates section */}
           {event.description && event.description.startsWith('Termine:') && (

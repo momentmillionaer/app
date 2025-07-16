@@ -1,4 +1,4 @@
-import { X, Calendar, MapPin, Clock, Euro, ExternalLink, Users } from "lucide-react";
+import { X, Calendar, MapPin, Clock, Euro, ExternalLink, Users, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Event } from "@shared/schema";
@@ -59,6 +59,13 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
               className="w-full h-full object-cover"
               crossOrigin="anonymous"
               referrerPolicy="no-referrer"
+              loading="lazy"
+              onError={(e) => {
+                console.error('Image failed to load:', event.imageUrl);
+              }}
+              onLoad={() => {
+                console.log('Image loaded successfully:', event.imageUrl);
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           </div>
@@ -257,27 +264,38 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                   </div>
                 </div>
               )}
+
+              {/* Documents */}
+              {event.documentsUrls && event.documentsUrls.length > 0 && (
+                <div className="liquid-glass p-4 rounded-2xl col-span-full">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <FileText className="h-5 w-5 text-brand-purple" />
+                    <div>
+                      <p className="text-sm text-white/70 drop-shadow-sm">Dokumente</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {event.documentsUrls.map((docUrl, index) => {
+                      const fileName = docUrl.split('/').pop()?.split('?')[0] || `Dokument ${index + 1}`;
+                      return (
+                        <a
+                          key={index}
+                          href={docUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center space-x-2 bg-white/10 hover:bg-white/20 text-white rounded-xl px-3 py-2 text-sm transition-colors"
+                        >
+                          <FileText className="h-4 w-4" />
+                          <span className="truncate max-w-32">{fileName}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Website Link */}
-            {event.website && (
-              <div className="liquid-glass p-4 rounded-2xl">
-                <a
-                  href={event.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-3 text-brand-blue hover:text-brand-lime transition-colors group"
-                >
-                  <ExternalLink className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                  <div>
-                    <p className="text-sm text-white/70 drop-shadow-sm">Website</p>
-                    <p className="font-medium drop-shadow-sm text-white">
-                      Mehr Informationen & Tickets
-                    </p>
-                  </div>
-                </a>
-              </div>
-            )}
+
           </div>
 
           {/* Action Buttons */}

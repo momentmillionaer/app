@@ -153,10 +153,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
 
-        // Extract image URL from "Dateien" property with better filtering
+        // Extract image URL and documents from "Dateien" property with better filtering
         let imageUrl = "";
+        let documentsUrls: string[] = [];
+        
         if (properties.Dateien?.files && properties.Dateien.files.length > 0) {
-          // Find first actual image file (not PDF or other documents)
           for (const file of properties.Dateien.files) {
             let url = "";
             if (file.type === "file") {
@@ -165,7 +166,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
               url = file.external.url;
             }
             
-            // More robust image detection
             if (url) {
               const lowerUrl = url.toLowerCase();
               const isImageFile = lowerUrl.includes('.jpg') || lowerUrl.includes('.jpeg') || 
@@ -178,13 +178,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
                                 lowerUrl.includes('imgur.com') ||
                                 lowerUrl.includes('cloudinary.com');
               
-              // Exclude obvious non-image files
-              const isNonImage = lowerUrl.includes('.pdf') || lowerUrl.includes('.doc') || 
-                               lowerUrl.includes('.txt') || lowerUrl.includes('.zip');
+              // Check for document files
+              const isDocumentFile = lowerUrl.includes('.pdf') || lowerUrl.includes('.doc') || 
+                                    lowerUrl.includes('.docx') || lowerUrl.includes('.txt') || 
+                                    lowerUrl.includes('.zip') || lowerUrl.includes('.ppt') ||
+                                    lowerUrl.includes('.pptx') || lowerUrl.includes('.xls') ||
+                                    lowerUrl.includes('.xlsx');
               
-              if ((isImageFile || isImageHost) && !isNonImage) {
-                imageUrl = url;
-                break; // Use first valid image found
+              if ((isImageFile || isImageHost) && !isDocumentFile && !imageUrl) {
+                imageUrl = url; // Use first valid image found
+              } else if (isDocumentFile) {
+                documentsUrls.push(url); // Collect all document files
               }
             }
           }
@@ -262,7 +266,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             return "Event Partner";
           })(),
           attendees: properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name).join(", ") || "",
-          imageUrl: imageUrl
+          imageUrl: imageUrl,
+          documentsUrls: documentsUrls
         };
       }));
 
