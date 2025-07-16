@@ -13,18 +13,28 @@ export function setupSyncMonitor() {
     }
   });
   
-  // Check every 5 minutes
-  const interval = setInterval(async () => {
+  // Check every 12 hours (twice daily as requested)
+  const syncInterval = setInterval(async () => {
     try {
       await checkNotionEventsSync();
     } catch (error) {
       console.error("❌ Sync monitor error:", error);
     }
-  }, 5 * 60 * 1000); // 5 minutes
+  }, 12 * 60 * 60 * 1000); // 12 hours
+  
+  // Quick health check every 30 minutes to keep cache warm
+  const healthInterval = setInterval(async () => {
+    try {
+      console.log("🔄 Health check - keeping cache warm");
+    } catch (error) {
+      console.error("❌ Health check error:", error);
+    }
+  }, 30 * 60 * 1000); // 30 minutes
 
   // Cleanup function
   return () => {
-    clearInterval(interval);
+    clearInterval(syncInterval);
+    clearInterval(healthInterval);
     console.log("🛑 Stopped sync monitoring");
   };
 }

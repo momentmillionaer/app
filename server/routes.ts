@@ -94,9 +94,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           console.log(`Loaded ${response.results.length} events (batch), total: ${allEvents.length}, hasMore: ${response.has_more}`);
           
-          // Add delay to prevent rate limiting
+          // Add exponential backoff delay to prevent rate limiting
           if (hasMore) {
-            await new Promise(resolve => setTimeout(resolve, 100));
+            const delay = Math.min(200 * Math.pow(1.5, Math.floor(allEvents.length / 100)), 2000);
+            await new Promise(resolve => setTimeout(resolve, delay));
           }
         }
         
@@ -106,14 +107,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } catch (searchError) {
         console.error("Error searching for Momente database:", searchError);
         
-        // Handle rate limiting specifically
+        // Handle rate limiting specifically - use expired cache as fallback
         if (searchError.code === 'rate_limited') {
-          console.log("Rate limited, checking for cached events");
-          const cachedEvents = cache.get("events");
-          if (cachedEvents) {
-            console.log("Returning cached events due to rate limit");
-            return res.json(cachedEvents);
+          console.log("Rate limited, checking for any cached events (including expired)");
+          
+          // First try expired regular cache
+          let fallbackEvents = cache.getExpiredCache("events");
+          
+          // Then try long-term backup cache
+          if (!fallbackEvents) {
+            fallbackEvents = cache.get("events-backup");
           }
+          
+          // Finally try expired backup cache
+          if (!fallbackEvents) {
+            fallbackEvents = cache.getExpiredCache("events-backup");
+          }
+          
+          if (fallbackEvents) {
+            console.log("Returning cached events due to rate limit");
+            res.set('X-Cache', 'fallback');
+            res.set('X-Cache-Warning', 'rate-limited-fallback');
+            return res.json(fallbackEvents);
+          }
+          
           return res.status(429).json({ 
             error: "Rate limited",
             message: "Zu viele Anfragen. Die Events werden in wenigen Minuten wieder verfügbar sein.",
@@ -197,21 +214,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
           
-          // If we have multiple images, prioritize non-problematic ones
+          // If we have multiple images, prioritize high-quality, accessible ones
           if (allImageUrls.length > 1) {
-            // Prefer simpler file extensions and shorter URLs
+            // Prefer reliable hosting and good formats
             const sortedImages = allImageUrls.sort((a, b) => {
-              const aSimple = a.includes('.jpg') || a.includes('.png');
-              const bSimple = b.includes('.jpg') || b.includes('.png');
-              const aShort = a.length < 200;
-              const bShort = b.length < 200;
+              // Priority 1: AWS S3 hosting (most reliable)
+              const aIsAWS = a.includes('prod-files-secure.s3.us-west-2.amazonaws.com');
+              const bIsAWS = b.includes('prod-files-secure.s3.us-west-2.amazonaws.com');
               
-              if (aSimple && !bSimple) return -1;
-              if (!aSimple && bSimple) return 1;
-              if (aShort && !bShort) return -1;
-              if (!aShort && bShort) return 1;
+              // Priority 2: Common image formats
+              const aGoodFormat = a.includes('.jpg') || a.includes('.png') || a.includes('.webp');
+              const bGoodFormat = b.includes('.jpg') || b.includes('.png') || b.includes('.webp');
               
-              return a.length - b.length; // Prefer shorter URLs
+              // Priority 3: Reasonable URL length
+              const aReasonableLength = a.length < 300;
+              const bReasonableLength = b.length < 300;
+              
+              if (aIsAWS && !bIsAWS) return -1;
+              if (!aIsAWS && bIsAWS) return 1;
+              if (aGoodFormat && !bGoodFormat) return -1;
+              if (!aGoodFormat && bGoodFormat) return 1;
+              if (aReasonableLength && !bReasonableLength) return -1;
+              if (!aReasonableLength && bReasonableLength) return 1;
+              
+              return a.length - b.length; // Prefer shorter URLs as tiebreaker
             });
             
             imageUrl = sortedImages[0];
@@ -295,8 +321,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       }));
 
-      // Cache the events for 5 minutes
-      cache.set("events", eventsWithRelations, 5);
+      // Cache the events for 30 minutes (for frequent access)
+      cache.set("events", eventsWithRelations, 30);
+      
+      // Also cache for 24 hours as backup
+      cache.setLongTerm("events-backup", eventsWithRelations, 24);
       
       res.json(eventsWithRelations);
     } catch (error) {
@@ -364,7 +393,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           page_size: 100
         });
       } catch (searchError) {
-        console.error("Error searching for Momente database:", searchError);
+        console.error("Error searching for Momente database (categories):", searchError);
+        
+        // Handle rate limiting for categories
+        if (searchError.code === 'rate_limited') {
+          const cachedCategories = cache.getExpiredCache("categories");
+          if (cachedCategories) {
+            console.log("Returning expired cached categories due to rate limit");
+            res.set('X-Cache', 'expired-fallback');
+            return res.json(cachedCategories);
+          }
+        }
+        
         return res.status(500).json({ 
           error: "Database search failed",
           message: "Fehler beim Suchen der Momente-Datenbank"
@@ -380,8 +420,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const sortedCategories = Array.from(categoriesSet).sort();
       
-      // Cache categories for 10 minutes
-      cache.set("categories", sortedCategories, 10);
+      // Cache categories for 60 minutes (longer since they change rarely)
+      cache.set("categories", sortedCategories, 60);
+      
+      // Also store as long-term backup
+      cache.setLongTerm("categories-backup", sortedCategories, 24);
       
       res.json(sortedCategories);
     } catch (error) {

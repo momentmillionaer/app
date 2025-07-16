@@ -70,6 +70,18 @@ Preferred communication style: Simple, everyday language.
 - ✓ Removed filter summary text from event count display
 - ✓ Created new Footer component with copyright, Impressum/Kontakt links, and tagline
 - ✓ Footer shows "© momentmillionär" with "Dein Weg zu unvergesslichen Momenten in Graz" tagline
+- ✓ Added user's profile image to Instagram section without additional frames
+- ✓ Enhanced text with emoji decoration for better visual appeal
+
+**July 16, 2025 - Performance & Reliability Optimizations**
+- ✓ Notion database sync frequency changed to twice daily (12-hour intervals) as requested
+- ✓ Enhanced caching system: Events cached for 30 minutes with 24-hour backup cache
+- ✓ Improved rate limiting handling with multi-level fallback cache system
+- ✓ Categories cached for 60 minutes (instead of 10) with 24-hour backup
+- ✓ Enhanced image loading with smart retry mechanisms and graceful fallbacks
+- ✓ Prioritized AWS S3 images for better reliability and loading performance
+- ✓ Added exponential backoff for Notion API pagination to prevent rate limiting
+- ✓ Comprehensive error handling ensures app stays functional during API issues
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server

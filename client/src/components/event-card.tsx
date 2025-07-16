@@ -228,6 +228,17 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
                     referrerPolicy="no-referrer"
                     onError={(e) => {
                       console.error('Image failed to load:', event.imageUrl);
+                      
+                      // First fallback: try URL without parameters
+                      const urlWithoutParams = event.imageUrl.split('?')[0];
+                      if (e.currentTarget.src !== urlWithoutParams && !e.currentTarget.dataset.retried) {
+                        console.log('Retrying with URL without parameters:', urlWithoutParams);
+                        e.currentTarget.dataset.retried = 'true';
+                        e.currentTarget.src = urlWithoutParams;
+                        return;
+                      }
+                      
+                      // Final fallback: use emoji instead
                       setImageError(true);
                     }}
                     onLoad={() => {

@@ -17,6 +17,17 @@ class MemoryCache {
     });
     console.log(`Cached ${key} for ${ttlMinutes} minutes`);
   }
+  
+  // Extended cache with longer TTL for critical data
+  setLongTerm(key: string, data: any, ttlHours: number = 24): void {
+    const ttl = ttlHours * 60 * 60 * 1000; // Convert to milliseconds
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now(),
+      ttl
+    });
+    console.log(`Long-term cached ${key} for ${ttlHours} hours`);
+  }
 
   get(key: string): any | null {
     const cached = this.cache.get(key);
