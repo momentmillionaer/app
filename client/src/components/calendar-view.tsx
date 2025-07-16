@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Event } from "@shared/schema";
 import { EventCard } from "./event-card";
 import { CalendarEventHover } from "./calendar-event-hover";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CalendarViewProps {
   events: Event[];
@@ -14,6 +15,7 @@ interface CalendarViewProps {
 
 export function CalendarView({ events, onEventClick }: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const isMobile = useIsMobile();
 
   // Get the first day of the month and calculate calendar grid
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -76,6 +78,34 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
       }
       return newDate;
     });
+  };
+
+  const navigateWeek = (direction: 'prev' | 'next') => {
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setDate(newDate.getDate() - 7);
+      } else {
+        newDate.setDate(newDate.getDate() + 7);
+      }
+      return newDate;
+    });
+  };
+
+  // Week calculation for mobile
+  const getWeekDays = () => {
+    const startOfWeek = new Date(currentDate);
+    const day = startOfWeek.getDay();
+    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Monday as first day
+    startOfWeek.setDate(diff);
+    
+    const weekDays = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(startOfWeek);
+      date.setDate(startOfWeek.getDate() + i);
+      weekDays.push(date);
+    }
+    return weekDays;
   };
 
   const goToToday = () => {
@@ -235,6 +265,156 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
     return "px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200";
   };
 
+  // Mobile Week View
+  if (isMobile) {
+    const weekDays = getWeekDays();
+    const weekStart = weekDays[0];
+    const weekEnd = weekDays[6];
+    
+    return (
+      <div className="space-y-4">
+        {/* Week Header */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white drop-shadow-lg">
+            {weekStart.getDate()}.{weekStart.getMonth() + 1}. - {weekEnd.getDate()}.{weekEnd.getMonth() + 1}.{weekEnd.getFullYear()}
+          </h2>
+          <div className="flex space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigateWeek('prev')}
+              className="rounded-full bg-white/10 border-white/25 text-white hover:bg-white/20"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={goToToday}
+              className="rounded-full bg-white/10 border-white/25 text-white hover:bg-white/20 px-3"
+            >
+              Heute
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigateWeek('next')}
+              className="rounded-full bg-white/10 border-white/25 text-white hover:bg-white/20"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+        
+        {/* Week Days - Vertical List */}
+        <div className="space-y-3">
+          {weekDays.map((date, index) => {
+            const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+            const dayEvents = eventsByDate[dateKey] || [];
+            const isToday = new Date().toDateString() === date.toDateString();
+            const dayName = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][index];
+            
+            return (
+              <div
+                key={index}
+                className={`rounded-2xl transition-all duration-300 ${
+                  isToday 
+                    ? 'bg-white/25 border-2 border-brand-orange/50' 
+                    : 'bg-white/10 border border-white/20'
+                }`}
+                style={{
+                  backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
+                }}
+              >
+                {/* Day Header */}
+                <div className="p-3 border-b border-white/20">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-semibold text-white text-sm">
+                        {dayName}
+                      </span>
+                      <span className={`text-lg font-bold ${isToday ? 'text-brand-orange' : 'text-white'}`}>
+                        {date.getDate()}
+                      </span>
+                    </div>
+                    {dayEvents.length > 0 && (
+                      <Badge className="bg-brand-purple/20 text-white border-brand-purple/30 text-xs">
+                        {dayEvents.length} Event{dayEvents.length !== 1 ? 's' : ''}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Events for this day */}
+                <div className="p-3">
+                  {dayEvents.length === 0 ? (
+                    <p className="text-white/50 text-sm italic">Keine Events</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {dayEvents.slice(0, 3).map((event, eventIndex) => {
+                        const isPast = (() => {
+                          const today = new Date();
+                          const eventDate = new Date(event.date);
+                          return eventDate < today;
+                        })();
+                        
+                        return (
+                          <div
+                            key={eventIndex}
+                            onClick={() => onEventClick?.(event)}
+                            className={`p-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
+                              isPast ? 'opacity-60' : ''
+                            }`}
+                            style={{
+                              background: isPast ? 'rgba(128, 128, 128, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+                              backdropFilter: 'blur(10px)',
+                              WebkitBackdropFilter: 'blur(10px)',
+                            }}
+                          >
+                            <div className="flex items-start space-x-2">
+                              <span className="text-lg flex-shrink-0 mt-0.5">
+                                {getEventEmoji(event)}
+                              </span>
+                              <div className="flex-grow min-w-0">
+                                <h4 className="font-medium text-white text-sm leading-tight line-clamp-2">
+                                  {event.title}
+                                </h4>
+                                {event.time && (
+                                  <p className="text-white/70 text-xs mt-0.5">
+                                    {event.time}
+                                  </p>
+                                )}
+                                {event.location && (
+                                  <p className="text-white/60 text-xs truncate">
+                                    📍 {event.location}
+                                  </p>
+                                )}
+                              </div>
+                              {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
+                                <span className="text-xs">🆓</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {dayEvents.length > 3 && (
+                        <p className="text-white/50 text-xs text-center italic">
+                          +{dayEvents.length - 3} weitere Events
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop Month View
   return (
     <div className="space-y-6">
       {/* Calendar Header */}
