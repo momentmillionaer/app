@@ -399,8 +399,12 @@ export default function EventsPage() {
               <Skeleton className="h-4 w-32" />
             ) : (
               <>
-                <span>{viewMode === "calendar" ? eventsForCalendar.length : eventsForListAndGrid.length}</span> Events gefunden
-                <span className="hidden sm:inline">{getFilterSummary()}</span>
+                <span className="font-connihof text-lg tracking-tight">Juli 2025</span>
+                <br />
+                <span className="font-connihof text-base tracking-tight">Alle Events im Juli</span>
+                <br />
+                <span className="text-sm mt-2 block">{viewMode === "calendar" ? eventsForCalendar.length : eventsForListAndGrid.length} Events gefunden</span>
+                <span className="hidden sm:inline text-sm">{getFilterSummary()}</span>
               </>
             )}
           </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -20,12 +20,15 @@ export function DateRangePicker({
   onDateToChange
 }: DateRangePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [mode, setMode] = useState<"single" | "range">("range");
-  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({
-    from: dateFrom ? new Date(dateFrom) : undefined,
-    to: dateTo ? new Date(dateTo) : undefined,
-  });
+  const [tempDateFrom, setTempDateFrom] = useState<Date | undefined>(
+    dateFrom ? new Date(dateFrom) : undefined
+  );
+  const [tempDateTo, setTempDateTo] = useState<Date | undefined>(
+    dateTo ? new Date(dateTo) : undefined
+  );
+  const [pendingUpdate, setPendingUpdate] = useState<NodeJS.Timeout | null>(null);
 
+  // Format display text
   const formatDateRange = () => {
     if (dateFrom && dateTo) {
       const from = format(new Date(dateFrom), "dd.MM.yyyy", { locale: de });
@@ -38,159 +41,186 @@ export function DateRangePicker({
     }
   };
 
-  const handleDateSelect = (date: Date | undefined | { from?: Date; to?: Date }) => {
-    if (!date) return;
+  // Update filters with delay after date selection
+  const updateFiltersWithDelay = (from?: Date, to?: Date) => {
+    // Clear previous timeout
+    if (pendingUpdate) {
+      clearTimeout(pendingUpdate);
+    }
 
-    if (mode === "single") {
-      if (date instanceof Date) {
-        setDateRange({ from: date, to: undefined });
-        // Auto-apply for single date selection for better UX
-        setTimeout(() => {
-          onDateFromChange(date.toISOString().split('T')[0]);
-          onDateToChange(""); // Clear any existing end date
-          setIsOpen(false);
-        }, 100);
+    // Set new timeout for delayed filter update
+    const timeout = setTimeout(() => {
+      if (from) {
+        onDateFromChange(from.toISOString().split('T')[0]);
+      } else {
+        onDateFromChange("");
       }
-    } else if (mode === "range") {
-      if (typeof date === 'object' && 'from' in date) {
-        // Range object from calendar (this is the proper way for range selection)
-        setDateRange(date);
-        
-        // If we have a complete range, auto-apply it
-        if (date.from && date.to) {
-          setTimeout(() => {
-            onDateFromChange(date.from!.toISOString().split('T')[0]);
-            onDateToChange(date.to!.toISOString().split('T')[0]);
-            setIsOpen(false);
-          }, 100);
-        }
-      } else if (date instanceof Date) {
-        // Single date click in range mode - start new range
-        if (!dateRange.from || (dateRange.from && dateRange.to)) {
-          setDateRange({ from: date, to: undefined });
-        } else {
-          // Complete range
-          if (date < dateRange.from) {
-            setDateRange({ from: date, to: dateRange.from });
-          } else {
-            setDateRange({ from: dateRange.from, to: date });
-          }
-        }
+      
+      if (to) {
+        onDateToChange(to.toISOString().split('T')[0]);
+      } else {
+        onDateToChange("");
       }
+      setPendingUpdate(null);
+    }, 800); // 800ms delay
+
+    setPendingUpdate(timeout);
+  };
+
+  // Handle calendar date selection for range mode
+  const handleDateSelect = (range: { from?: Date; to?: Date } | undefined) => {
+    if (!range) return;
+    
+    setTempDateFrom(range.from);
+    setTempDateTo(range.to);
+    
+    // Auto-apply with delay when both dates are selected
+    if (range.from && range.to) {
+      updateFiltersWithDelay(range.from, range.to);
+    } else if (range.from && !range.to) {
+      // Only start date selected, update immediately but clear end date
+      updateFiltersWithDelay(range.from, undefined);
     }
   };
 
-  const handleApply = () => {
-    applyDates();
-  };
-
-  const handleCancel = () => {
-    setDateRange({
-      from: dateFrom ? new Date(dateFrom) : undefined,
-      to: dateTo ? new Date(dateTo) : undefined,
-    });
-    setIsOpen(false);
-  };
-
+  // Quick selection handlers
   const handleToday = () => {
     const today = new Date();
-    setDateRange({ from: today, to: mode === "single" ? undefined : dateRange.to });
-    if (mode === "single") {
-      // Auto-apply today for single date mode
-      onDateFromChange(today.toISOString().split('T')[0]);
-      onDateToChange("");
-      setIsOpen(false);
-    }
+    setTempDateFrom(today);
+    setTempDateTo(today);
+    updateFiltersWithDelay(today, today);
+  };
+
+  const handleThisWeek = () => {
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Monday
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday
+    
+    setTempDateFrom(startOfWeek);
+    setTempDateTo(endOfWeek);
+    updateFiltersWithDelay(startOfWeek, endOfWeek);
+  };
+
+  const handleThisMonth = () => {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    setTempDateFrom(startOfMonth);
+    setTempDateTo(endOfMonth);
+    updateFiltersWithDelay(startOfMonth, endOfMonth);
   };
 
   const handleClear = () => {
-    setDateRange({ from: undefined, to: undefined });
+    setTempDateFrom(undefined);
+    setTempDateTo(undefined);
+    updateFiltersWithDelay(undefined, undefined);
   };
+
+  const handleCancel = () => {
+    // Reset to current filter values
+    setTempDateFrom(dateFrom ? new Date(dateFrom) : undefined);
+    setTempDateTo(dateTo ? new Date(dateTo) : undefined);
+    setIsOpen(false);
+  };
+
+  const handleApply = () => {
+    // Apply current temp values immediately
+    if (pendingUpdate) {
+      clearTimeout(pendingUpdate);
+      setPendingUpdate(null);
+    }
+    
+    if (tempDateFrom) {
+      onDateFromChange(tempDateFrom.toISOString().split('T')[0]);
+    } else {
+      onDateFromChange("");
+    }
+    
+    if (tempDateTo) {
+      onDateToChange(tempDateTo.toISOString().split('T')[0]);
+    } else {
+      onDateToChange("");
+    }
+    
+    setIsOpen(false);
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (pendingUpdate) {
+        clearTimeout(pendingUpdate);
+      }
+    };
+  }, [pendingUpdate]);
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
-          className="rounded-full border-0 liquid-glass bg-white/20 text-white hover:bg-white/30 justify-start text-left font-normal min-w-[200px]"
+          variant="ghost"
+          className="w-full justify-start text-left font-normal rounded-full h-10 bg-white/20 text-white hover:bg-white/30 border-0 backdrop-blur-xl transition-all duration-300"
         >
-          <CalendarDays className="mr-2 h-4 w-4 text-white/60" />
-          <span className="text-white/90">
-            {formatDateRange()}
-          </span>
+          <CalendarDays className="mr-2 h-4 w-4" />
+          {formatDateRange()}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 border-0 rounded-3xl overflow-hidden ios-glass-popup" align="start">
-        <div className="p-6 space-y-4">
-          {/* Mode Toggle */}
-          <div className="flex gap-3 p-1 bg-white/10 rounded-2xl backdrop-blur-xl">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setMode("single");
-                setDateRange({ from: dateRange.from, to: undefined });
-              }}
-              className={`flex-1 text-xs rounded-full transition-all duration-300 ${
-                mode === "single" 
-                  ? "bg-white/20 text-white shadow-lg backdrop-blur-xl" 
-                  : "text-white/70 hover:bg-white/10"
-              }`}
-            >
-              📅 Einzelnes Datum
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setMode("range");
-              }}
-              className={`flex-1 text-xs rounded-full transition-all duration-300 ${
-                mode === "range" 
-                  ? "bg-white/20 text-white shadow-lg backdrop-blur-xl" 
-                  : "text-white/70 hover:bg-white/10"
-              }`}
-            >
-              📅 Zeitraum
-            </Button>
-          </div>
+      <PopoverContent 
+        className="w-auto p-0 rounded-2xl border-0 ios-glass-popup" 
+        align="start"
+      >
+        <div className="p-4 space-y-4">
+          {/* Calendar with range selection */}
+          <Calendar
+            mode="range"
+            selected={{ from: tempDateFrom, to: tempDateTo }}
+            onSelect={handleDateSelect}
+            numberOfMonths={1}
+            locale={de}
+            className="rounded-xl"
+            classNames={{
+              day_selected: "bg-brand-orange text-white hover:bg-brand-orange",
+              day_range_middle: "bg-brand-orange/30 text-white",
+              day_range_start: "bg-brand-orange text-white",
+              day_range_end: "bg-brand-orange text-white",
+              day_today: "bg-brand-purple/20 text-white font-bold",
+            }}
+          />
 
-          {/* Calendar */}
-          {mode === "range" ? (
-            <Calendar
-              mode="range"
-              selected={dateRange}
-              onSelect={handleDateSelect}
-              initialFocus
-              locale={de}
-              className="rounded-2xl border-0 ios-calendar ios-calendar-range"
-            />
-          ) : (
-            <Calendar
-              mode="single"
-              selected={dateRange.from}
-              onSelect={handleDateSelect}
-              initialFocus
-              locale={de}
-              className="rounded-2xl border-0 ios-calendar ios-calendar-single"
-            />
-          )}
-
-          {/* Quick Actions */}
-          <div className="flex gap-3">
+          {/* Quick Selection Buttons */}
+          <div className="grid grid-cols-2 gap-2">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleToday}
-              className="flex-1 text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
+              className="text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
             >
               ☀️ Heute
             </Button>
             <Button
               variant="ghost"
               size="sm"
+              onClick={handleThisWeek}
+              className="text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
+            >
+              📅 Diese Woche
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleThisMonth}
+              className="text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
+            >
+              🗓️ Dieser Monat
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleClear}
-              className="flex-1 text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
+              className="text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
             >
               🗑️ Löschen
             </Button>
@@ -212,6 +242,13 @@ export function DateRangePicker({
               Anwenden
             </Button>
           </div>
+
+          {/* Status indicator for pending updates */}
+          {pendingUpdate && (
+            <div className="text-center text-xs text-white/60">
+              Filter wird in Kürze aktualisiert...
+            </div>
+          )}
         </div>
       </PopoverContent>
     </Popover>
