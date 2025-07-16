@@ -4,6 +4,7 @@ import { MapPin, Euro, Users, ExternalLink, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import type { Event } from "@shared/schema";
+import { getCategoryEmojis } from "@/lib/category-utils";
 
 interface GridViewProps {
   events: Event[];
@@ -269,12 +270,12 @@ export function GridView({ events, onEventClick }: GridViewProps) {
 
               {/* Bottom section with event details */}
               <div className="space-y-2">
-                {/* Category badge */}
-                {event.category && (
-                  <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
-                    {event.category}
-                  </Badge>
-                )}
+                {/* Category emojis */}
+                <div className="flex gap-1">
+                  {getCategoryEmojis(event.categories).map((emoji, index) => (
+                    <span key={index} className="text-lg">{emoji}</span>
+                  ))}
+                </div>
 
                 {/* Title */}
                 <div className="space-y-1">

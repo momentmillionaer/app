@@ -5,6 +5,7 @@ import { MapPin, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
+import { getCategoryEmojis } from '@/lib/category-utils';
 
 interface CalendarEventHoverProps {
   event: Event;
@@ -184,11 +185,13 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
                   )}
                 </div>
 
-                {/* Category and Price */}
+                {/* Category emojis and Price */}
                 <div className="flex items-center justify-between">
-                  <Badge className="bg-white/20 text-white border-white/20 text-xs">
-                    {event.category}
-                  </Badge>
+                  <div className="flex gap-1">
+                    {getCategoryEmojis(event.categories).map((emoji, index) => (
+                      <span key={index} className="text-lg">{emoji}</span>
+                    ))}
+                  </div>
                   
                   <div className="flex items-center gap-2">
                     {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (

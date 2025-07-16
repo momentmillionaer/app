@@ -26,6 +26,7 @@ export const events = pgTable("events", {
   subtitle: text("subtitle"),
   description: text("description"),
   category: text("category").notNull(),
+  categories: text("categories").array(), // New field for multiple categories
   location: text("location"),
   date: timestamp("date").notNull(),
   time: text("time"),

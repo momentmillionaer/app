@@ -196,6 +196,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           subtitle: properties.Untertitel?.rich_text?.[0]?.plain_text || "",
           description: properties.Beschreibung?.rich_text?.[0]?.plain_text || "",
           category: primaryCategory,
+          categories: categories, // Send all categories
           location: properties.Ort?.select?.name || "",
           date: eventDate,
           time: eventTime,

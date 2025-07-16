@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Event } from "@shared/schema";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
+import { getCategoryEmojis } from "@/lib/category-utils";
 
 interface EventModalProps {
   event: Event | null;
@@ -91,11 +92,12 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                     </p>
                   )}
                 </div>
-                {event.category && (
-                  <Badge className="mt-2 bg-white/20 text-white border-white/20 hover:bg-white/30">
-                    {event.category}
-                  </Badge>
-                )}
+                {/* Category emojis */}
+                <div className="mt-2 flex gap-2">
+                  {getCategoryEmojis(event.categories).map((emoji, index) => (
+                    <span key={index} className="text-2xl">{emoji}</span>
+                  ))}
+                </div>
               </div>
             </div>
             <Button

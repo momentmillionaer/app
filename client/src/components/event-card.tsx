@@ -4,6 +4,7 @@ import { MapPin, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import type { Event } from "@shared/schema";
+import { getCategoryEmojis } from "@/lib/category-utils";
 
 interface EventCardProps {
   event: Event;
@@ -257,15 +258,18 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
             )}
           </div>
 
-          {/* Category Badge above title */}
+          {/* Category Emojis above title */}
           <div className="flex items-center gap-2 mb-2">
             {/* Free event emoji */}
             {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
               <span className="text-lg">🆓</span>
             )}
-            <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
-              {event.category}
-            </Badge>
+            {/* Category emojis */}
+            <div className="flex gap-1">
+              {getCategoryEmojis(event.categories).map((emoji, index) => (
+                <span key={index} className="text-lg">{emoji}</span>
+              ))}
+            </div>
           </div>
 
           {/* Title and content */}
@@ -439,9 +443,12 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
               {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
                 <span className="text-xl">🆓</span>
               )}
-              <Badge className="bg-white/20 text-white border-white/20 hover:bg-white/30 text-xs">
-                {event.category}
-              </Badge>
+              {/* Category emojis */}
+              <div className="flex gap-1">
+                {getCategoryEmojis(event.categories).map((emoji, index) => (
+                  <span key={index} className="text-xl">{emoji}</span>
+                ))}
+              </div>
             </div>
           </div>
 
