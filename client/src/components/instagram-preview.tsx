@@ -8,13 +8,11 @@ export function InstagramPreview() {
         <div className="flex flex-col md:flex-row items-center gap-8">
           {/* Profile Image */}
           <div className="flex-shrink-0">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden shadow-2xl border-4 border-white/20">
-              <img 
-                src={corneliaImage} 
-                alt="Cornelia Morgen"
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <img 
+              src={corneliaImage} 
+              alt="Cornelia Morgen"
+              className="w-32 h-32 md:w-40 md:h-40 object-cover"
+            />
           </div>
           
           {/* Content */}
