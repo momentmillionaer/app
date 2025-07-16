@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { CalendarDays } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DateRangePickerProps {
   dateFrom: string;
@@ -19,6 +19,7 @@ export function DateRangePicker({
   onDateFromChange,
   onDateToChange
 }: DateRangePickerProps) {
+  const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [tempDateFrom, setTempDateFrom] = useState<Date | undefined>(
     dateFrom ? new Date(dateFrom) : undefined
@@ -162,10 +163,18 @@ export function DateRangePicker({
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          className="w-full justify-start text-left font-normal rounded-full h-10 bg-white/20 text-white hover:bg-white/30 border-0 backdrop-blur-xl transition-all duration-300"
+          className={`justify-start text-left font-normal rounded-full h-10 bg-white/20 text-white hover:bg-white/30 border-0 backdrop-blur-xl transition-all duration-300 ${
+            isMobile ? 'w-12 p-0 justify-center' : 'w-full'
+          }`}
         >
-          <CalendarDays className="mr-2 h-4 w-4" />
-          {formatDateRange()}
+          {isMobile ? (
+            <span className="text-lg">📅</span>
+          ) : (
+            <>
+              <span className="mr-2 text-sm">📅</span>
+              {formatDateRange()}
+            </>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent 

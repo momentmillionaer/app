@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search, Plus } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ export function SearchFilters({
   onFreeEventsChange,
   onClearFilters,
 }: SearchFiltersProps) {
+  const isMobile = useIsMobile();
   
   // Fetch categories from API
   const { data: categories = [] } = useQuery<string[]>({
@@ -120,10 +122,14 @@ export function SearchFilters({
       {/* Filter Controls - Horizontal Layout */}
       <div className="flex flex-wrap gap-4 items-start">
         {/* Category Filter */}
-        <div className="min-w-[200px]">
+        <div className={isMobile ? "min-w-[60px]" : "min-w-[200px]"}>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className="rounded-full border-0 liquid-glass bg-white/20 text-white">
-              <SelectValue placeholder="Alle Kategorien" className="text-white" />
+            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center' : ''}`}>
+              {isMobile ? (
+                <span className="text-lg">🗃️</span>
+              ) : (
+                <SelectValue placeholder="Alle Kategorien" className="text-white" />
+              )}
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
@@ -137,10 +143,16 @@ export function SearchFilters({
         </div>
 
         {/* Audience Filter */}
-        <div className="min-w-[200px]">
+        <div className={isMobile ? "min-w-[60px]" : "min-w-[200px]"}>
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
-            <SelectTrigger className="rounded-full border-0 liquid-glass bg-white/20 text-white">
-              <SelectValue placeholder="Alle Zielgruppen" className="text-white" />
+            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center' : ''}`}>
+              {isMobile ? (
+                <span className="text-lg">
+                  {selectedAudience === "all" ? "🎯" : audienceOptions.find(opt => opt.value === selectedAudience)?.emoji || "🎯"}
+                </span>
+              ) : (
+                <SelectValue placeholder="Alle Zielgruppen" className="text-white" />
+              )}
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               {audienceOptions.map((option) => (
@@ -166,22 +178,32 @@ export function SearchFilters({
         <Button
           variant={showFreeEventsOnly ? "default" : "outline"}
           onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
-          className={`rounded-full px-4 py-3 text-sm font-medium transition-all duration-200 ${
+          className={`rounded-full text-sm font-medium transition-all duration-200 ${
+            isMobile ? 'w-12 h-12 p-0' : 'px-4 py-3'
+          } ${
             showFreeEventsOnly 
               ? 'bg-brand-purple hover:bg-brand-orange text-black shadow-lg' 
               : 'bg-white/10 hover:bg-white/20 text-white border-white/25'
           }`}
         >
-          🆓 Nur kostenlose Events
+          {isMobile ? "🆓" : "🆓 Nur kostenlose Events"}
         </Button>
 
         {/* Add Event Button */}
         <Button
           onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-          className="rounded-full bg-brand-orange hover:bg-brand-purple text-white px-4 py-3 text-sm font-medium transition-all duration-200 shadow-lg"
+          className={`rounded-full bg-brand-orange hover:bg-brand-purple text-white text-sm font-medium transition-all duration-200 shadow-lg ${
+            isMobile ? 'w-12 h-12 p-0' : 'px-4 py-3'
+          }`}
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Event hinzufügen
+          {isMobile ? (
+            <Plus className="h-4 w-4" />
+          ) : (
+            <>
+              <Plus className="h-4 w-4 mr-2" />
+              Event hinzufügen
+            </>
+          )}
         </Button>
 
         {/* Clear Filters Button - Simple Trash Icon */}
