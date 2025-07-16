@@ -177,7 +177,7 @@ export function SearchFilters({
 
         {/* Add Event Button */}
         <Button
-          onClick={() => window.open('https://tally.so/r/mRaDOa', '_blank')}
+          onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
           className="rounded-full bg-brand-orange hover:bg-brand-purple text-white px-4 py-3 text-sm font-medium transition-all duration-200 shadow-lg"
         >
           <Plus className="h-4 w-4 mr-2" />
