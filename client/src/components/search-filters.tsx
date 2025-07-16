@@ -122,9 +122,9 @@ export function SearchFilters({
       {/* Filter Controls - Horizontal Layout */}
       <div className="flex flex-wrap gap-4 items-start">
         {/* Category Filter */}
-        <div className={isMobile ? "min-w-[60px]" : "min-w-[200px]"}>
+        <div className={isMobile ? "min-w-[48px]" : "min-w-[200px]"}>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center' : ''}`}>
+            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : ''}`}>
               {isMobile ? (
                 <span className="text-lg">🗃️</span>
               ) : (
@@ -143,9 +143,9 @@ export function SearchFilters({
         </div>
 
         {/* Audience Filter */}
-        <div className={isMobile ? "min-w-[60px]" : "min-w-[200px]"}>
+        <div className={isMobile ? "min-w-[48px]" : "min-w-[200px]"}>
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
-            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center' : ''}`}>
+            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : ''}`}>
               {isMobile ? (
                 <span className="text-lg">
                   {selectedAudience === "all" ? "🎯" : audienceOptions.find(opt => opt.value === selectedAudience)?.emoji || "🎯"}
@@ -183,10 +183,16 @@ export function SearchFilters({
           } ${
             showFreeEventsOnly 
               ? 'bg-brand-purple hover:bg-brand-orange text-black shadow-lg' 
-              : 'bg-white/10 hover:bg-white/20 text-white border-white/25'
+              : isMobile
+                ? 'bg-white/20 hover:bg-white/30 text-white border-0 liquid-glass'
+                : 'bg-white/10 hover:bg-white/20 text-white border-white/25'
           }`}
         >
-          {isMobile ? "🆓" : "🆓 Nur kostenlose Events"}
+          {isMobile ? (
+            <span className="text-lg">🆓</span>
+          ) : (
+            "🆓 Nur kostenlose Events"
+          )}
         </Button>
 
         {/* Add Event Button */}
@@ -197,7 +203,7 @@ export function SearchFilters({
           }`}
         >
           {isMobile ? (
-            <Plus className="h-4 w-4" />
+            <span className="text-lg">➕</span>
           ) : (
             <>
               <Plus className="h-4 w-4 mr-2" />
@@ -211,10 +217,14 @@ export function SearchFilters({
           <Button
             variant="outline"
             onClick={onClearFilters}
-            className="rounded-full w-12 h-12 p-0 border-white/20 bg-white/10 text-white hover:bg-white/20 transition-all duration-200"
+            className={`rounded-full p-0 transition-all duration-200 ${
+              isMobile 
+                ? 'w-12 h-12 border-0 bg-white/20 text-white hover:bg-white/30 liquid-glass'
+                : 'w-12 h-12 border-white/20 bg-white/10 text-white hover:bg-white/20'
+            }`}
             title="Filter löschen"
           >
-            🗑️
+            <span className="text-lg">🗑️</span>
           </Button>
         )}
       </div>

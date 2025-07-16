@@ -163,8 +163,8 @@ export function DateRangePicker({
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          className={`justify-start text-left font-normal rounded-full h-10 bg-white/20 text-white hover:bg-white/30 border-0 backdrop-blur-xl transition-all duration-300 ${
-            isMobile ? 'w-12 p-0 justify-center' : 'w-full'
+          className={`justify-start text-left font-normal rounded-full bg-white/20 text-white hover:bg-white/30 border-0 transition-all duration-300 ${
+            isMobile ? 'w-12 h-12 p-0 justify-center liquid-glass' : 'w-full h-10 backdrop-blur-xl'
           }`}
         >
           {isMobile ? (
