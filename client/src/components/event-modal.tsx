@@ -62,6 +62,28 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
               loading="lazy"
               onError={(e) => {
                 console.error('Image failed to load:', event.imageUrl);
+                console.error('Image error event:', e);
+                
+                // Try multiple fallback strategies
+                const target = e.target as HTMLImageElement;
+                const originalSrc = target.src;
+                
+                // Strategy 1: Remove URL parameters
+                const urlWithoutParams = event.imageUrl?.split('?')[0];
+                if (urlWithoutParams && urlWithoutParams !== originalSrc && !target.dataset.retried) {
+                  console.log('Retrying with URL without parameters:', urlWithoutParams);
+                  target.dataset.retried = 'true';
+                  target.src = urlWithoutParams;
+                  return;
+                }
+                
+                // Strategy 2: Try different cache-busting approach
+                if (!target.dataset.cacheBusted && event.imageUrl) {
+                  console.log('Trying cache-busted version:', event.imageUrl);
+                  target.dataset.cacheBusted = 'true';
+                  target.src = event.imageUrl + (event.imageUrl.includes('?') ? '&' : '?') + 'cache=' + Date.now();
+                  return;
+                }
               }}
               onLoad={() => {
                 console.log('Image loaded successfully:', event.imageUrl);
@@ -299,23 +321,16 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end space-x-3 mt-8">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              className="liquid-glass-button border-0 text-white hover:bg-white/10 rounded-2xl"
-            >
-              Schließen
-            </Button>
-            {event.website && (
+          {event.website && (
+            <div className="flex justify-end mt-8">
               <Button
                 onClick={() => window.open(event.website, '_blank')}
                 className="bg-brand-blue hover:bg-brand-lime text-white rounded-2xl transition-colors"
               >
                 Tickets & Info
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -40,6 +40,12 @@ class MemoryCache {
 
   clear(): void {
     this.cache.clear();
+    console.log('🗑️ Cache cleared');
+  }
+
+  clearEvents(): void {
+    this.cache.delete('events');
+    console.log('🗑️ Events cache cleared');
   }
 
   has(key: string): boolean {

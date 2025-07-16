@@ -21,12 +21,10 @@ export function DateRangePicker({
 }: DateRangePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"single" | "range">("range");
-  const [tempFromDate, setTempFromDate] = useState<Date | undefined>(
-    dateFrom ? new Date(dateFrom) : undefined
-  );
-  const [tempToDate, setTempToDate] = useState<Date | undefined>(
-    dateTo ? new Date(dateTo) : undefined
-  );
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({
+    from: dateFrom ? new Date(dateFrom) : undefined,
+    to: dateTo ? new Date(dateTo) : undefined,
+  });
 
   const formatDateRange = () => {
     if (dateFrom && dateTo) {
@@ -45,8 +43,7 @@ export function DateRangePicker({
 
     if (mode === "single") {
       if (date instanceof Date) {
-        setTempFromDate(date);
-        setTempToDate(undefined);
+        setDateRange({ from: date, to: undefined });
         // Auto-apply for single date selection for better UX
         setTimeout(() => {
           onDateFromChange(date.toISOString().split('T')[0]);
@@ -55,66 +52,50 @@ export function DateRangePicker({
         }, 100);
       }
     } else if (mode === "range") {
-      if (date instanceof Date) {
-        // Single date click in range mode
-        if (!tempFromDate || (tempFromDate && tempToDate)) {
-          // Start new range
-          setTempFromDate(date);
-          setTempToDate(undefined);
+      if (typeof date === 'object' && 'from' in date) {
+        // Range object from calendar (this is the proper way for range selection)
+        setDateRange(date);
+        
+        // If we have a complete range, auto-apply it
+        if (date.from && date.to) {
+          setTimeout(() => {
+            onDateFromChange(date.from!.toISOString().split('T')[0]);
+            onDateToChange(date.to!.toISOString().split('T')[0]);
+            setIsOpen(false);
+          }, 100);
+        }
+      } else if (date instanceof Date) {
+        // Single date click in range mode - start new range
+        if (!dateRange.from || (dateRange.from && dateRange.to)) {
+          setDateRange({ from: date, to: undefined });
         } else {
           // Complete range
-          if (date < tempFromDate) {
-            setTempToDate(tempFromDate);
-            setTempFromDate(date);
+          if (date < dateRange.from) {
+            setDateRange({ from: date, to: dateRange.from });
           } else {
-            setTempToDate(date);
+            setDateRange({ from: dateRange.from, to: date });
           }
         }
-      } else if (typeof date === 'object' && 'from' in date) {
-        // Range object from calendar
-        setTempFromDate(date.from);
-        setTempToDate(date.to);
       }
     }
   };
 
   const handleApply = () => {
-    if (mode === "single") {
-      // Single date mode: clear any existing range
-      if (tempFromDate) {
-        onDateFromChange(tempFromDate.toISOString().split('T')[0]);
-      } else {
-        onDateFromChange("");
-      }
-      onDateToChange(""); // Always clear end date in single mode
-    } else {
-      // Range mode: set both dates or clear both
-      if (tempFromDate && tempToDate) {
-        onDateFromChange(tempFromDate.toISOString().split('T')[0]);
-        onDateToChange(tempToDate.toISOString().split('T')[0]);
-      } else if (tempFromDate) {
-        onDateFromChange(tempFromDate.toISOString().split('T')[0]);
-        onDateToChange(""); // Clear end date if only start is selected
-      } else {
-        onDateFromChange("");
-        onDateToChange("");
-      }
-    }
-    
-    setIsOpen(false);
+    applyDates();
   };
 
   const handleCancel = () => {
-    setTempFromDate(dateFrom ? new Date(dateFrom) : undefined);
-    setTempToDate(dateTo ? new Date(dateTo) : undefined);
+    setDateRange({
+      from: dateFrom ? new Date(dateFrom) : undefined,
+      to: dateTo ? new Date(dateTo) : undefined,
+    });
     setIsOpen(false);
   };
 
   const handleToday = () => {
     const today = new Date();
-    setTempFromDate(today);
+    setDateRange({ from: today, to: mode === "single" ? undefined : dateRange.to });
     if (mode === "single") {
-      setTempToDate(undefined);
       // Auto-apply today for single date mode
       onDateFromChange(today.toISOString().split('T')[0]);
       onDateToChange("");
@@ -123,8 +104,7 @@ export function DateRangePicker({
   };
 
   const handleClear = () => {
-    setTempFromDate(undefined);
-    setTempToDate(undefined);
+    setDateRange({ from: undefined, to: undefined });
   };
 
   return (
@@ -179,13 +159,7 @@ export function DateRangePicker({
           {mode === "range" ? (
             <Calendar
               mode="range"
-              selected={
-                tempFromDate && tempToDate
-                  ? { from: tempFromDate, to: tempToDate }
-                  : tempFromDate
-                  ? { from: tempFromDate, to: undefined }
-                  : undefined
-              }
+              selected={dateRange}
               onSelect={handleDateSelect}
               initialFocus
               locale={de}
@@ -194,7 +168,7 @@ export function DateRangePicker({
           ) : (
             <Calendar
               mode="single"
-              selected={tempFromDate}
+              selected={dateRange.from}
               onSelect={handleDateSelect}
               initialFocus
               locale={de}

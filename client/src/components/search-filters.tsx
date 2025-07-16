@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -162,19 +162,27 @@ export function SearchFilters({
           />
         </div>
 
-        {/* Free Events Toggle */}
-        <div className="min-w-[60px]">
-          <button
-            onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
-            className={`text-2xl px-4 py-3 h-auto rounded-2xl border-0 transition-all duration-200 ${
-              showFreeEventsOnly 
-                ? 'shadow-inner bg-white/10 scale-95 transform' 
-                : 'bg-transparent hover:bg-white/10'
-            }`}
-          >
-            🆓
-          </button>
-        </div>
+        {/* Free Events Filter */}
+        <Button
+          variant={showFreeEventsOnly ? "default" : "outline"}
+          onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
+          className={`rounded-full px-4 py-3 text-sm font-medium transition-all duration-200 ${
+            showFreeEventsOnly 
+              ? 'bg-brand-blue hover:bg-brand-lime text-white shadow-lg' 
+              : 'bg-white/10 hover:bg-white/20 text-white border-white/25'
+          }`}
+        >
+          🆓 Nur kostenlose Events
+        </Button>
+
+        {/* Add Event Button */}
+        <Button
+          onClick={() => window.open('https://tally.so/r/mRaDOa', '_blank')}
+          className="rounded-full bg-brand-blue hover:bg-brand-lime text-white px-4 py-3 text-sm font-medium transition-all duration-200 shadow-lg"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Event hinzufügen
+        </Button>
 
         {/* Clear Filters Button */}
         {hasActiveFilters && (

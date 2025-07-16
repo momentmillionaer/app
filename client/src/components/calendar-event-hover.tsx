@@ -146,6 +146,28 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
                     loading="lazy"
                     onError={(e) => {
                       console.error('Image failed to load:', event.imageUrl);
+                      console.error('Image error event:', e);
+                      
+                      // Try multiple fallback strategies
+                      const target = e.target as HTMLImageElement;
+                      const originalSrc = target.src;
+                      
+                      // Strategy 1: Remove URL parameters
+                      const urlWithoutParams = event.imageUrl?.split('?')[0];
+                      if (urlWithoutParams && urlWithoutParams !== originalSrc && !target.dataset.retried) {
+                        console.log('Retrying with URL without parameters:', urlWithoutParams);
+                        target.dataset.retried = 'true';
+                        target.src = urlWithoutParams;
+                        return;
+                      }
+                      
+                      // Strategy 2: Try different cache-busting approach
+                      if (!target.dataset.cacheBusted && event.imageUrl) {
+                        console.log('Trying cache-busted version:', event.imageUrl);
+                        target.dataset.cacheBusted = 'true';
+                        target.src = event.imageUrl + (event.imageUrl.includes('?') ? '&' : '?') + 'cache=' + Date.now();
+                        return;
+                      }
                     }}
                     onLoad={() => {
                       console.log('Image loaded successfully:', event.imageUrl);

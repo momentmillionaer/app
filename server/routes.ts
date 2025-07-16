@@ -156,6 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Extract image URL and documents from "Dateien" property with better filtering
         let imageUrl = "";
         let documentsUrls: string[] = [];
+        let allImageUrls: string[] = [];
         
         if (properties.Dateien?.files && properties.Dateien.files.length > 0) {
           for (const file of properties.Dateien.files) {
@@ -185,12 +186,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
                                     lowerUrl.includes('.pptx') || lowerUrl.includes('.xls') ||
                                     lowerUrl.includes('.xlsx');
               
-              if ((isImageFile || isImageHost) && !isDocumentFile && !imageUrl) {
-                imageUrl = url; // Use first valid image found
+              if ((isImageFile || isImageHost) && !isDocumentFile) {
+                allImageUrls.push(url);
+                if (!imageUrl) {
+                  imageUrl = url; // Use first valid image found
+                }
               } else if (isDocumentFile) {
                 documentsUrls.push(url); // Collect all document files
               }
             }
+          }
+          
+          // If we have multiple images, prioritize non-problematic ones
+          if (allImageUrls.length > 1) {
+            // Prefer simpler file extensions and shorter URLs
+            const sortedImages = allImageUrls.sort((a, b) => {
+              const aSimple = a.includes('.jpg') || a.includes('.png');
+              const bSimple = b.includes('.jpg') || b.includes('.png');
+              const aShort = a.length < 200;
+              const bShort = b.length < 200;
+              
+              if (aSimple && !bSimple) return -1;
+              if (!aSimple && bSimple) return 1;
+              if (aShort && !bShort) return -1;
+              if (!aShort && bShort) return 1;
+              
+              return a.length - b.length; // Prefer shorter URLs
+            });
+            
+            imageUrl = sortedImages[0];
           }
         }
 
