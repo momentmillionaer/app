@@ -319,7 +319,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                 key={index}
                 className={`rounded-2xl transition-all duration-300 ${
                   isToday 
-                    ? 'bg-white/25 border-2 border-brand-orange/50' 
+                    ? 'bg-white/25 border-2 border-brand-lime/70' 
                     : 'bg-white/10 border border-white/20'
                 }`}
                 style={{
@@ -334,12 +334,16 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                       <span className="font-semibold text-white text-sm">
                         {dayName}
                       </span>
-                      <span className={`text-lg font-bold ${isToday ? 'text-brand-orange' : 'text-white'}`}>
+                      <span className={`text-lg font-bold ${isToday ? 'text-brand-lime' : 'text-white'}`}>
                         {date.getDate()}
                       </span>
                     </div>
                     {dayEvents.length > 0 && (
-                      <Badge className="bg-brand-purple/20 text-white border-brand-purple/30 text-xs">
+                      <Badge className={`text-xs ${
+                        isToday 
+                          ? 'bg-brand-lime/20 text-brand-lime border-brand-lime/40' 
+                          : 'bg-brand-purple/20 text-white border-brand-purple/30'
+                      }`}>
                         {dayEvents.length} Event{dayEvents.length !== 1 ? 's' : ''}
                       </Badge>
                     )}

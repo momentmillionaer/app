@@ -83,6 +83,14 @@ Preferred communication style: Simple, everyday language.
 - ✓ Added exponential backoff for Notion API pagination to prevent rate limiting
 - ✓ Comprehensive error handling ensures app stays functional during API issues
 
+**July 16, 2025 - Responsive Calendar Views & UI Consistency**
+- ✓ Updated "Event hinzufügen" button to link to new Tally form (https://tally.so/r/m606Pk)
+- ✓ Implemented responsive calendar: Mobile shows weekly view with vertical day list, Desktop keeps monthly view
+- ✓ Mobile weekly view features full event title readability with complete event information per day
+- ✓ Consistent lime highlighting for today's date across both mobile and desktop views
+- ✓ Mobile view shows up to 3 events per day with overflow indicator for better performance
+- ✓ Enhanced mobile UX with day-by-day cards including time, location, and free event indicators
+
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
 - ✓ Added health check endpoints at / and /health for deployment monitoring
