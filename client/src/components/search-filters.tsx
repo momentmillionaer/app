@@ -120,7 +120,7 @@ export function SearchFilters({
       </div>
 
       {/* Filter Controls - Horizontal Layout */}
-      <div className="flex flex-wrap gap-4 items-start">
+      <div className={`flex flex-wrap items-start ${isMobile ? 'justify-center gap-3' : 'gap-4'}`}>
         {/* Category Filter */}
         <div className={isMobile ? "min-w-[48px]" : "min-w-[200px]"}>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
