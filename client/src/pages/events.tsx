@@ -521,7 +521,7 @@ export default function EventsPage() {
         <Footer />
 
         {/* Latest Event Popup */}
-        <LatestEventPopup events={events} />
+        <LatestEventPopup events={events} onEventClick={handleEventClick} />
       </div>
     </div>
   );

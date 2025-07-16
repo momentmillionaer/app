@@ -5,9 +5,10 @@ import { Event } from "@shared/schema";
 
 interface LatestEventPopupProps {
   events: Event[];
+  onEventClick?: (event: Event) => void;
 }
 
-export function LatestEventPopup({ events }: LatestEventPopupProps) {
+export function LatestEventPopup({ events, onEventClick }: LatestEventPopupProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hasBeenShown, setHasBeenShown] = useState(false);
 
@@ -81,7 +82,7 @@ export function LatestEventPopup({ events }: LatestEventPopupProps) {
         {/* Content */}
         <div 
           className="p-3 cursor-pointer hover:bg-white/5 transition-colors rounded-b-2xl"
-          onClick={() => window.open(latestEvent.website || '#', '_blank')}
+          onClick={() => onEventClick?.(latestEvent)}
         >
           <h4 className="font-semibold text-white text-sm leading-tight mb-1 line-clamp-2">
             {latestEvent.title}
