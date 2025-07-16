@@ -173,7 +173,7 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
   if (viewMode === 'grid') {
     return (
       <div 
-        className={`rounded-full transition-all duration-500 cursor-pointer shadow-xl overflow-hidden relative ${
+        className={`rounded-[2rem] transition-all duration-500 cursor-pointer shadow-xl overflow-hidden relative ${
           isEventPast ? 'opacity-60' : ''
         }`}
         style={{
@@ -325,7 +325,7 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
   // Original horizontal layout for list view
   return (
     <div 
-      className={`rounded-full transition-all duration-500 cursor-pointer shadow-xl overflow-hidden relative ${
+      className={`rounded-[2rem] transition-all duration-500 cursor-pointer shadow-xl overflow-hidden relative ${
         isEventPast ? 'opacity-60' : ''
       }`}
       style={{

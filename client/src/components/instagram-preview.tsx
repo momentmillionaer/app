@@ -6,10 +6,10 @@ export function InstagramPreview() {
       <div className="liquid-glass-strong rounded-[2rem] p-8 border-0">
         <div className="text-center">
           <h3 className="text-2xl font-bold text-white mb-4 drop-shadow-sm">
-            Folge mir auf Instagram
+            Verfolge meine Reise zum Momentmillionär
           </h3>
           <p className="text-white/80 mb-6 drop-shadow-sm">
-            Für tägliche Event-Updates und Behind-the-Scenes
+            Event-Recaps, Special Ankündigungen und ganz viele echte Momente
           </p>
           
           <div className="inline-flex items-center justify-center">
@@ -24,9 +24,7 @@ export function InstagramPreview() {
             </a>
           </div>
           
-          <div className="mt-6 text-sm text-white/60 drop-shadow-sm">
-            <p>📸 Exklusive Event-Einblicke • 🎉 Live-Updates • ✨ Community</p>
-          </div>
+
         </div>
       </div>
     </div>

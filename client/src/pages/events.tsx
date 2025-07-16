@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CalendarX, List, Calendar, Grid3X3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InstagramPreview } from "@/components/instagram-preview";
+import { Footer } from "@/components/footer";
 import type { Event } from "@shared/schema";
 
 export default function EventsPage() {
@@ -404,7 +405,7 @@ export default function EventsPage() {
                 <span className="font-connihof text-base tracking-tight">Alle Events im Juli</span>
                 <br />
                 <span className="text-sm mt-2 block">{viewMode === "calendar" ? eventsForCalendar.length : eventsForListAndGrid.length} Events gefunden</span>
-                <span className="hidden sm:inline text-sm">{getFilterSummary()}</span>
+
               </>
             )}
           </div>
@@ -523,26 +524,7 @@ export default function EventsPage() {
         <InstagramPreview />
 
         {/* Footer */}
-        <footer className="bg-white/10 border-t border-white/20 mt-16 rounded-lg backdrop-blur-sm">
-          <div className="px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="flex items-center mb-4 md:mb-0">
-                <span className="text-white/80 drop-shadow-sm">Momentmillionär</span>
-              </div>
-              <div className="flex items-center space-x-6 text-sm text-white/60">
-                <span>Powered by Notion API</span>
-                <a href="mailto:cornelia@morgen.co.at" className="hover:text-white/80 transition-colors">Kontakt</a>
-                <a href="https://www.instagram.com/cornelia.morgen" target="_blank" rel="noopener noreferrer" className="hover:text-white/80 transition-colors">@cornelia.morgen</a>
-                <a href="https://www.morgen.co.at/impressum" target="_blank" rel="noopener noreferrer" className="hover:text-white/80 transition-colors">Impressum</a>
-              </div>
-            </div>
-            <div className="mt-4 pt-4 border-t border-white/20">
-              <p className="text-xs text-white/50 text-center">
-                Ich hafte nicht für die Inhalte auf dieser Seite / die Inhalte auf den verlinkten Seiten.
-              </p>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </div>
   );

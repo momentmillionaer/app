@@ -63,6 +63,14 @@ Preferred communication style: Simple, everyday language.
 - ✓ Instagram preview features gradient purple-to-orange button with hover animations
 - ✓ Date range picker action buttons now use orange/purple color scheme instead of blue/lime
 
+**July 16, 2025 - UI Refinements & Content Updates**
+- ✓ EventCards reverted back to rounded-[2rem] rectangles as requested (not fully round)
+- ✓ Buttons, badges, toggles, and small fields remain fully rounded (rounded-full)
+- ✓ Updated Instagram section: "Verfolge meine Reise zum Momentmillionär" and "Event-Recaps, Special Ankündigungen und ganz viele echte Momente"
+- ✓ Removed filter summary text from event count display
+- ✓ Created new Footer component with copyright, Impressum/Kontakt links, and tagline
+- ✓ Footer shows "© momentmillionär" with "Dein Weg zu unvergesslichen Momenten in Graz" tagline
+
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
 - ✓ Added health check endpoints at / and /health for deployment monitoring
