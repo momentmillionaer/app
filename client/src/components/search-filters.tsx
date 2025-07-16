@@ -120,9 +120,9 @@ export function SearchFilters({
       </div>
 
       {/* Filter Controls - Horizontal Layout */}
-      <div className={`flex flex-wrap items-start ${isMobile ? 'justify-center gap-3' : 'gap-4'}`}>
+      <div className={isMobile ? 'flex justify-between items-center' : 'flex flex-wrap gap-4 items-start'}>
         {/* Category Filter */}
-        <div className={isMobile ? "min-w-[48px]" : "min-w-[200px]"}>
+        <div className={isMobile ? "flex-shrink-0" : "min-w-[200px]"}>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
             <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : ''}`}>
               {isMobile ? (
@@ -143,7 +143,7 @@ export function SearchFilters({
         </div>
 
         {/* Audience Filter */}
-        <div className={isMobile ? "min-w-[48px]" : "min-w-[200px]"}>
+        <div className={isMobile ? "flex-shrink-0" : "min-w-[200px]"}>
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
             <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : ''}`}>
               {isMobile ? (
@@ -165,7 +165,7 @@ export function SearchFilters({
         </div>
 
         {/* Date Range Filter */}
-        <div className="min-w-[200px]">
+        <div className={isMobile ? "flex-shrink-0" : "min-w-[200px]"}>
           <DateRangePicker
             dateFrom={dateFrom}
             dateTo={dateTo}
