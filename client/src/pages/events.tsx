@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CalendarX, List, Calendar, Grid3X3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InstagramPreview } from "@/components/instagram-preview";
 import type { Event } from "@shared/schema";
 
 export default function EventsPage() {
@@ -388,18 +389,7 @@ export default function EventsPage() {
           />
         </div>
 
-        {/* Event hinzufügen Button */}
-        <div className="flex justify-end mb-4">
-          <a
-            href="https://tally.so/r/m606Pk"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center space-x-2 px-4 py-2 bg-white/20 text-white rounded-2xl hover:bg-white/30 transition-colors duration-200 backdrop-blur-sm border border-white/20"
-          >
-            <span>➕</span>
-            <span className="text-sm font-medium">Event hinzufügen</span>
-          </a>
-        </div>
+
 
         {/* View Mode Toggle */}
         <div className="flex flex-col items-center mb-6 space-y-4">
@@ -524,6 +514,9 @@ export default function EventsPage() {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
         />
+
+        {/* Instagram Preview */}
+        <InstagramPreview />
 
         {/* Footer */}
         <footer className="bg-white/10 border-t border-white/20 mt-16 rounded-lg backdrop-blur-sm">

@@ -50,6 +50,19 @@ Preferred communication style: Simple, everyday language.
 - ✓ Documents displayed as clickable badges in event cards with file type icons
 - ✓ Event modal shows documents section with file name extraction from URLs
 
+**July 16, 2025 - Custom Color Palette & UI Consistency**
+- ✓ Implemented purple and orange color highlights from custom color palette instead of only blue/lime
+- ✓ Free Events filter button now uses purple background with orange hover state
+- ✓ Event hinzufügen button uses orange background with purple hover state
+- ✓ Active filter badges now use different brand colors: purple for search, orange for category, blue for audience, lime for dates, cream for free events
+- ✓ All form elements made maximally rounded (rounded-full) including search input, category/audience dropdowns
+- ✓ Date range picker buttons converted to fully rounded design (rounded-full)
+- ✓ Clear filters button simplified to round trash icon only (🗑️) without additional text
+- ✓ Removed duplicate "Event hinzufügen" button below filter section as requested
+- ✓ Added Instagram preview component for @cornelia.morgen at bottom of events page
+- ✓ Instagram preview features gradient purple-to-orange button with hover animations
+- ✓ Date range picker action buttons now use orange/purple color scheme instead of blue/lime
+
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
 - ✓ Added health check endpoints at / and /health for deployment monitoring

@@ -110,7 +110,7 @@ export function SearchFilters({
           <Input
             type="text"
             placeholder="Events, Veranstaltungsorte oder Beschreibungen durchsuchen..."
-            className="pl-10 py-4 rounded-2xl border-0 liquid-glass bg-white/20 text-white placeholder:text-white/50"
+            className="pl-10 py-4 rounded-full border-0 liquid-glass bg-white/20 text-white placeholder:text-white/50"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -122,13 +122,13 @@ export function SearchFilters({
         {/* Category Filter */}
         <div className="min-w-[200px]">
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20 text-white">
+            <SelectTrigger className="rounded-full border-0 liquid-glass bg-white/20 text-white">
               <SelectValue placeholder="Alle Kategorien" className="text-white" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-0 ios-glass-popup">
-              <SelectItem value="all" className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
+            <SelectContent className="rounded-3xl border-0 ios-glass-popup">
+              <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
               {categories.map((category) => (
-                <SelectItem key={category} value={category} className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
+                <SelectItem key={category} value={category} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
                   {category}
                 </SelectItem>
               ))}
@@ -139,12 +139,12 @@ export function SearchFilters({
         {/* Audience Filter */}
         <div className="min-w-[200px]">
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
-            <SelectTrigger className="rounded-2xl border-0 liquid-glass bg-white/20 text-white">
+            <SelectTrigger className="rounded-full border-0 liquid-glass bg-white/20 text-white">
               <SelectValue placeholder="Alle Zielgruppen" className="text-white" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-0 ios-glass-popup">
+            <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               {audienceOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value} className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
+                <SelectItem key={option.value} value={option.value} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
                   {option.label}
                 </SelectItem>
               ))}
@@ -168,7 +168,7 @@ export function SearchFilters({
           onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
           className={`rounded-full px-4 py-3 text-sm font-medium transition-all duration-200 ${
             showFreeEventsOnly 
-              ? 'bg-brand-blue hover:bg-brand-lime text-white shadow-lg' 
+              ? 'bg-brand-purple hover:bg-brand-orange text-black shadow-lg' 
               : 'bg-white/10 hover:bg-white/20 text-white border-white/25'
           }`}
         >
@@ -178,23 +178,22 @@ export function SearchFilters({
         {/* Add Event Button */}
         <Button
           onClick={() => window.open('https://tally.so/r/mRaDOa', '_blank')}
-          className="rounded-full bg-brand-blue hover:bg-brand-lime text-white px-4 py-3 text-sm font-medium transition-all duration-200 shadow-lg"
+          className="rounded-full bg-brand-orange hover:bg-brand-purple text-white px-4 py-3 text-sm font-medium transition-all duration-200 shadow-lg"
         >
           <Plus className="h-4 w-4 mr-2" />
           Event hinzufügen
         </Button>
 
-        {/* Clear Filters Button */}
+        {/* Clear Filters Button - Simple Trash Icon */}
         {hasActiveFilters && (
-          <div className="flex items-end">
-            <Button
-              variant="outline"
-              onClick={onClearFilters}
-              className="rounded-2xl border-white/20 bg-white/20 text-white hover:bg-white/30 px-6"
-            >
-              🗑️ Filter löschen
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            onClick={onClearFilters}
+            className="rounded-full w-12 h-12 p-0 border-white/20 bg-white/10 text-white hover:bg-white/20 transition-all duration-200"
+            title="Filter löschen"
+          >
+            🗑️
+          </Button>
         )}
       </div>
 
@@ -203,10 +202,10 @@ export function SearchFilters({
         <div className="mt-6 flex flex-wrap gap-2 items-center">
           <span className="text-sm text-white/80 drop-shadow-sm mr-2">Aktive Filter:</span>
           {searchQuery && (
-            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
+            <Badge variant="default" className="bg-brand-purple text-black rounded-full shadow-sm">
               🔍 Suche: {searchQuery}
               <button
-                className="ml-2 hover:text-gray-200"
+                className="ml-2 hover:text-gray-600"
                 onClick={() => removeFilter('search')}
               >
                 ×
@@ -214,7 +213,7 @@ export function SearchFilters({
             </Badge>
           )}
           {selectedCategory && selectedCategory !== "all" && (
-            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
+            <Badge variant="default" className="bg-brand-orange text-white rounded-full shadow-sm">
               🎭 {selectedCategory}
               <button
                 className="ml-2 hover:text-gray-200"
@@ -236,7 +235,7 @@ export function SearchFilters({
             </Badge>
           )}
           {(dateFrom || dateTo) && (
-            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
+            <Badge variant="default" className="bg-brand-lime text-black rounded-full shadow-sm">
               📅 {dateFrom && dateTo 
                 ? `${new Date(dateFrom).toLocaleDateString('de-DE')} - ${new Date(dateTo).toLocaleDateString('de-DE')}`
                 : dateFrom 
@@ -244,7 +243,7 @@ export function SearchFilters({
                 : new Date(dateTo).toLocaleDateString('de-DE')
               }
               <button
-                className="ml-2 hover:text-gray-200"
+                className="ml-2 hover:text-gray-600"
                 onClick={() => removeFilter('date')}
               >
                 ×
@@ -252,23 +251,16 @@ export function SearchFilters({
             </Badge>
           )}
           {showFreeEventsOnly && (
-            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
+            <Badge variant="default" className="bg-brand-cream text-black rounded-full shadow-sm">
               🆓 Nur kostenlose Events
               <button
-                className="ml-2 hover:text-gray-200"
+                className="ml-2 hover:text-gray-600"
                 onClick={() => removeFilter('freeEvents')}
               >
                 ×
               </button>
             </Badge>
           )}
-          <Button
-            variant="link"
-            className="text-sm text-gray-500 hover:text-gray-700 p-0 h-auto rounded-2xl"
-            onClick={onClearFilters}
-          >
-            Alle Filter löschen
-          </Button>
         </div>
       )}
     </div>

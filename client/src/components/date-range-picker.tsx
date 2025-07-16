@@ -112,7 +112,7 @@ export function DateRangePicker({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="rounded-2xl border-0 liquid-glass bg-white/20 text-white hover:bg-white/30 justify-start text-left font-normal min-w-[200px]"
+          className="rounded-full border-0 liquid-glass bg-white/20 text-white hover:bg-white/30 justify-start text-left font-normal min-w-[200px]"
         >
           <CalendarDays className="mr-2 h-4 w-4 text-white/60" />
           <span className="text-white/90">
@@ -129,9 +129,9 @@ export function DateRangePicker({
               size="sm"
               onClick={() => {
                 setMode("single");
-                setTempToDate(undefined);
+                setDateRange({ from: dateRange.from, to: undefined });
               }}
-              className={`flex-1 text-xs rounded-xl transition-all duration-300 ${
+              className={`flex-1 text-xs rounded-full transition-all duration-300 ${
                 mode === "single" 
                   ? "bg-white/20 text-white shadow-lg backdrop-blur-xl" 
                   : "text-white/70 hover:bg-white/10"
@@ -145,7 +145,7 @@ export function DateRangePicker({
               onClick={() => {
                 setMode("range");
               }}
-              className={`flex-1 text-xs rounded-xl transition-all duration-300 ${
+              className={`flex-1 text-xs rounded-full transition-all duration-300 ${
                 mode === "range" 
                   ? "bg-white/20 text-white shadow-lg backdrop-blur-xl" 
                   : "text-white/70 hover:bg-white/10"
@@ -182,7 +182,7 @@ export function DateRangePicker({
               variant="ghost"
               size="sm"
               onClick={handleToday}
-              className="flex-1 text-xs rounded-2xl bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
+              className="flex-1 text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
             >
               ☀️ Heute
             </Button>
@@ -190,7 +190,7 @@ export function DateRangePicker({
               variant="ghost"
               size="sm"
               onClick={handleClear}
-              className="flex-1 text-xs rounded-2xl bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
+              className="flex-1 text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
             >
               🗑️ Löschen
             </Button>
@@ -201,13 +201,13 @@ export function DateRangePicker({
             <Button
               variant="ghost"
               onClick={handleCancel}
-              className="flex-1 rounded-2xl bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
+              className="flex-1 rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
             >
               Abbrechen
             </Button>
             <Button
               onClick={handleApply}
-              className="flex-1 rounded-2xl bg-brand-blue/80 hover:bg-brand-blue text-white backdrop-blur-xl transition-all duration-300 shadow-lg"
+              className="flex-1 rounded-full bg-brand-orange hover:bg-brand-purple text-white backdrop-blur-xl transition-all duration-300 shadow-lg"
             >
               Anwenden
             </Button>
