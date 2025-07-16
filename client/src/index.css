@@ -325,6 +325,38 @@
   color: white !important;
 }
 
+/* Special Date Range Calendar Styles */
+.date-range-calendar .rdp-day_range_start {
+  border-radius: 9999px 0 0 9999px !important;
+  background-color: var(--brand-orange) !important;
+  color: white !important;
+}
+
+.date-range-calendar .rdp-day_range_end {
+  border-radius: 0 9999px 9999px 0 !important;
+  background-color: var(--brand-orange) !important;
+  color: white !important;
+}
+
+.date-range-calendar .rdp-day_range_middle {
+  border-radius: 0 !important;
+  background-color: rgba(254, 92, 43, 0.3) !important;
+  color: white !important;
+}
+
+.date-range-calendar .rdp-day_selected {
+  border-radius: 9999px !important;
+  background-color: var(--brand-orange) !important;
+  color: white !important;
+}
+
+.date-range-calendar .rdp-day_today {
+  border-radius: 9999px !important;
+  background-color: rgba(247, 55, 178, 0.2) !important;
+  color: white !important;
+  font-weight: bold !important;
+}
+
 [data-radix-select-value] * {
   color: white !important;
 }

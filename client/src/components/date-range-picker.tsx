@@ -180,14 +180,7 @@ export function DateRangePicker({
             onSelect={handleDateSelect}
             numberOfMonths={1}
             locale={de}
-            className="rounded-xl"
-            classNames={{
-              day_selected: "bg-brand-orange text-white hover:bg-brand-orange",
-              day_range_middle: "bg-brand-orange/30 text-white",
-              day_range_start: "bg-brand-orange text-white",
-              day_range_end: "bg-brand-orange text-white",
-              day_today: "bg-brand-purple/20 text-white font-bold",
-            }}
+            className="rounded-3xl date-range-calendar"
           />
 
           {/* Quick Selection Buttons */}

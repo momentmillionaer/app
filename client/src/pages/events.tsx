@@ -411,12 +411,12 @@ export default function EventsPage() {
           
           {/* View Mode Toggle - Always Centered */}
           <div className="flex flex-col items-center space-y-4">
-            <div className="flex items-center liquid-glass-button rounded-2xl p-2">
+            <div className="flex items-center liquid-glass-button rounded-full p-2">
               <Button
                 variant={viewMode === "calendar" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("calendar")}
-                className="flex items-center space-x-2 rounded-xl px-3 py-2"
+                className="flex items-center space-x-2 rounded-full px-3 py-2"
               >
                 <Calendar className="h-4 w-4" />
                 <span>Kalender</span>
@@ -425,7 +425,7 @@ export default function EventsPage() {
                 variant={viewMode === "list" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("list")}
-                className="flex items-center space-x-2 rounded-xl px-3 py-2"
+                className="flex items-center space-x-2 rounded-full px-3 py-2"
               >
                 <List className="h-4 w-4" />
                 <span>Liste</span>
@@ -434,7 +434,7 @@ export default function EventsPage() {
                 variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("grid")}
-                className="flex items-center space-x-2 rounded-xl px-3 py-2"
+                className="flex items-center space-x-2 rounded-full px-3 py-2"
               >
                 <Grid3X3 className="h-4 w-4" />
                 <span>Raster</span>
@@ -445,14 +445,14 @@ export default function EventsPage() {
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-white/80 drop-shadow-sm">Sortierung:</span>
                 <Select value={sortOption} onValueChange={setSortOption}>
-                  <SelectTrigger className="w-40 rounded-2xl border-0 liquid-glass bg-white/20 text-white">
+                  <SelectTrigger className="w-40 rounded-full border-0 liquid-glass bg-white/20 text-white">
                     <SelectValue className="text-white" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-2xl border-0 ios-glass-popup">
-                    <SelectItem value="date-asc" className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Datum (aufsteigend)</SelectItem>
-                    <SelectItem value="date-desc" className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Datum (absteigend)</SelectItem>
-                    <SelectItem value="title" className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Titel (A-Z)</SelectItem>
-                    <SelectItem value="category" className="rounded-xl focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Kategorie</SelectItem>
+                  <SelectContent className="rounded-3xl border-0 ios-glass-popup">
+                    <SelectItem value="date-asc" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Datum (aufsteigend)</SelectItem>
+                    <SelectItem value="date-desc" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Datum (absteigend)</SelectItem>
+                    <SelectItem value="title" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Titel (A-Z)</SelectItem>
+                    <SelectItem value="category" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Kategorie</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -488,7 +488,7 @@ export default function EventsPage() {
             </p>
             {(searchQuery || selectedCategory || dateFrom || dateTo) && (
               <Button
-                className="bg-brand-blue hover:bg-brand-lime text-white rounded-2xl transition-colors"
+                className="bg-brand-blue hover:bg-brand-lime text-white rounded-full transition-colors"
                 onClick={clearFilters}
               >
                 Filter zurücksetzen
