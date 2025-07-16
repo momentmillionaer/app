@@ -79,7 +79,10 @@ export function LatestEventPopup({ events }: LatestEventPopupProps) {
         </div>
 
         {/* Content */}
-        <div className="p-3">
+        <div 
+          className="p-3 cursor-pointer hover:bg-white/5 transition-colors rounded-b-2xl"
+          onClick={() => window.open(latestEvent.website || '#', '_blank')}
+        >
           <h4 className="font-semibold text-white text-sm leading-tight mb-1 line-clamp-2">
             {latestEvent.title}
           </h4>

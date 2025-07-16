@@ -322,15 +322,13 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                     ? 'ring-2 ring-[#9DFF00]/70' 
                     : 'bg-white/10 border border-white/20'
                 }`}
-                style={isToday ? {
-                  backgroundColor: 'rgba(157, 255, 0, 0.25)', // Same as desktop
-                  backdropFilter: 'blur(30px) saturate(140%) brightness(1.2)',
-                  WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.2)',
-                  border: '2px solid rgba(157, 255, 0, 0.6)',
-                  boxShadow: '0 0 20px rgba(157, 255, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
-                } : {
+                style={{
                   backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
                   WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
+                  ...(isToday && {
+                    border: '2px solid rgba(157, 255, 0, 0.8)',
+                    boxShadow: '0 0 15px rgba(157, 255, 0, 0.4)'
+                  })
                 }}
               >
                 {/* Day Header */}
@@ -340,14 +338,14 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                       <span className="font-semibold text-white text-sm">
                         {dayName}
                       </span>
-                      <span className={`text-lg font-bold ${isToday ? 'text-black drop-shadow-lg font-extrabold' : 'text-white'}`}>
+                      <span className={`text-lg font-bold ${isToday ? 'text-brand-lime drop-shadow-lg font-extrabold' : 'text-white'}`}>
                         {date.getDate()}
                       </span>
                     </div>
                     {dayEvents.length > 0 && (
                       <Badge className={`text-xs ${
                         isToday 
-                          ? 'bg-black/20 text-black border-black/40 font-bold' 
+                          ? 'bg-brand-lime/20 text-brand-lime border-brand-lime/40 font-bold' 
                           : 'bg-brand-purple/20 text-white border-brand-purple/30'
                       }`}>
                         {dayEvents.length} Event{dayEvents.length !== 1 ? 's' : ''}
@@ -359,16 +357,16 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                 {/* Events for this day */}
                 <div className="p-3">
                   {dayEvents.length === 0 ? (
-                    <p className={`text-sm italic ${
-                      isToday ? 'text-black/60' : 'text-white/50'
-                    }`}>Keine Events</p>
+                    <p className="text-white/50 text-sm italic">Keine Events</p>
                   ) : (
                     <div className="space-y-2">
                       {dayEvents.slice(0, 3).map((event, eventIndex) => {
                         const isPast = (() => {
                           const today = new Date();
+                          today.setHours(0, 0, 0, 0); // Start of today
                           const eventDate = new Date(event.date);
-                          return eventDate < today;
+                          eventDate.setHours(0, 0, 0, 0); // Start of event day
+                          return eventDate < today; // Only past if event date is before today
                         })();
                         
                         return (
@@ -379,11 +377,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                               isPast ? 'opacity-60' : ''
                             }`}
                             style={{
-                              background: isPast 
-                                ? 'rgba(128, 128, 128, 0.1)' 
-                                : isToday 
-                                  ? 'rgba(0, 0, 0, 0.3)' // Darker background for better readability on lime
-                                  : 'rgba(255, 255, 255, 0.1)',
+                              background: isPast ? 'rgba(128, 128, 128, 0.1)' : 'rgba(255, 255, 255, 0.1)',
                               backdropFilter: 'blur(10px)',
                               WebkitBackdropFilter: 'blur(10px)',
                             }}
@@ -393,22 +387,16 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                                 {getEventEmoji(event)}
                               </span>
                               <div className="flex-grow min-w-0">
-                                <h4 className={`font-medium text-sm leading-tight line-clamp-2 ${
-                                  isToday ? 'text-black font-bold' : 'text-white'
-                                }`}>
+                                <h4 className="font-medium text-white text-sm leading-tight line-clamp-2">
                                   {event.title}
                                 </h4>
                                 {event.time && (
-                                  <p className={`text-xs mt-0.5 ${
-                                    isToday ? 'text-black/80' : 'text-white/70'
-                                  }`}>
+                                  <p className="text-white/70 text-xs mt-0.5">
                                     {event.time}
                                   </p>
                                 )}
                                 {event.location && (
-                                  <p className={`text-xs truncate ${
-                                    isToday ? 'text-black/70' : 'text-white/60'
-                                  }`}>
+                                  <p className="text-white/60 text-xs truncate">
                                     📍 {event.location}
                                   </p>
                                 )}
@@ -421,9 +409,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                         );
                       })}
                       {dayEvents.length > 3 && (
-                        <p className={`text-xs text-center italic ${
-                          isToday ? 'text-black/60' : 'text-white/50'
-                        }`}>
+                        <p className="text-white/50 text-xs text-center italic">
                           +{dayEvents.length - 3} weitere Events
                         </p>
                       )}
