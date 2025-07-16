@@ -319,10 +319,16 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                 key={index}
                 className={`rounded-2xl transition-all duration-300 ${
                   isToday 
-                    ? 'bg-white/25 border-2 border-brand-lime/70' 
+                    ? 'ring-2 ring-[#9DFF00]/70' 
                     : 'bg-white/10 border border-white/20'
                 }`}
-                style={{
+                style={isToday ? {
+                  backgroundColor: 'rgba(157, 255, 0, 0.25)', // Same as desktop
+                  backdropFilter: 'blur(30px) saturate(140%) brightness(1.2)',
+                  WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.2)',
+                  border: '2px solid rgba(157, 255, 0, 0.6)',
+                  boxShadow: '0 0 20px rgba(157, 255, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+                } : {
                   backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
                   WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
                 }}
@@ -334,14 +340,14 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                       <span className="font-semibold text-white text-sm">
                         {dayName}
                       </span>
-                      <span className={`text-lg font-bold ${isToday ? 'text-brand-lime' : 'text-white'}`}>
+                      <span className={`text-lg font-bold ${isToday ? 'text-black drop-shadow-lg font-extrabold' : 'text-white'}`}>
                         {date.getDate()}
                       </span>
                     </div>
                     {dayEvents.length > 0 && (
                       <Badge className={`text-xs ${
                         isToday 
-                          ? 'bg-brand-lime/20 text-brand-lime border-brand-lime/40' 
+                          ? 'bg-black/20 text-black border-black/40 font-bold' 
                           : 'bg-brand-purple/20 text-white border-brand-purple/30'
                       }`}>
                         {dayEvents.length} Event{dayEvents.length !== 1 ? 's' : ''}

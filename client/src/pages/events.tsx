@@ -13,6 +13,7 @@ import { CalendarX, List, Calendar, Grid3X3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InstagramPreview } from "@/components/instagram-preview";
 import { Footer } from "@/components/footer";
+import { LatestEventPopup } from "@/components/latest-event-popup";
 import type { Event } from "@shared/schema";
 
 export default function EventsPage() {
@@ -518,6 +519,9 @@ export default function EventsPage() {
 
         {/* Footer */}
         <Footer />
+
+        {/* Latest Event Popup */}
+        <LatestEventPopup events={events} />
       </div>
     </div>
   );
