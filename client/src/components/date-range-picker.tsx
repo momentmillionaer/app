@@ -5,6 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarDays, X } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DateRangePickerProps {
   dateFrom?: string;
@@ -14,6 +15,7 @@ interface DateRangePickerProps {
 }
 
 export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToChange }: DateRangePickerProps) {
+  const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<'single' | 'range'>('single');
   const [tempFromDate, setTempFromDate] = useState<Date | undefined>();
@@ -111,20 +113,30 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
         <Button
           variant="outline"
           className={`
-            liquid-glass-button px-4 py-2 rounded-full text-white text-sm min-w-[140px] justify-between
+            rounded-full border-0 liquid-glass bg-white/20 text-white
+            ${isMobile 
+              ? 'w-12 h-12 p-0 justify-center' 
+              : 'px-4 py-2 min-w-[140px] justify-between'
+            }
             ${hasSelection ? 'bg-brand-lime/30 border-brand-lime/40 hover:bg-brand-lime/40' : 'hover:bg-white/20'}
           `}
         >
-          <CalendarDays className="h-4 w-4 mr-2" />
-          <span className="flex-1 text-left">{getButtonText()}</span>
-          {hasSelection && (
-            <X 
-              className="h-3 w-3 ml-2 hover:bg-white/20 rounded-full p-0.5" 
-              onClick={(e) => {
-                e.stopPropagation();
-                handleClear();
-              }}
-            />
+          {isMobile ? (
+            <span className="text-lg">📅</span>
+          ) : (
+            <>
+              <CalendarDays className="h-4 w-4 mr-2" />
+              <span className="flex-1 text-left">{getButtonText()}</span>
+              {hasSelection && (
+                <X 
+                  className="h-3 w-3 ml-2 hover:bg-white/20 rounded-full p-0.5" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClear();
+                  }}
+                />
+              )}
+            </>
           )}
         </Button>
       </PopoverTrigger>
