@@ -110,6 +110,8 @@ Preferred communication style: Simple, everyday language.
 - ✓ Today's date now shows only border outline (lime green) instead of filled background
 - ✓ Single mode selections show border-only, range mode shows filled backgrounds
 - ✓ Range background highlight only appears when both start and end dates selected
+- ✓ Fixed mobile date picker styling to match other filter buttons (transparent glass with emoji)
+- ✓ Date picker now uses consistent liquid-glass styling across all screen sizes
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server

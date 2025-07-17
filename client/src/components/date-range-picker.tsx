@@ -113,12 +113,12 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
         <Button
           variant="outline"
           className={`
-            rounded-full border-0 liquid-glass bg-white/20 text-white
+            rounded-full border-0 liquid-glass text-white
             ${isMobile 
-              ? 'w-12 h-12 p-0 justify-center' 
-              : 'px-4 py-2 min-w-[140px] justify-between'
+              ? 'w-12 h-12 p-0 justify-center bg-white/20 hover:bg-white/30' 
+              : 'px-4 py-2 min-w-[140px] justify-between bg-white/20'
             }
-            ${hasSelection ? 'bg-brand-lime/30 border-brand-lime/40 hover:bg-brand-lime/40' : 'hover:bg-white/20'}
+            ${hasSelection && !isMobile ? 'bg-brand-lime/30 border-brand-lime/40 hover:bg-brand-lime/40' : ''}
           `}
         >
           {isMobile ? (
