@@ -93,7 +93,45 @@ export const handler = serverless(app);
    - Start Command: `npm start`
    - Node Version: 18
 
-## Option 5: DigitalOcean App Platform
+## Option 5: Render (Empfohlen für einfaches Setup)
+
+### Schritt 1: GitHub Repository vorbereiten
+1. Laden Sie die Zip-Datei von Replit herunter
+2. Erstellen Sie ein GitHub Repository: `momentmillionaer/app`
+3. Laden Sie alle Dateien hoch
+
+### Schritt 2: Render Setup
+1. Gehen Sie zu [render.com](https://render.com)
+2. **"New +"** → **"Web Service"**
+3. **GitHub Repository verbinden**: `momentmillionaer/app`
+4. **Konfiguration**:
+   - **Name**: `momentmillionaer-app`
+   - **Build Command**: `npm ci && npm run build`
+   - **Start Command**: `npm start`
+   - **Node Version**: 18
+
+### Schritt 3: Environment Variables
+Fügen Sie in Render folgende Environment Variables hinzu:
+```
+NODE_ENV=production
+DATABASE_URL=postgresql://user:password@host:port/database
+NOTION_INTEGRATION_SECRET=secret_your_notion_token
+NOTION_PAGE_URL=https://notion.so/your-page-id
+```
+
+### Schritt 4: PostgreSQL Database (Optional)
+- **"New +"** → **"PostgreSQL"**
+- **Name**: `momentmillionaer-db`
+- Verbinden Sie die Database URL mit Ihrem Web Service
+
+### Vorteile von Render:
+- Kostenloser Plan verfügbar
+- Automatische SSL-Zertifikate
+- Einfache Environment Variable Verwaltung
+- Integrierte PostgreSQL-Option
+- Automatisches Deployment bei Git-Push
+
+## Option 6: DigitalOcean App Platform
 
 1. Gehen Sie zu [cloud.digitalocean.com](https://cloud.digitalocean.com)
 2. Erstellen Sie eine neue App
