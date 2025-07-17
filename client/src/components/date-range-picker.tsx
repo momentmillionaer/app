@@ -140,15 +140,15 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
         </Button>
       </PopoverTrigger>
       
-      <PopoverContent className="w-auto p-0 rounded-full border-0 ios-glass-popup" align="start">
-        <div className="p-6 space-y-6">
+      <PopoverContent className="w-auto p-0 rounded-2xl border-0 ios-glass-popup" align="start">
+        <div className="p-4 space-y-4">
           {/* Mode Toggle */}
-          <div className="flex gap-2 mb-6 justify-center">
+          <div className="flex gap-2 mb-4">
             <Button
               variant={mode === 'single' ? "default" : "outline"}
               size="sm"
               onClick={() => handleModeChange('single')}
-              className={`text-xs rounded-full px-4 py-2 ${
+              className={`text-xs rounded-full px-3 py-1 ${
                 mode === 'single' 
                   ? 'bg-brand-orange text-white hover:bg-brand-orange/80' 
                   : 'bg-white/20 hover:bg-white/30 text-white border-white/20'
@@ -160,7 +160,7 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
               variant={mode === 'range' ? "default" : "outline"}
               size="sm"
               onClick={() => handleModeChange('range')}
-              className={`text-xs rounded-full px-4 py-2 ${
+              className={`text-xs rounded-full px-3 py-1 ${
                 mode === 'range' 
                   ? 'bg-brand-orange text-white hover:bg-brand-orange/80' 
                   : 'bg-white/20 hover:bg-white/30 text-white border-white/20'
@@ -181,12 +181,12 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
           />
 
           {/* Action Buttons */}
-          <div className="flex justify-center gap-3 pt-4">
+          <div className="flex justify-between gap-2 pt-2">
             <Button
               variant="outline"
               size="sm"
               onClick={handleClear}
-              className="text-xs rounded-full px-4 py-2 bg-white/20 hover:bg-white/30 text-white border-white/20"
+              className="text-xs rounded-full px-3 py-1 bg-white/20 hover:bg-white/30 text-white border-white/20"
             >
               🗑️ Löschen
             </Button>
@@ -194,7 +194,7 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
               variant="default"
               size="sm"
               onClick={handleApply}
-              className="text-xs rounded-full px-4 py-2 bg-brand-orange text-white hover:bg-brand-orange/80"
+              className="text-xs rounded-full px-3 py-1 bg-brand-orange text-white hover:bg-brand-orange/80"
             >
               ✓ Anwenden
             </Button>
