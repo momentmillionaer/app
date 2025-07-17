@@ -37,20 +37,39 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
     calendarDays.push(day);
   }
 
-  // Group events by date - handle merged events with multiple dates
+  // Group events by date - handle both single events and multi-day events with endDate
   const eventsByDate: { [key: string]: Event[] } = {};
   events.forEach(event => {
-    // Always add the main date (which is now the next future date)
     if (event.date) {
-      const eventDate = new Date(event.date);
-      const dateKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}-${eventDate.getDate()}`;
-      if (!eventsByDate[dateKey]) {
-        eventsByDate[dateKey] = [];
+      const startDate = new Date(event.date);
+      const endDate = event.endDate ? new Date(event.endDate) : null;
+      
+      if (endDate && endDate > startDate) {
+        // Multi-day event: add to all days between start and end (inclusive)
+        const currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+          const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${currentDate.getDate()}`;
+          if (!eventsByDate[dateKey]) {
+            eventsByDate[dateKey] = [];
+          }
+          // Check if event is already added for this date to avoid duplicates
+          const existingEvent = eventsByDate[dateKey].find(e => e.notionId === event.notionId);
+          if (!existingEvent) {
+            eventsByDate[dateKey].push(event);
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      } else {
+        // Single-day event or no end date
+        const dateKey = `${startDate.getFullYear()}-${startDate.getMonth()}-${startDate.getDate()}`;
+        if (!eventsByDate[dateKey]) {
+          eventsByDate[dateKey] = [];
+        }
+        eventsByDate[dateKey].push(event);
       }
-      eventsByDate[dateKey].push(event);
     }
     
-    // Also add any additional dates from the description (these are all future dates)
+    // Also handle legacy "Termine:" description format for backward compatibility
     if (event.description && event.description.startsWith('Termine:')) {
       const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
       if (termineMatch) {
@@ -62,7 +81,10 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
             if (!eventsByDate[dateKey]) {
               eventsByDate[dateKey] = [];
             }
-            eventsByDate[dateKey].push(event);
+            const existingEvent = eventsByDate[dateKey].find(e => e.notionId === event.notionId);
+            if (!existingEvent) {
+              eventsByDate[dateKey].push(event);
+            }
           }
         });
       }

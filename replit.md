@@ -91,6 +91,18 @@ Preferred communication style: Simple, everyday language.
 - ✓ Mobile view shows up to 3 events per day with overflow indicator for better performance
 - ✓ Enhanced mobile UX with day-by-day cards including time, location, and free event indicators
 
+**July 17, 2025 - Multi-Day Event Support & Calendar Enhancements**
+- ✓ Fixed React hooks errors by moving useState outside map functions
+- ✓ Enhanced date-range-picker to support both single day AND range selection with mode toggle
+- ✓ Updated latest-event-popup with 2x daily automatic refresh mechanism (12-hour intervals)
+- ✓ Made mobile "+ weitere Events" buttons clickable and expandable with full event details
+- ✓ Implemented comprehensive multi-day event support with endDate field in schema
+- ✓ Multi-day events (like Herbstmesse) now appear on ALL days between start and end dates
+- ✓ Enhanced calendar logic to handle both single-day and multi-day events correctly
+- ✓ Added automatic date range detection from Notion date properties (start/end)
+- ✓ Events with explicit start/end dates now display across entire date range in calendar
+- ✓ Maintained backward compatibility with legacy "Termine:" description format
+
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
 - ✓ Added health check endpoints at / and /health for deployment monitoring

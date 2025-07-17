@@ -253,6 +253,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           categories: categories, // Send all categories
           location: properties.Ort?.select?.name || "",
           date: eventDate,
+          endDate: properties.Datum?.date?.end || null, // Add end date support
           time: eventTime,
           price: properties.Preis?.number ? properties.Preis.number.toString() : "",
           website: properties.URL?.url || "",

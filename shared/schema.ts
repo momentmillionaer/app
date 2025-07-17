@@ -29,6 +29,7 @@ export const events = pgTable("events", {
   categories: text("categories").array(), // New field for multiple categories
   location: text("location"),
   date: timestamp("date").notNull(),
+  endDate: timestamp("end_date"), // For multi-day events
   time: text("time"),
   price: text("price"),
   website: text("website"),
