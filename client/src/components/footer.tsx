@@ -11,13 +11,15 @@ export function Footer() {
           {/* Navigation Links */}
           <div className="flex space-x-6">
             <a 
-              href="#impressum" 
+              href="https://www.morgen.co.at/impressum" 
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-white/70 hover:text-white text-sm transition-colors duration-200"
             >
               Impressum
             </a>
             <a 
-              href="#kontakt" 
+              href="mailto:cornelia@morgen.co.at" 
               className="text-white/70 hover:text-white text-sm transition-colors duration-200"
             >
               Kontakt

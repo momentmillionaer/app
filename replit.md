@@ -116,7 +116,7 @@ Preferred communication style: Simple, everyday language.
 - ✓ Today's date shows lime green outline with subtle glow effect, no background fill
 - ✓ Date range backgrounds (start, middle, end) all use consistent rounded corner styling
 
-**July 17, 2025 - Comprehensive Deployment Setup**
+**July 17, 2025 - Comprehensive Deployment Setup & Footer Updates**
 - ✓ Created complete GitHub deployment configuration with automated CI/CD pipeline
 - ✓ Added Vercel deployment setup with optimized build configuration
 - ✓ Implemented Docker containerization with multi-stage builds for production efficiency
@@ -126,6 +126,7 @@ Preferred communication style: Simple, everyday language.
 - ✓ Enhanced deployment flexibility with multiple platform support (Vercel, Render, Docker)
 - ✓ Added health check endpoints and production-ready error handling
 - ✓ Created step-by-step deployment guides for non-technical users
+- ✓ Updated Footer links: Impressum → https://www.morgen.co.at/impressum, Kontakt → cornelia@morgen.co.at
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
