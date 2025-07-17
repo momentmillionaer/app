@@ -82,11 +82,11 @@
     @apply font-helvetica antialiased text-foreground;
     background: 
       linear-gradient(135deg, 
-        rgba(26, 10, 46, 0.9) 0%,
-        rgba(22, 33, 62, 0.85) 25%,
-        rgba(15, 52, 96, 0.8) 50%,
-        rgba(83, 58, 113, 0.85) 75%,
-        rgba(106, 76, 147, 0.9) 100%
+        rgba(26, 10, 46, 0.4) 0%,
+        rgba(22, 33, 62, 0.35) 25%,
+        rgba(15, 52, 96, 0.3) 50%,
+        rgba(83, 58, 113, 0.35) 75%,
+        rgba(106, 76, 147, 0.4) 100%
       ),
       url('@assets/244783fgsdl_1752738731988.jpg') center/cover fixed;
     min-height: 100vh;
@@ -345,20 +345,32 @@
 
 .date-range-calendar .rdp-day_range_middle {
   border-radius: 0 !important;
-  background-color: rgba(254, 92, 43, 0.3) !important;
+  background-color: rgba(254, 92, 43, 0.2) !important;
   color: white !important;
+  /* Only visible when both start and end dates are selected */
 }
 
-.date-range-calendar .rdp-day_selected {
+/* Selected day styling - different for single vs range mode */
+.date-range-calendar.single-mode .rdp-day_selected {
+  border-radius: 9999px !important;
+  background-color: transparent !important;
+  color: white !important;
+  border: 2px solid var(--brand-orange) !important;
+  font-weight: bold !important;
+}
+
+.date-range-calendar.range-mode .rdp-day_selected {
   border-radius: 9999px !important;
   background-color: var(--brand-orange) !important;
   color: white !important;
+  border: none !important;
 }
 
 .date-range-calendar .rdp-day_today {
   border-radius: 9999px !important;
-  background-color: rgba(247, 55, 178, 0.2) !important;
+  background-color: transparent !important;
   color: white !important;
+  border: 2px solid hsl(var(--brand-lime)) !important;
   font-weight: bold !important;
 }
 

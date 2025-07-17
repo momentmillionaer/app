@@ -106,6 +106,10 @@ Preferred communication style: Simple, everyday language.
 - ✓ Rebuilt date picker with "Einzeltag" and "Zeitraum" toggle modes in popup
 - ✓ Replaced background image with new user-provided classical painting asset
 - ✓ Date selection now uses local date formatting to prevent timezone issues
+- ✓ Reduced background overlay opacity from 0.9 to 0.4 for clearer image visibility
+- ✓ Today's date now shows only border outline (lime green) instead of filled background
+- ✓ Single mode selections show border-only, range mode shows filled backgrounds
+- ✓ Range background highlight only appears when both start and end dates selected
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
