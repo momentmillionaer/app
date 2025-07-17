@@ -25,6 +25,7 @@ export default function EventsPage() {
   const [showFreeEventsOnly, setShowFreeEventsOnly] = useState(false);
   const [sortOption, setSortOption] = useState("date-asc");
   const [viewMode, setViewMode] = useState<"calendar" | "list" | "grid">("calendar");
+  const [userChangedView, setUserChangedView] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -198,16 +199,47 @@ export default function EventsPage() {
       });
     }
 
-    if (dateFrom) {
-      filtered = filtered.filter(event => 
-        event.date && event.date >= dateFrom
-      );
-    }
+    // Date filtering - exact match for single date, range for date range
+    if (dateFrom && dateTo && dateFrom === dateTo) {
+      // Single date selected - show only events on this exact date
+      filtered = filtered.filter(event => {
+        if (!event.date) return false;
+        
+        // Check main date
+        if (event.date === dateFrom) return true;
+        
+        // Check if event has multiple dates in description
+        if (event.description.includes('Termine:')) {
+          const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+          if (termineMatch) {
+            const dates = termineMatch[1].split(',').map(d => d.trim());
+            return dates.includes(dateFrom);
+          }
+        }
+        
+        // Check endDate for multi-day events
+        if (event.endDate) {
+          const startDate = new Date(event.date);
+          const endDate = new Date(event.endDate);
+          const selectedDate = new Date(dateFrom);
+          return selectedDate >= startDate && selectedDate <= endDate;
+        }
+        
+        return false;
+      });
+    } else {
+      // Date range filtering
+      if (dateFrom) {
+        filtered = filtered.filter(event => 
+          event.date && event.date >= dateFrom
+        );
+      }
 
-    if (dateTo) {
-      filtered = filtered.filter(event => 
-        event.date && event.date <= dateTo
-      );
+      if (dateTo) {
+        filtered = filtered.filter(event => 
+          event.date && event.date <= dateTo
+        );
+      }
     }
 
     // Apply sorting
@@ -298,11 +330,31 @@ export default function EventsPage() {
       if (showFreeEventsOnly && event.price && event.price !== "0") {
         return false;
       }
-      if (dateFrom && event.date && event.date < dateFrom) {
-        return false;
-      }
-      if (dateTo && event.date && event.date > dateTo) {
-        return false;
+      // Apply same date filtering logic for calendar
+      if (dateFrom && dateTo && dateFrom === dateTo) {
+        // Single date selected
+        if (event.date !== dateFrom) {
+          // Check if event has multiple dates in description
+          if (event.description.includes('Termine:')) {
+            const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+            if (termineMatch) {
+              const dates = termineMatch[1].split(',').map(d => d.trim());
+              if (!dates.includes(dateFrom)) return false;
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        }
+      } else {
+        // Date range filtering
+        if (dateFrom && event.date && event.date < dateFrom) {
+          return false;
+        }
+        if (dateTo && event.date && event.date > dateTo) {
+          return false;
+        }
       }
       return true;
     });
@@ -316,6 +368,30 @@ export default function EventsPage() {
     setDateTo("");
     setShowFreeEventsOnly(false);
   };
+
+  // Check if any filters are active
+  const hasActiveFilters = searchQuery || 
+    (selectedCategory && selectedCategory !== "all") || 
+    (selectedAudience && selectedAudience !== "all") || 
+    dateFrom || 
+    dateTo || 
+    showFreeEventsOnly;
+
+  // Auto-switch to grid view when filters are applied (unless user manually changed view)
+  useEffect(() => {
+    if (hasActiveFilters && !userChangedView) {
+      setViewMode("grid");
+    } else if (!hasActiveFilters && !userChangedView) {
+      setViewMode("calendar");
+    }
+  }, [hasActiveFilters, userChangedView]);
+
+  // Reset user changed view when filters are cleared
+  useEffect(() => {
+    if (!hasActiveFilters) {
+      setUserChangedView(false);
+    }
+  }, [hasActiveFilters]);
 
   const getLastUpdated = () => {
     const now = new Date();
@@ -410,7 +486,10 @@ export default function EventsPage() {
               <Button
                 variant={viewMode === "calendar" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setViewMode("calendar")}
+                onClick={() => {
+                  setViewMode("calendar");
+                  setUserChangedView(true);
+                }}
                 className="flex items-center space-x-2 rounded-full px-3 py-2"
               >
                 <Calendar className="h-4 w-4" />
@@ -419,7 +498,10 @@ export default function EventsPage() {
               <Button
                 variant={viewMode === "list" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setViewMode("list")}
+                onClick={() => {
+                  setViewMode("list");
+                  setUserChangedView(true);
+                }}
                 className="flex items-center space-x-2 rounded-full px-3 py-2"
               >
                 <List className="h-4 w-4" />
@@ -428,7 +510,22 @@ export default function EventsPage() {
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setViewMode("grid")}
+                onClick={() => {
+                  setViewMode("grid");
+                  setUserChangedView(true);
+                }}
+                className="flex items-center space-x-2 rounded-full px-3 py-2"
+              >
+                <Grid3X3 className="h-4 w-4" />
+                <span>Liste</span>
+              </Button>
+              <Button
+                variant={viewMode === "grid" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => {
+                  setViewMode("grid");
+                  setUserChangedView(true);
+                }}
                 className="flex items-center space-x-2 rounded-full px-3 py-2"
               >
                 <Grid3X3 className="h-4 w-4" />
