@@ -40,7 +40,7 @@ Name: momentmillionaer-app
 Branch: main
 Root Directory: (leer lassen)
 Runtime: Node
-Build Command: npm ci && npm run build
+Build Command: npm install && npm run build
 Start Command: npm start
 ```
 
