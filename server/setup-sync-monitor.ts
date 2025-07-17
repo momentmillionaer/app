@@ -16,6 +16,7 @@ export function setupSyncMonitor() {
   // Check every 12 hours (twice daily as requested)
   const syncInterval = setInterval(async () => {
     try {
+      console.log("🔄 Running scheduled 12-hour sync check...");
       await checkNotionEventsSync();
     } catch (error) {
       console.error("❌ Sync monitor error:", error);

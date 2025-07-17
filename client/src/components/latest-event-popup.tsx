@@ -11,20 +11,44 @@ interface LatestEventPopupProps {
 export function LatestEventPopup({ events, onEventClick }: LatestEventPopupProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hasBeenShown, setHasBeenShown] = useState(false);
+  const [lastEventId, setLastEventId] = useState<string | null>(null);
 
-  // Get the latest event (most recently added)
-  const latestEvent = events.length > 0 ? events[events.length - 1] : null;
+  // Get the latest event (most recently added to Notion, sorted by creation time)
+  const latestEvent = events.length > 0 
+    ? events.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())[0]
+    : null;
 
   useEffect(() => {
-    // Show popup after 2 seconds if there's a latest event and it hasn't been shown yet
-    if (latestEvent && !hasBeenShown) {
+    // Check for 2x daily updates and new events
+    const currentEventId = latestEvent?.notionId;
+    const storedEventId = localStorage.getItem('lastShownEventId');
+    const storedTime = localStorage.getItem('lastShownEventTime');
+    const now = Date.now();
+    const twelveHours = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+    
+    // Show popup if: 1) New event ID, or 2) Same event but 12+ hours passed (2x daily refresh)
+    const shouldShow = latestEvent && (
+      currentEventId !== lastEventId || 
+      currentEventId !== storedEventId ||
+      !storedTime || 
+      (now - parseInt(storedTime)) >= twelveHours
+    );
+    
+    if (shouldShow) {
+      // Reset the popup for new/refreshed event
+      setHasBeenShown(false);
+      setLastEventId(currentEventId);
+      
       const timer = setTimeout(() => {
         setIsVisible(true);
         setHasBeenShown(true);
+        // Store last shown event ID and timestamp for 2x daily tracking
+        localStorage.setItem('lastShownEventId', currentEventId || '');
+        localStorage.setItem('lastShownEventTime', Date.now().toString());
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [latestEvent, hasBeenShown]);
+  }, [latestEvent, lastEventId]);
 
   const handleClose = () => {
     setIsVisible(false);

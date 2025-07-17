@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Event } from "@shared/schema";
 import { EventCard } from "./event-card";
-import { CalendarEventHover } from "./calendar-event-hover";
+
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CalendarViewProps {
@@ -15,6 +15,7 @@ interface CalendarViewProps {
 
 export function CalendarView({ events, onEventClick }: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [expandedDays, setExpandedDays] = useState<{[key: string]: boolean}>({});
   const isMobile = useIsMobile();
 
   // Get the first day of the month and calculate calendar grid
@@ -313,6 +314,8 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
             const dayEvents = eventsByDate[dateKey] || [];
             const isToday = new Date().toDateString() === date.toDateString();
             const dayName = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][index];
+            const dayId = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+            const isExpanded = expandedDays[dayId] || false;
             
             return (
               <div
@@ -409,9 +412,66 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                         );
                       })}
                       {dayEvents.length > 3 && (
-                        <p className="text-white/50 text-xs text-center italic">
-                          +{dayEvents.length - 3} weitere Events
-                        </p>
+                        <div className="relative">
+                          <button
+                            onClick={() => setExpandedDays(prev => ({...prev, [dayId]: !isExpanded}))}
+                            className="w-full text-white/50 text-xs text-center italic hover:text-white/70 transition-colors p-1 rounded"
+                          >
+                            + {dayEvents.length - 3} weitere{dayEvents.length > 4 ? ' Events' : ' Event'}
+                          </button>
+                          {isExpanded && (
+                            <div className="space-y-2 mt-2">
+                              {dayEvents.slice(3).map((event, eventIndex) => {
+                                const isPast = (() => {
+                                  const today = new Date();
+                                  today.setHours(0, 0, 0, 0);
+                                  const eventDate = new Date(event.date);
+                                  eventDate.setHours(0, 0, 0, 0);
+                                  return eventDate < today;
+                                })();
+                                
+                                return (
+                                  <div
+                                    key={eventIndex + 3}
+                                    onClick={() => onEventClick?.(event)}
+                                    className={`p-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
+                                      isPast ? 'opacity-60' : ''
+                                    }`}
+                                    style={{
+                                      background: isPast ? 'rgba(128, 128, 128, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+                                      backdropFilter: 'blur(10px)',
+                                      WebkitBackdropFilter: 'blur(10px)',
+                                    }}
+                                  >
+                                    <div className="flex items-start space-x-2">
+                                      <span className="text-lg flex-shrink-0 mt-0.5">
+                                        {getEventEmoji(event)}
+                                      </span>
+                                      <div className="flex-grow min-w-0">
+                                        <h4 className="font-medium text-white text-sm leading-tight line-clamp-2">
+                                          {event.title}
+                                        </h4>
+                                        {event.time && (
+                                          <p className="text-white/70 text-xs mt-0.5">
+                                            {event.time}
+                                          </p>
+                                        )}
+                                        {event.location && (
+                                          <p className="text-white/60 text-xs truncate">
+                                            📍 {event.location}
+                                          </p>
+                                        )}
+                                      </div>
+                                      {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
+                                        <span className="text-xs">🆓</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}
@@ -531,15 +591,11 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                       const isEventPast = specificDate < todayMidnight;
                       
                       return (
-                        <CalendarEventHover
+                        <div
                           key={`${day}-event-${eventIndex}`}
-                          event={event}
-                          onEventClick={onEventClick || (() => {})}
-                        >
-                          <div
-                            className={`text-xs px-2 py-1 rounded-full truncate liquid-glass border cursor-pointer transition-colors ${
-                              isEventPast 
-                                ? "bg-gray-400/20 border-gray-400/30 text-gray-400 opacity-60" // Past events are grayed out
+                          className={`text-xs px-2 py-1 rounded-full truncate liquid-glass border cursor-pointer transition-colors ${
+                            isEventPast 
+                              ? "bg-gray-400/20 border-gray-400/30 text-gray-400 opacity-60" // Past events are grayed out
                                 : event.price === "0" 
                                   ? "bg-brand-lime/80 border-brand-lime text-brand-black font-bold hover:bg-white/50" 
                                   : "bg-white/40 border-white/20 text-gray-900 hover:bg-white/50"
@@ -554,7 +610,6 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                             {event.title}
                             {!isEventPast && event.price === "0" && <span className="ml-1">🎉</span>}
                           </div>
-                        </CalendarEventHover>
                       );
                     })}
                     

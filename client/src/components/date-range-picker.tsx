@@ -21,6 +21,7 @@ export function DateRangePicker({
 }: DateRangePickerProps) {
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
+  const [mode, setMode] = useState<'single' | 'range'>('single');
   const [tempDateFrom, setTempDateFrom] = useState<Date | undefined>(
     dateFrom ? new Date(dateFrom) : undefined
   );
@@ -31,7 +32,9 @@ export function DateRangePicker({
 
   // Format display text
   const formatDateRange = () => {
-    if (dateFrom && dateTo) {
+    if (mode === 'single' && dateFrom) {
+      return format(new Date(dateFrom), "dd.MM.yyyy", { locale: de });
+    } else if (mode === 'range' && dateFrom && dateTo) {
       const from = format(new Date(dateFrom), "dd.MM.yyyy", { locale: de });
       const to = format(new Date(dateTo), "dd.MM.yyyy", { locale: de });
       return `${from} - ${to}`;
@@ -182,11 +185,17 @@ export function DateRangePicker({
         align="start"
       >
         <div className="p-4 space-y-4">
-          {/* Calendar with range selection */}
+          {/* Calendar with mode-dependent selection */}
           <Calendar
-            mode="range"
-            selected={{ from: tempDateFrom, to: tempDateTo }}
-            onSelect={handleDateSelect}
+            mode={mode === 'single' ? 'single' : 'range'}
+            selected={mode === 'single' ? tempDateFrom : { from: tempDateFrom, to: tempDateTo }}
+            onSelect={mode === 'single' ? (date: Date | undefined) => {
+              setTempDateFrom(date);
+              setTempDateTo(undefined);
+              if (date) {
+                updateFiltersWithDelay(date, undefined);
+              }
+            } : handleDateSelect}
             numberOfMonths={1}
             locale={de}
             className="rounded-3xl date-range-calendar"
@@ -202,22 +211,26 @@ export function DateRangePicker({
             >
               ☀️ Heute
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleThisWeek}
-              className="text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
-            >
-              📅 Diese Woche
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleThisMonth}
-              className="text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
-            >
-              🗓️ Dieser Monat
-            </Button>
+            {mode === 'range' && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleThisWeek}
+                  className="text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
+                >
+                  📅 Diese Woche
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleThisMonth}
+                  className="text-xs rounded-full bg-white/10 text-white/90 hover:bg-white/20 backdrop-blur-xl transition-all duration-300"
+                >
+                  🗓️ Dieser Monat
+                </Button>
+              </>
+            )}
             <Button
               variant="ghost"
               size="sm"
