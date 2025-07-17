@@ -1,10 +1,12 @@
-import { X, Calendar, MapPin, Clock, Euro, ExternalLink, Users, FileText } from "lucide-react";
+import { X, Calendar, MapPin, Clock, Euro, ExternalLink, Users, FileText, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Event } from "@shared/schema";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { getCategoryEmojis } from "@/lib/category-utils";
+import { ShareEventDialog } from "./share-event-dialog";
+import { useState } from "react";
 
 interface EventModalProps {
   event: Event | null;
@@ -13,6 +15,8 @@ interface EventModalProps {
 }
 
 export function EventModal({ event, isOpen, onClose }: EventModalProps) {
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  
   if (!isOpen || !event) return null;
 
   // Function to generate emoji based on event content
@@ -321,18 +325,35 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
           </div>
 
           {/* Action Buttons */}
-          {event.website && (
-            <div className="flex justify-end mt-8">
+          <div className="flex justify-between items-center mt-8">
+            {/* Share Button - Bottom Left */}
+            <Button
+              onClick={() => setShowShareDialog(true)}
+              className="bg-purple-500 hover:bg-orange-500 text-white rounded-full px-6 py-2 transition-colors"
+            >
+              <Share2 className="w-4 h-4 mr-2" />
+              Teilen
+            </Button>
+
+            {/* Website Button - Bottom Right */}
+            {event.website && (
               <Button
                 onClick={() => window.open(event.website, '_blank')}
                 className="bg-brand-blue hover:bg-brand-lime text-white rounded-2xl transition-colors"
               >
                 Tickets & Info
               </Button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Share Dialog */}
+      <ShareEventDialog
+        event={event}
+        isOpen={showShareDialog}
+        onClose={() => setShowShareDialog(false)}
+      />
     </div>
   );
 }
