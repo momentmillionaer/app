@@ -200,7 +200,7 @@ export default function EventsPage() {
     }
 
     // Date filtering - exact match for single date, range for date range
-    if (dateFrom && dateTo && dateFrom === dateTo) {
+    if (dateFrom && !dateTo) {
       // Single date selected - show only events on this exact date
       filtered = filtered.filter(event => {
         if (!event.date) return false;
@@ -227,19 +227,16 @@ export default function EventsPage() {
         
         return false;
       });
-    } else {
+    } else if (dateFrom && dateTo) {
       // Date range filtering
-      if (dateFrom) {
-        filtered = filtered.filter(event => 
-          event.date && event.date >= dateFrom
-        );
-      }
-
-      if (dateTo) {
-        filtered = filtered.filter(event => 
-          event.date && event.date <= dateTo
-        );
-      }
+      filtered = filtered.filter(event => 
+        event.date && event.date >= dateFrom && event.date <= dateTo
+      );
+    } else if (dateFrom) {
+      // Only dateFrom specified (fallback)
+      filtered = filtered.filter(event => 
+        event.date && event.date >= dateFrom
+      );
     }
 
     // Apply sorting
@@ -331,7 +328,7 @@ export default function EventsPage() {
         return false;
       }
       // Apply same date filtering logic for calendar
-      if (dateFrom && dateTo && dateFrom === dateTo) {
+      if (dateFrom && !dateTo) {
         // Single date selected
         if (event.date !== dateFrom) {
           // Check if event has multiple dates in description
@@ -347,12 +344,14 @@ export default function EventsPage() {
             return false;
           }
         }
-      } else {
+      } else if (dateFrom && dateTo) {
         // Date range filtering
-        if (dateFrom && event.date && event.date < dateFrom) {
+        if (event.date && (event.date < dateFrom || event.date > dateTo)) {
           return false;
         }
-        if (dateTo && event.date && event.date > dateTo) {
+      } else if (dateFrom) {
+        // Only dateFrom specified (fallback)
+        if (event.date && event.date < dateFrom) {
           return false;
         }
       }
