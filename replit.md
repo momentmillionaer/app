@@ -134,6 +134,10 @@ Preferred communication style: Simple, everyday language.
 - ✓ Filter UX improvements: automatic switch to grid view when filters applied for better overview
 - ✓ Date filtering corrected to show exact date matches instead of events after selected date
 - ✓ Removed duplicate grid view option to maintain clean 3-button interface (Calendar, Liste, Raster)
+- ✓ Fixed date filtering logic: Single date selections now show exact matches only (dateFrom && !dateTo)
+- ✓ Enhanced CORS support in share functionality for better cross-origin image handling
+- ✓ PWA setup completed: favicon, app icons, manifest.json for iPhone home screen integration
+- ✓ App name "momentmillionär" configured for all devices with custom MM logo as app icon
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
