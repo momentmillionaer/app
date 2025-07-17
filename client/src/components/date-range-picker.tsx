@@ -113,12 +113,11 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
         <Button
           variant="outline"
           className={`
-            rounded-full border-0 liquid-glass text-white
+            rounded-full border-0 liquid-glass text-white bg-white/20 hover:bg-white/30
             ${isMobile 
-              ? 'w-12 h-12 p-0 justify-center bg-white/20 hover:bg-white/30' 
-              : 'px-4 py-2 min-w-[140px] justify-between bg-white/20'
+              ? 'w-12 h-12 p-0 justify-center' 
+              : 'px-4 py-2 min-w-[140px] justify-between'
             }
-            ${hasSelection && !isMobile ? 'bg-brand-lime/30 border-brand-lime/40 hover:bg-brand-lime/40' : ''}
           `}
         >
           {isMobile ? (
@@ -141,15 +140,15 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
         </Button>
       </PopoverTrigger>
       
-      <PopoverContent className="w-auto p-0 rounded-2xl border-0 ios-glass-popup" align="start">
-        <div className="p-4 space-y-4">
+      <PopoverContent className="w-auto p-0 rounded-full border-0 ios-glass-popup" align="start">
+        <div className="p-6 space-y-6">
           {/* Mode Toggle */}
-          <div className="flex gap-2 mb-4">
+          <div className="flex gap-2 mb-6 justify-center">
             <Button
               variant={mode === 'single' ? "default" : "outline"}
               size="sm"
               onClick={() => handleModeChange('single')}
-              className={`text-xs rounded-full px-3 py-1 ${
+              className={`text-xs rounded-full px-4 py-2 ${
                 mode === 'single' 
                   ? 'bg-brand-orange text-white hover:bg-brand-orange/80' 
                   : 'bg-white/20 hover:bg-white/30 text-white border-white/20'
@@ -161,7 +160,7 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
               variant={mode === 'range' ? "default" : "outline"}
               size="sm"
               onClick={() => handleModeChange('range')}
-              className={`text-xs rounded-full px-3 py-1 ${
+              className={`text-xs rounded-full px-4 py-2 ${
                 mode === 'range' 
                   ? 'bg-brand-orange text-white hover:bg-brand-orange/80' 
                   : 'bg-white/20 hover:bg-white/30 text-white border-white/20'
@@ -178,37 +177,27 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
             onSelect={mode === 'single' ? handleSingleDateSelect : handleRangeSelect}
             numberOfMonths={1}
             locale={de}
-            className={`rounded-2xl date-range-calendar ${mode === 'single' ? 'single-mode' : 'range-mode'}`}
+            className={`rounded-full date-range-calendar ${mode === 'single' ? 'single-mode' : 'range-mode'}`}
           />
 
           {/* Action Buttons */}
-          <div className="flex justify-between pt-2">
+          <div className="flex justify-center gap-3 pt-4">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={handleClear}
-              className="text-white/70 hover:text-white hover:bg-white/10 rounded-full px-3"
+              className="text-xs rounded-full px-4 py-2 bg-white/20 hover:bg-white/30 text-white border-white/20"
             >
-              Löschen
+              🗑️ Löschen
             </Button>
-            
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCancel}
-                className="text-white/70 hover:text-white hover:bg-white/10 rounded-full px-3"
-              >
-                Abbrechen
-              </Button>
-              <Button
-                size="sm"
-                onClick={handleApply}
-                className="bg-brand-orange hover:bg-brand-purple text-white rounded-full px-4"
-              >
-                Übernehmen
-              </Button>
-            </div>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleApply}
+              className="text-xs rounded-full px-4 py-2 bg-brand-orange text-white hover:bg-brand-orange/80"
+            >
+              ✓ Anwenden
+            </Button>
           </div>
         </div>
       </PopoverContent>
