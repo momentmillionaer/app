@@ -102,6 +102,10 @@ Preferred communication style: Simple, everyday language.
 - ✓ Added automatic date range detection from Notion date properties (start/end)
 - ✓ Events with explicit start/end dates now display across entire date range in calendar
 - ✓ Maintained backward compatibility with legacy "Termine:" description format
+- ✓ Fixed critical date picker off-by-one error with proper timezone handling
+- ✓ Rebuilt date picker with "Einzeltag" and "Zeitraum" toggle modes in popup
+- ✓ Replaced background image with new user-provided classical painting asset
+- ✓ Date selection now uses local date formatting to prevent timezone issues
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server

@@ -80,12 +80,17 @@
 
   body {
     @apply font-helvetica antialiased text-foreground;
-    background: url('@assets/222401fgsdl_1752489274104.jpg') center/cover fixed,
-                linear-gradient(135deg, 
-                  rgba(0, 0, 0, 0.15) 0%, 
-                  rgba(0, 0, 0, 0.05) 50%, 
-                  rgba(0, 0, 0, 0.1) 100%);
+    background: 
+      linear-gradient(135deg, 
+        rgba(26, 10, 46, 0.9) 0%,
+        rgba(22, 33, 62, 0.85) 25%,
+        rgba(15, 52, 96, 0.8) 50%,
+        rgba(83, 58, 113, 0.85) 75%,
+        rgba(106, 76, 147, 0.9) 100%
+      ),
+      url('@assets/244783fgsdl_1752738731988.jpg') center/cover fixed;
     min-height: 100vh;
+    color: white;
   }
   
   /* iOS Widget Style - Authentic translucent materials */
