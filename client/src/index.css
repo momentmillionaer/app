@@ -344,7 +344,7 @@
 }
 
 .date-range-calendar .rdp-day_range_middle {
-  border-radius: 0 !important;
+  border-radius: 12px !important;
   background-color: rgba(254, 92, 43, 0.2) !important;
   color: white !important;
   /* Only visible when both start and end dates are selected */
@@ -352,7 +352,7 @@
 
 /* Selected day styling - different for single vs range mode */
 .date-range-calendar.single-mode .rdp-day_selected {
-  border-radius: 9999px !important;
+  border-radius: 12px !important;
   background-color: transparent !important;
   color: white !important;
   border: 2px solid var(--brand-orange) !important;
@@ -360,18 +360,27 @@
 }
 
 .date-range-calendar.range-mode .rdp-day_selected {
-  border-radius: 9999px !important;
+  border-radius: 12px !important;
+  background-color: var(--brand-orange) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.date-range-calendar .rdp-day_range_start,
+.date-range-calendar .rdp-day_range_end {
+  border-radius: 12px !important;
   background-color: var(--brand-orange) !important;
   color: white !important;
   border: none !important;
 }
 
 .date-range-calendar .rdp-day_today {
-  border-radius: 9999px !important;
+  border-radius: 12px !important;
   background-color: transparent !important;
   color: white !important;
   border: 2px solid hsl(var(--brand-lime)) !important;
   font-weight: bold !important;
+  box-shadow: 0 0 8px rgba(208, 254, 29, 0.4) !important;
 }
 
 [data-radix-select-value] * {

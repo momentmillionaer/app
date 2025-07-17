@@ -177,7 +177,7 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
             onSelect={mode === 'single' ? handleSingleDateSelect : handleRangeSelect}
             numberOfMonths={1}
             locale={de}
-            className={`rounded-full date-range-calendar ${mode === 'single' ? 'single-mode' : 'range-mode'}`}
+            className={`rounded-2xl date-range-calendar ${mode === 'single' ? 'single-mode' : 'range-mode'}`}
           />
 
           {/* Action Buttons */}

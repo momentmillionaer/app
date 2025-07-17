@@ -112,6 +112,9 @@ Preferred communication style: Simple, everyday language.
 - ✓ Range background highlight only appears when both start and end dates selected
 - ✓ Fixed mobile date picker styling to match other filter buttons (transparent glass with emoji)
 - ✓ Date picker now uses consistent liquid-glass styling across all screen sizes
+- ✓ Calendar date selections use rounded corners (12px) instead of full circles for better readability
+- ✓ Today's date shows lime green outline with subtle glow effect, no background fill
+- ✓ Date range backgrounds (start, middle, end) all use consistent rounded corner styling
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
