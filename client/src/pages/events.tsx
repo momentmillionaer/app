@@ -517,18 +517,6 @@ export default function EventsPage() {
                 className="flex items-center space-x-2 rounded-full px-3 py-2"
               >
                 <Grid3X3 className="h-4 w-4" />
-                <span>Liste</span>
-              </Button>
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => {
-                  setViewMode("grid");
-                  setUserChangedView(true);
-                }}
-                className="flex items-center space-x-2 rounded-full px-3 py-2"
-              >
-                <Grid3X3 className="h-4 w-4" />
                 <span>Raster</span>
               </Button>
             </div>

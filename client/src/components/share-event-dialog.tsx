@@ -55,7 +55,15 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         
         await new Promise((resolve, reject) => {
           img.onload = resolve
-          img.onerror = reject
+          img.onerror = () => {
+            console.log('Failed to load original image, trying without parameters')
+            // Try without URL parameters
+            const cleanUrl = event.imageUrl!.split('?')[0]
+            img.src = cleanUrl
+            
+            img.onload = resolve
+            img.onerror = reject
+          }
           img.src = event.imageUrl
         })
 

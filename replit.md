@@ -131,6 +131,9 @@ Preferred communication style: Simple, everyday language.
 - ✓ Added Share button (purple/orange) in event modal bottom-left with liquid glass share dialog
 - ✓ Created social media optimized 1080x1080px images with blurred event background and glass-morphism overlay
 - ✓ Added download, share (native API), and link copying functionality for enhanced social sharing
+- ✓ Filter UX improvements: automatic switch to grid view when filters applied for better overview
+- ✓ Date filtering corrected to show exact date matches instead of events after selected date
+- ✓ Removed duplicate grid view option to maintain clean 3-button interface (Calendar, Liste, Raster)
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
