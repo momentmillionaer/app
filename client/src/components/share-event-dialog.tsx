@@ -35,17 +35,26 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
   const eventUrl = `${window.location.origin}/?event=${event.notionId}`
 
   const generateShareImage = async () => {
-    if (!canvasRef.current) return
+    if (!canvasRef.current) {
+      console.log('Canvas ref not available')
+      return
+    }
 
     setIsGenerating(true)
+    console.log('Starting image generation for:', event.title)
     
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    if (!ctx) {
+      console.log('Canvas context not available')
+      setIsGenerating(false)
+      return
+    }
 
     // Set canvas size for social media (1080x1080 for Instagram)
     canvas.width = 1080
     canvas.height = 1080
+    console.log('Canvas size set to:', canvas.width, 'x', canvas.height)
 
     try {
       // Load and draw background image (blurred)
@@ -198,13 +207,21 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.fillText('momentmillionär', canvas.width / 2, containerY + containerHeight + 60)
 
       // Convert to blob and create URL
-      const blob = await new Promise<Blob>((resolve) => {
-        canvas.toBlob((blob) => resolve(blob!), 'image/png', 0.9)
+      console.log('Converting canvas to blob...')
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob)
+          } else {
+            reject(new Error('Failed to create blob'))
+          }
+        }, 'image/png', 0.9)
       })
       
+      console.log('Blob created, size:', blob.size, 'bytes')
       const url = URL.createObjectURL(blob)
       setGeneratedImage(url)
-      console.log('Share image generated successfully')
+      console.log('Share image generated successfully, URL:', url)
       
     } catch (error) {
       console.error('Error generating share image:', error)
@@ -338,8 +355,12 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
   useEffect(() => {
     if (isOpen && !generatedImage && !isGenerating) {
-      // Start generation immediately when dialog opens
-      generateShareImage()
+      // Start generation with small delay to ensure canvas is ready
+      const timer = setTimeout(() => {
+        console.log('Dialog opened, starting image generation...')
+        generateShareImage()
+      }, 100)
+      return () => clearTimeout(timer)
     }
   }, [isOpen, generatedImage, isGenerating])
 
@@ -373,8 +394,14 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
               />
             </div>
           ) : (
-            <div className="flex items-center justify-center h-64 bg-white/10 backdrop-blur-sm rounded-[2rem] border border-white/20">
+            <div className="flex flex-col items-center justify-center h-64 bg-white/10 backdrop-blur-sm rounded-[2rem] border border-white/20 space-y-2">
               <div className="text-white/70 drop-shadow-lg">Vorschau wird geladen...</div>
+              <button 
+                onClick={generateShareImage}
+                className="text-sm text-white/50 hover:text-white/80 underline"
+              >
+                Erneut versuchen
+              </button>
             </div>
           )}
 
