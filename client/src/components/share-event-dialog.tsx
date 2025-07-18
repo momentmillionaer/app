@@ -121,19 +121,19 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerWidth = canvas.width - 160
       const containerHeight = 780
 
-      // Glass morphism effect with backdrop blur simulation
-      // Create a blur effect by drawing multiple overlapping semi-transparent rectangles
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.02)'
-      for (let i = 0; i < 5; i++) {
+      // Glass morphism effect with subtle backdrop blur simulation
+      // Create a softer blur effect with fewer layers
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'
+      for (let i = 0; i < 3; i++) {
         ctx.beginPath()
-        ctx.roundRect(containerX + i, containerY + i, containerWidth - 2*i, containerHeight - 2*i, radius - i)
+        ctx.roundRect(containerX + i*2, containerY + i*2, containerWidth - 4*i, containerHeight - 4*i, radius - i)
         ctx.fill()
       }
       
-      // Main container with stronger opacity
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)'
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)'
-      ctx.lineWidth = 1
+      // Main container with good opacity for readability
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
+      ctx.lineWidth = 2
 
       // Rounded rectangle for glass container
       const radius = 40
@@ -247,7 +247,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
       // Convert to blob and create URL
       console.log('Converting canvas to blob...')
-      console.log('Generated at:', new Date().toLocaleTimeString(), 'with blurred container & no background blur')
+      console.log('Generated at:', new Date().toLocaleTimeString(), 'with subtle container blur & readable content')
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((blob) => {
           if (blob) {
