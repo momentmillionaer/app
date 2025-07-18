@@ -90,7 +90,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             const offsetX = (canvas.width - scaledWidth) / 2
             const offsetY = (canvas.height - scaledHeight) / 2
             
-            ctx.filter = 'blur(25px) brightness(0.4) contrast(1.1) saturate(1.1)'
+            ctx.filter = 'blur(30px) saturate(140%) brightness(1.1)'
             ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight)
             ctx.filter = 'none'
           } else {
@@ -120,10 +120,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerWidth = canvas.width - 160
       const containerHeight = 780
 
-      // Glass morphism effect similar to filter section
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
-      ctx.lineWidth = 2
+      // Glass morphism effect matching EventCard modal styling
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'
+      ctx.lineWidth = 1
 
       // Rounded rectangle for glass container
       const radius = 40
@@ -132,23 +132,21 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.fill()
       ctx.stroke()
 
-      // Text styling with soft shadows for liquid glass effect
+      // Text styling matching EventCard modal
       ctx.fillStyle = 'white'
       ctx.textAlign = 'left'
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.6)'
-      ctx.shadowBlur = 6
-      ctx.shadowOffsetX = 1
-      ctx.shadowOffsetY = 1
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
+      ctx.shadowBlur = 4
+      ctx.shadowOffsetX = 0
+      ctx.shadowOffsetY = 2
 
       let currentY = containerY + 80
 
-      // Event title with subtle stroke for liquid glass effect
+      // Event title matching EventCard modal styling
       ctx.font = 'bold 56px Helvetica, Arial, sans-serif'
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)'
-      ctx.lineWidth = 3
+      // No stroke needed - shadow provides enough contrast
       const titleLines = wrapText(ctx, event.title, containerWidth - 80)
       titleLines.forEach(line => {
-        ctx.strokeText(line, containerX + 40, currentY)
         ctx.fillText(line, containerX + 40, currentY)
         currentY += 70
       })
@@ -182,30 +180,24 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       currentY += 80
       ctx.textAlign = 'left'
 
-      // Date and time with subtle stroke
+      // Date and time matching EventCard modal
       ctx.font = 'bold 32px Helvetica, Arial, sans-serif'
       ctx.fillStyle = 'white'
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)'
-      ctx.lineWidth = 2
       const eventDate = format(new Date(event.date), 'EEEE, dd. MMMM yyyy', { locale: de })
-      ctx.strokeText(`📅 ${eventDate}`, containerX + 40, currentY)
       ctx.fillText(`📅 ${eventDate}`, containerX + 40, currentY)
       currentY += 50
 
       if (event.time) {
-        ctx.strokeText(`🕐 ${event.time}`, containerX + 40, currentY)
         ctx.fillText(`🕐 ${event.time}`, containerX + 40, currentY)
         currentY += 50
       }
 
       // Location
-      ctx.strokeText(`📍 ${event.location}`, containerX + 40, currentY)
       ctx.fillText(`📍 ${event.location}`, containerX + 40, currentY)
       currentY += 50
 
       // Organizer
       if (event.organizer) {
-        ctx.strokeText(`👤 ${event.organizer}`, containerX + 40, currentY)
         ctx.fillText(`👤 ${event.organizer}`, containerX + 40, currentY)
         currentY += 50
       }
@@ -213,7 +205,6 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       // Price
       if (event.price) {
         const priceText = event.price === '0' ? '🆓 GRATIS' : `💰 ${event.price}€`
-        ctx.strokeText(priceText, containerX + 40, currentY)
         ctx.fillText(priceText, containerX + 40, currentY)
         currentY += 50
       }
