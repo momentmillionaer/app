@@ -55,7 +55,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
     canvas.width = 1080
     canvas.height = 1350
     console.log('Canvas size set to:', canvas.width, 'x', canvas.height, '(4:5 ratio)')
-    console.log('Container transparency: 4%, Background blur: 40px, Brightness: 0.3')
+    console.log('Container transparency: 4%, Background: no blur, Brightness: 0.5')
 
     try {
       // Load and draw background image (blurred)
@@ -91,7 +91,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             const offsetX = (canvas.width - scaledWidth) / 2
             const offsetY = (canvas.height - scaledHeight) / 2
             
-            ctx.filter = 'blur(25px) saturate(140%) brightness(0.5)'
+            ctx.filter = 'saturate(140%) brightness(0.5)'
             ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight)
             ctx.filter = 'none'
           } else {
@@ -238,7 +238,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
       // Convert to blob and create URL
       console.log('Converting canvas to blob...')
-      console.log('Generated at:', new Date().toLocaleTimeString(), 'with 4% transparency & 25px blur')
+      console.log('Generated at:', new Date().toLocaleTimeString(), 'with 4% transparency & no blur')
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((blob) => {
           if (blob) {
