@@ -51,10 +51,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       return
     }
 
-    // Set canvas size for social media (1080x1080 for Instagram)
+    // Set canvas size for social media (4:5 ratio - 1080x1350 for Instagram)
     canvas.width = 1080
-    canvas.height = 1080
-    console.log('Canvas size set to:', canvas.width, 'x', canvas.height)
+    canvas.height = 1350
+    console.log('Canvas size set to:', canvas.width, 'x', canvas.height, '(4:5 ratio)')
 
     try {
       // Load and draw background image (blurred)
@@ -83,7 +83,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
           // Draw blurred background if image loaded
           if (img.complete && img.naturalHeight !== 0) {
-            ctx.filter = 'blur(20px) brightness(0.4)'
+            ctx.filter = 'blur(30px) brightness(0.3) contrast(0.8)'
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
             ctx.filter = 'none'
           } else {
@@ -107,15 +107,15 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         ctx.fillRect(0, 0, canvas.width, canvas.height)
       }
 
-      // Liquid glass container
+      // Liquid glass container (adjusted for 4:5 ratio)
       const containerX = 80
-      const containerY = 200
+      const containerY = 250
       const containerWidth = canvas.width - 160
-      const containerHeight = 680
+      const containerHeight = 780
 
-      // Glass morphism effect
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'
+      // Glass morphism effect (more opaque for better readability)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
       ctx.lineWidth = 2
 
       // Rounded rectangle for glass container
@@ -200,11 +200,11 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         currentY += 50
       }
 
-      // momentmillionär branding
+      // momentmillionär branding (positioned for 4:5 ratio)
       ctx.font = 'bold 28px Helvetica, Arial, sans-serif'
       ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
       ctx.textAlign = 'center'
-      ctx.fillText('momentmillionär', canvas.width / 2, containerY + containerHeight + 60)
+      ctx.fillText('momentmillionär', canvas.width / 2, containerY + containerHeight + 80)
 
       // Convert to blob and create URL
       console.log('Converting canvas to blob...')

@@ -142,6 +142,10 @@ Preferred communication style: Simple, everyday language.
 - ✓ Fixed share buttons: Download, Share (with multiple fallbacks), and Link copy all functional
 - ✓ Latest Event Popup: Fixed to show earliest upcoming event, daily refresh (24h intervals)
 - ✓ Share dialog now handles image loading failures gracefully with gradient fallbacks
+- ✓ Updated share image format to 4:5 ratio (1080x1350px) optimized for Instagram
+- ✓ Enhanced background blur (30px) and reduced brightness (0.3) for better text readability
+- ✓ Improved glass morphism container opacity for better text contrast
+- ✓ Debug logging system added for troubleshooting image generation issues
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
