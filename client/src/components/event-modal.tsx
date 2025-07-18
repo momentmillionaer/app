@@ -327,22 +327,44 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
           {/* Action Buttons */}
           <div className="flex justify-between items-center mt-8">
             {/* Share Button - Bottom Left */}
-            <Button
+            <button
               onClick={() => setShowShareDialog(true)}
-              className="bg-purple-500 hover:bg-orange-500 text-white rounded-full px-6 py-2 transition-colors"
+              className="liquid-glass-button flex items-center px-6 py-3 rounded-full text-white font-medium drop-shadow-lg transition-all duration-300 border border-white/20 hover:border-white/40 hover:backdrop-blur-xl"
+              style={{
+                background: 'rgba(128, 0, 128, 0.3)',
+                backdropFilter: 'blur(20px) saturate(150%)',
+                WebkitBackdropFilter: 'blur(20px) saturate(150%)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 165, 0, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(128, 0, 128, 0.3)';
+              }}
             >
               <Share2 className="w-4 h-4 mr-2" />
               Teilen
-            </Button>
+            </button>
 
             {/* Website Button - Bottom Right */}
             {event.website && (
-              <Button
+              <button
                 onClick={() => window.open(event.website, '_blank')}
-                className="bg-brand-blue hover:bg-brand-lime text-white rounded-2xl transition-colors"
+                className="liquid-glass-button flex items-center px-6 py-3 rounded-full text-white font-medium drop-shadow-lg transition-all duration-300 border border-white/20 hover:border-white/40 hover:backdrop-blur-xl"
+                style={{
+                  background: 'rgba(0, 0, 255, 0.3)',
+                  backdropFilter: 'blur(20px) saturate(150%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(150%)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(208, 254, 29, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 0, 255, 0.3)';
+                }}
               >
                 Tickets & Info
-              </Button>
+              </button>
             )}
           </div>
         </div>

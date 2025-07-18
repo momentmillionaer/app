@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://momentmillionaer.replit.app/sitemap.xml
+
+# Allow indexing of all content
+Allow: /events
+Allow: /calendar
+Allow: /list
+Allow: /grid
+
+# Disallow sensitive areas (none for this app)
+# Disallow: /admin
+# Disallow: /api
+
+# Crawl delay (optional, remove if not needed)
+Crawl-delay: 1
