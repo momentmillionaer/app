@@ -90,7 +90,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             const offsetX = (canvas.width - scaledWidth) / 2
             const offsetY = (canvas.height - scaledHeight) / 2
             
-            ctx.filter = 'blur(30px) saturate(140%) brightness(0.4)'
+            ctx.filter = 'blur(40px) saturate(140%) brightness(0.3)'
             ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight)
             ctx.filter = 'none'
           } else {
@@ -120,9 +120,9 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerWidth = canvas.width - 160
       const containerHeight = 780
 
-      // Glass morphism effect matching EventCard modal styling (much darker)
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)'
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)'
+      // Glass morphism effect - minimal transparency with strong blur
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.04)'
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)'
       ctx.lineWidth = 1
 
       // Rounded rectangle for glass container
