@@ -247,7 +247,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       // Convert to blob and create URL with forced cache break
       const timestamp = Date.now()
       console.log('Converting canvas to blob...')
-      console.log('Generated at:', new Date().toLocaleTimeString(), 'BLURRY DARK container with readable content v', timestamp)
+      console.log('Generated at:', new Date().toLocaleTimeString(), 'ROBUST FALLBACK - Always shows complete content v', timestamp)
       
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((blob) => {
@@ -266,21 +266,100 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       
     } catch (error) {
       console.error('Error generating share image:', error)
-      // Create fallback gradient image
+      // Force fallback with complete event content
       try {
+        // Clear canvas and start fresh
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        
+        // Gradient background
         const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
         gradient.addColorStop(0, '#6366f1')
         gradient.addColorStop(1, '#f59e0b')
         ctx.fillStyle = gradient
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         
-        // Add event text on fallback
+        // Container for fallback
+        const containerX = 80
+        const containerY = 250
+        const containerWidth = canvas.width - 160
+        const containerHeight = 780
+        const radius = 40
+        
+        // Glass container
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.12)'
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'
+        ctx.lineWidth = 1.5
+        ctx.beginPath()
+        ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
+        ctx.fill()
+        ctx.stroke()
+        
+        // Text styling
         ctx.fillStyle = 'white'
-        ctx.font = 'bold 48px Helvetica, Arial, sans-serif'
+        ctx.textAlign = 'left'
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'
+        ctx.shadowBlur = 6
+        ctx.shadowOffsetX = 2
+        ctx.shadowOffsetY = 2
+        
+        let currentY = containerY + 80
+        
+        // Event title
+        ctx.font = 'bold 56px Helvetica, Arial, sans-serif'
+        const titleLines = wrapText(ctx, event.title, containerWidth - 80)
+        titleLines.forEach(line => {
+          ctx.fillText(line, containerX + 40, currentY)
+          currentY += 70
+        })
+        
+        currentY += 20
+        
+        // Add all event details
+        ctx.font = '32px Helvetica, Arial, sans-serif'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+        
+        if (event.subtitle) {
+          ctx.font = 'italic 36px Helvetica, Arial, sans-serif'
+          const subtitleLines = wrapText(ctx, event.subtitle, containerWidth - 80)
+          subtitleLines.forEach(line => {
+            ctx.fillText(line, containerX + 40, currentY)
+            currentY += 45
+          })
+          currentY += 20
+        }
+        
+        // Date and time
+        ctx.font = '32px Helvetica, Arial, sans-serif'
+        const eventDate = new Date(event.date).toLocaleDateString('de-AT', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+        ctx.fillText(`📅 ${eventDate}`, containerX + 40, currentY)
+        currentY += 50
+        
+        if (event.time) {
+          ctx.fillText(`🕐 ${event.time}`, containerX + 40, currentY)
+          currentY += 50
+        }
+        
+        // Location
+        ctx.fillText(`📍 ${event.location}`, containerX + 40, currentY)
+        currentY += 50
+        
+        // Price
+        if (event.price) {
+          const priceText = event.price === '0' ? '🆓 GRATIS' : `💰 ${event.price}€`
+          ctx.fillText(priceText, containerX + 40, currentY)
+          currentY += 50
+        }
+        
+        // Branding
+        ctx.font = 'bold 28px Connihof, serif'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
         ctx.textAlign = 'center'
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
-        ctx.shadowBlur = 4
-        ctx.fillText(event.title, canvas.width / 2, canvas.height / 2)
+        ctx.fillText('© momentmillionär', canvas.width / 2, containerY + containerHeight + 80)
         
         const blob = await new Promise<Blob>((resolve) => {
           canvas.toBlob((blob) => resolve(blob!), 'image/png', 0.9)
@@ -288,7 +367,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         
         const url = URL.createObjectURL(blob)
         setGeneratedImage(url)
-        console.log('Fallback share image generated')
+        console.log('Complete fallback share image generated with all content')
       } catch (fallbackError) {
         console.error('Fallback image generation failed:', fallbackError)
       }
