@@ -83,9 +83,13 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
           // Draw blurred background if image loaded
           if (img.complete && img.naturalHeight !== 0) {
-            ctx.filter = 'blur(30px) brightness(0.3) contrast(0.8)'
+            ctx.filter = 'blur(40px) brightness(0.2) contrast(1.2) saturate(0.8)'
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
             ctx.filter = 'none'
+            
+            // Add dark overlay for better text readability
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
           } else {
             throw new Error('Image failed to load')
           }
@@ -113,10 +117,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerWidth = canvas.width - 160
       const containerHeight = 780
 
-      // Glass morphism effect (more opaque for better readability)
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
-      ctx.lineWidth = 2
+      // Glass morphism effect (much more opaque for better readability)
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+      ctx.lineWidth = 3
 
       // Rounded rectangle for glass container
       const radius = 40
@@ -125,19 +129,23 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.fill()
       ctx.stroke()
 
-      // Text styling
+      // Text styling with enhanced readability
       ctx.fillStyle = 'white'
       ctx.textAlign = 'left'
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
-      ctx.shadowBlur = 4
+      ctx.shadowColor = 'rgba(0, 0, 0, 1.0)'
+      ctx.shadowBlur = 8
+      ctx.shadowOffsetX = 2
       ctx.shadowOffsetY = 2
 
       let currentY = containerY + 80
 
-      // Event title
+      // Event title with stroke for better readability
       ctx.font = 'bold 56px Helvetica, Arial, sans-serif'
+      ctx.strokeStyle = 'rgba(0, 0, 0, 1.0)'
+      ctx.lineWidth = 6
       const titleLines = wrapText(ctx, event.title, containerWidth - 80)
       titleLines.forEach(line => {
+        ctx.strokeText(line, containerX + 40, currentY)
         ctx.fillText(line, containerX + 40, currentY)
         currentY += 70
       })
@@ -171,24 +179,30 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       currentY += 80
       ctx.textAlign = 'left'
 
-      // Date and time
+      // Date and time with stroke
       ctx.font = 'bold 32px Helvetica, Arial, sans-serif'
       ctx.fillStyle = 'white'
+      ctx.strokeStyle = 'rgba(0, 0, 0, 1.0)'
+      ctx.lineWidth = 4
       const eventDate = format(new Date(event.date), 'EEEE, dd. MMMM yyyy', { locale: de })
+      ctx.strokeText(`📅 ${eventDate}`, containerX + 40, currentY)
       ctx.fillText(`📅 ${eventDate}`, containerX + 40, currentY)
       currentY += 50
 
       if (event.time) {
+        ctx.strokeText(`🕐 ${event.time}`, containerX + 40, currentY)
         ctx.fillText(`🕐 ${event.time}`, containerX + 40, currentY)
         currentY += 50
       }
 
       // Location
+      ctx.strokeText(`📍 ${event.location}`, containerX + 40, currentY)
       ctx.fillText(`📍 ${event.location}`, containerX + 40, currentY)
       currentY += 50
 
       // Organizer
       if (event.organizer) {
+        ctx.strokeText(`👤 ${event.organizer}`, containerX + 40, currentY)
         ctx.fillText(`👤 ${event.organizer}`, containerX + 40, currentY)
         currentY += 50
       }
@@ -196,6 +210,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       // Price
       if (event.price) {
         const priceText = event.price === '0' ? '🆓 GRATIS' : `💰 ${event.price}€`
+        ctx.strokeText(priceText, containerX + 40, currentY)
         ctx.fillText(priceText, containerX + 40, currentY)
         currentY += 50
       }
