@@ -58,32 +58,43 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
     console.log('Container transparency: 4%, Background: no blur, Brightness: 0.5')
 
     try {
-      // Load and draw background image (blurred)
+      let imageLoaded = false
+      
+      // Always start with gradient background
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
+      gradient.addColorStop(0, '#6366f1')
+      gradient.addColorStop(1, '#f59e0b')
+      ctx.fillStyle = gradient
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      // Try to load and overlay the event image
       if (event.imageUrl) {
         try {
           const img = new Image()
           img.crossOrigin = 'anonymous'
           
           await new Promise((resolve, reject) => {
-            img.onload = resolve
+            const timeout = setTimeout(() => {
+              console.log('Image load timeout, using gradient background')
+              resolve(null)
+            }, 3000) // 3 second timeout
+            
+            img.onload = () => {
+              clearTimeout(timeout)
+              imageLoaded = true
+              resolve(img)
+            }
             img.onerror = () => {
-              console.log('Failed to load original image, trying without parameters')
-              // Try without URL parameters
-              const cleanUrl = event.imageUrl!.split('?')[0]
-              const fallbackImg = new Image()
-              fallbackImg.crossOrigin = 'anonymous'
-              fallbackImg.onload = resolve
-              fallbackImg.onerror = () => {
-                console.log('Fallback also failed, using gradient background')
-                resolve(null)
-              }
-              fallbackImg.src = cleanUrl
+              clearTimeout(timeout)
+              console.log('Image load failed, using gradient background')
+              resolve(null)
             }
             img.src = event.imageUrl
           })
 
-          // Draw blurred background if image loaded with proper scaling
-          if (img.complete && img.naturalHeight !== 0) {
+          // Overlay the event image if loaded
+          if (imageLoaded && img.complete && img.naturalHeight !== 0) {
+            console.log('Image loaded successfully, overlaying on gradient')
             // Calculate scale to fill canvas without distortion (cover behavior)
             const scale = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight)
             const scaledWidth = img.naturalWidth * scale
@@ -91,28 +102,16 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             const offsetX = (canvas.width - scaledWidth) / 2
             const offsetY = (canvas.height - scaledHeight) / 2
             
+            // Apply image with reduced opacity and filters
+            ctx.globalAlpha = 0.8
             ctx.filter = 'saturate(140%) brightness(0.5)'
             ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight)
             ctx.filter = 'none'
-          } else {
-            throw new Error('Image failed to load')
+            ctx.globalAlpha = 1.0
           }
         } catch (error) {
-          console.log('Using gradient background due to image error:', error)
-          // Fallback gradient background
-          const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-          gradient.addColorStop(0, '#6366f1')
-          gradient.addColorStop(1, '#f59e0b')
-          ctx.fillStyle = gradient
-          ctx.fillRect(0, 0, canvas.width, canvas.height)
+          console.log('Image processing error, continuing with gradient:', error)
         }
-      } else {
-        // Fallback gradient background
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-        gradient.addColorStop(0, '#6366f1')
-        gradient.addColorStop(1, '#f59e0b')
-        ctx.fillStyle = gradient
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
       }
 
       // Liquid glass container (adjusted for 4:5 ratio)
@@ -121,18 +120,9 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerWidth = canvas.width - 160
       const containerHeight = 780
 
-      // Glass morphism effect with subtle backdrop blur simulation
-      // Create a softer blur effect with fewer layers
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'
-      for (let i = 0; i < 3; i++) {
-        ctx.beginPath()
-        ctx.roundRect(containerX + i*2, containerY + i*2, containerWidth - 4*i, containerHeight - 4*i, radius - i)
-        ctx.fill()
-      }
-      
-      // Main container with good opacity for readability
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
+      // Glass morphism container with strong background for readability
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'
       ctx.lineWidth = 2
 
       // Rounded rectangle for glass container
@@ -142,12 +132,12 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.fill()
       ctx.stroke()
 
-      // Text styling matching EventCard modal
+      // Text styling with strong contrast
       ctx.fillStyle = 'white'
       ctx.textAlign = 'left'
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
-      ctx.shadowBlur = 4
-      ctx.shadowOffsetX = 0
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'
+      ctx.shadowBlur = 6
+      ctx.shadowOffsetX = 2
       ctx.shadowOffsetY = 2
 
       let currentY = containerY + 80
@@ -248,7 +238,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       // Convert to blob and create URL with forced cache break
       const timestamp = Date.now()
       console.log('Converting canvas to blob...')
-      console.log('Generated at:', new Date().toLocaleTimeString(), 'with FIXED container blur & readable content - CACHE BREAK v', timestamp)
+      console.log('Generated at:', new Date().toLocaleTimeString(), 'COMPLETE REBUILD - All content visible v', timestamp)
       
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((blob) => {
