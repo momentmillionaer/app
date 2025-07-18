@@ -386,23 +386,14 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                   ) : (
                     <div className="space-y-2">
                       {dayEvents.slice(0, 3).map((event, eventIndex) => {
-                        const isPast = (() => {
-                          const today = new Date();
-                          today.setHours(0, 0, 0, 0); // Start of today
-                          const eventDate = new Date(event.date);
-                          eventDate.setHours(0, 0, 0, 0); // Start of event day
-                          return eventDate < today; // Only past if event date is before today
-                        })();
-                        
+                        // Don't gray out events in mobile calendar - keep consistent with desktop
                         return (
                           <div
                             key={eventIndex}
                             onClick={() => onEventClick?.(event)}
-                            className={`p-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
-                              isPast ? 'opacity-60' : ''
-                            }`}
+                            className="p-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02]"
                             style={{
-                              background: isPast ? 'rgba(128, 128, 128, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+                              background: 'rgba(255, 255, 255, 0.1)',
                               backdropFilter: 'blur(10px)',
                               WebkitBackdropFilter: 'blur(10px)',
                             }}
@@ -444,23 +435,14 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                           {isExpanded && (
                             <div className="space-y-2 mt-2">
                               {dayEvents.slice(3).map((event, eventIndex) => {
-                                const isPast = (() => {
-                                  const today = new Date();
-                                  today.setHours(0, 0, 0, 0);
-                                  const eventDate = new Date(event.date);
-                                  eventDate.setHours(0, 0, 0, 0);
-                                  return eventDate < today;
-                                })();
-                                
+                                // Don't gray out events in mobile calendar - keep consistent with desktop
                                 return (
                                   <div
                                     key={eventIndex + 3}
                                     onClick={() => onEventClick?.(event)}
-                                    className={`p-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
-                                      isPast ? 'opacity-60' : ''
-                                    }`}
+                                    className="p-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02]"
                                     style={{
-                                      background: isPast ? 'rgba(128, 128, 128, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+                                      background: 'rgba(255, 255, 255, 0.1)',
                                       backdropFilter: 'blur(10px)',
                                       WebkitBackdropFilter: 'blur(10px)',
                                     }}
