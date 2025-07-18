@@ -199,14 +199,41 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
       // Convert to blob and create URL
       const blob = await new Promise<Blob>((resolve) => {
-        canvas.toBlob((blob) => resolve(blob!), 'image/png', 1.0)
+        canvas.toBlob((blob) => resolve(blob!), 'image/png', 0.9)
       })
       
       const url = URL.createObjectURL(blob)
       setGeneratedImage(url)
+      console.log('Share image generated successfully')
       
     } catch (error) {
       console.error('Error generating share image:', error)
+      // Create fallback gradient image
+      try {
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
+        gradient.addColorStop(0, '#6366f1')
+        gradient.addColorStop(1, '#f59e0b')
+        ctx.fillStyle = gradient
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        
+        // Add event text on fallback
+        ctx.fillStyle = 'white'
+        ctx.font = 'bold 48px Helvetica, Arial, sans-serif'
+        ctx.textAlign = 'center'
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
+        ctx.shadowBlur = 4
+        ctx.fillText(event.title, canvas.width / 2, canvas.height / 2)
+        
+        const blob = await new Promise<Blob>((resolve) => {
+          canvas.toBlob((blob) => resolve(blob!), 'image/png', 0.9)
+        })
+        
+        const url = URL.createObjectURL(blob)
+        setGeneratedImage(url)
+        console.log('Fallback share image generated')
+      } catch (fallbackError) {
+        console.error('Fallback image generation failed:', fallbackError)
+      }
     } finally {
       setIsGenerating(false)
     }
@@ -310,16 +337,17 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
   }
 
   useEffect(() => {
-    if (isOpen && !generatedImage) {
+    if (isOpen && !generatedImage && !isGenerating) {
+      // Start generation immediately when dialog opens
       generateShareImage()
     }
-  }, [isOpen])
+  }, [isOpen, generatedImage, isGenerating])
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-black/90 backdrop-blur-xl border-white/20">
+      <DialogContent className="max-w-2xl bg-black/40 backdrop-blur-xl backdrop-saturate-150 backdrop-brightness-110 border border-white/20 rounded-[2rem] shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="text-white text-xl font-semibold">
+          <DialogTitle className="text-white text-xl font-semibold drop-shadow-lg">
             Event teilen
           </DialogTitle>
         </DialogHeader>
@@ -333,42 +361,46 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
           {/* Preview */}
           {isGenerating ? (
-            <div className="flex items-center justify-center h-64 bg-white/5 rounded-2xl">
-              <div className="text-white">Bild wird generiert...</div>
+            <div className="flex items-center justify-center h-64 bg-white/10 backdrop-blur-sm rounded-[2rem] border border-white/20">
+              <div className="text-white drop-shadow-lg">Bild wird generiert...</div>
             </div>
           ) : generatedImage ? (
-            <div className="bg-white/5 rounded-2xl p-4">
+            <div className="bg-white/10 backdrop-blur-sm rounded-[2rem] p-4 border border-white/20">
               <img
                 src={generatedImage}
                 alt="Share preview"
-                className="w-full max-w-md mx-auto rounded-xl shadow-lg"
+                className="w-full max-w-md mx-auto rounded-[1.5rem] shadow-lg"
               />
             </div>
-          ) : null}
+          ) : (
+            <div className="flex items-center justify-center h-64 bg-white/10 backdrop-blur-sm rounded-[2rem] border border-white/20">
+              <div className="text-white/70 drop-shadow-lg">Vorschau wird geladen...</div>
+            </div>
+          )}
 
           {/* Action buttons */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <Button
+            <button
               onClick={downloadImage}
-              disabled={!generatedImage}
-              className="bg-purple-500 hover:bg-purple-600 text-white rounded-full"
+              disabled={!generatedImage || isGenerating}
+              className="flex items-center justify-center px-6 py-3 bg-purple-500/80 hover:bg-purple-600/80 disabled:bg-white/20 disabled:text-white/50 text-white rounded-full backdrop-blur-sm border border-white/20 transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
             >
               <Download className="w-4 h-4 mr-2" />
               Herunterladen
-            </Button>
+            </button>
 
-            <Button
+            <button
               onClick={shareImage}
-              disabled={!generatedImage}
-              className="bg-orange-500 hover:bg-orange-600 text-white rounded-full"
+              disabled={!generatedImage || isGenerating}
+              className="flex items-center justify-center px-6 py-3 bg-orange-500/80 hover:bg-orange-600/80 disabled:bg-white/20 disabled:text-white/50 text-white rounded-full backdrop-blur-sm border border-white/20 transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
             >
               <Share2 className="w-4 h-4 mr-2" />
               Teilen
-            </Button>
+            </button>
 
-            <Button
+            <button
               onClick={copyEventLink}
-              className="bg-blue-500 hover:bg-blue-600 text-white rounded-full"
+              className="flex items-center justify-center px-6 py-3 bg-blue-500/80 hover:bg-blue-600/80 text-white rounded-full backdrop-blur-sm border border-white/20 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               {copied ? (
                 <Check className="w-4 h-4 mr-2" />
@@ -376,10 +408,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
                 <Copy className="w-4 h-4 mr-2" />
               )}
               {copied ? 'Kopiert!' : 'Link kopieren'}
-            </Button>
+            </button>
           </div>
 
-          <div className="text-xs text-white/60 text-center">
+          <div className="text-xs text-white/60 text-center drop-shadow-lg">
             Das generierte Bild kann auf Instagram, Facebook, WhatsApp und anderen Plattformen geteilt werden
           </div>
         </div>
