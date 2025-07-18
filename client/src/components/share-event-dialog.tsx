@@ -245,9 +245,11 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.textAlign = 'center'
       ctx.fillText('© momentmillionär', canvas.width / 2, containerY + containerHeight + 80)
 
-      // Convert to blob and create URL
+      // Convert to blob and create URL with forced cache break
+      const timestamp = Date.now()
       console.log('Converting canvas to blob...')
-      console.log('Generated at:', new Date().toLocaleTimeString(), 'with subtle container blur & readable content')
+      console.log('Generated at:', new Date().toLocaleTimeString(), 'with FIXED container blur & readable content - CACHE BREAK v', timestamp)
+      
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((blob) => {
           if (blob) {
