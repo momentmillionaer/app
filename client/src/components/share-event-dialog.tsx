@@ -81,15 +81,18 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             img.src = event.imageUrl
           })
 
-          // Draw blurred background if image loaded
+          // Draw blurred background if image loaded with proper scaling
           if (img.complete && img.naturalHeight !== 0) {
-            ctx.filter = 'blur(40px) brightness(0.2) contrast(1.2) saturate(0.8)'
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-            ctx.filter = 'none'
+            // Calculate scale to fill canvas without distortion (cover behavior)
+            const scale = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight)
+            const scaledWidth = img.naturalWidth * scale
+            const scaledHeight = img.naturalHeight * scale
+            const offsetX = (canvas.width - scaledWidth) / 2
+            const offsetY = (canvas.height - scaledHeight) / 2
             
-            // Add dark overlay for better text readability
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            ctx.filter = 'blur(25px) brightness(0.4) contrast(1.1) saturate(1.1)'
+            ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight)
+            ctx.filter = 'none'
           } else {
             throw new Error('Image failed to load')
           }
@@ -117,10 +120,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerWidth = canvas.width - 160
       const containerHeight = 780
 
-      // Glass morphism effect (much more opaque for better readability)
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
-      ctx.lineWidth = 3
+      // Glass morphism effect similar to filter section
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
+      ctx.lineWidth = 2
 
       // Rounded rectangle for glass container
       const radius = 40
@@ -129,20 +132,20 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.fill()
       ctx.stroke()
 
-      // Text styling with enhanced readability
+      // Text styling with soft shadows for liquid glass effect
       ctx.fillStyle = 'white'
       ctx.textAlign = 'left'
-      ctx.shadowColor = 'rgba(0, 0, 0, 1.0)'
-      ctx.shadowBlur = 8
-      ctx.shadowOffsetX = 2
-      ctx.shadowOffsetY = 2
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.6)'
+      ctx.shadowBlur = 6
+      ctx.shadowOffsetX = 1
+      ctx.shadowOffsetY = 1
 
       let currentY = containerY + 80
 
-      // Event title with stroke for better readability
+      // Event title with subtle stroke for liquid glass effect
       ctx.font = 'bold 56px Helvetica, Arial, sans-serif'
-      ctx.strokeStyle = 'rgba(0, 0, 0, 1.0)'
-      ctx.lineWidth = 6
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)'
+      ctx.lineWidth = 3
       const titleLines = wrapText(ctx, event.title, containerWidth - 80)
       titleLines.forEach(line => {
         ctx.strokeText(line, containerX + 40, currentY)
@@ -179,11 +182,11 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       currentY += 80
       ctx.textAlign = 'left'
 
-      // Date and time with stroke
+      // Date and time with subtle stroke
       ctx.font = 'bold 32px Helvetica, Arial, sans-serif'
       ctx.fillStyle = 'white'
-      ctx.strokeStyle = 'rgba(0, 0, 0, 1.0)'
-      ctx.lineWidth = 4
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)'
+      ctx.lineWidth = 2
       const eventDate = format(new Date(event.date), 'EEEE, dd. MMMM yyyy', { locale: de })
       ctx.strokeText(`📅 ${eventDate}`, containerX + 40, currentY)
       ctx.fillText(`📅 ${eventDate}`, containerX + 40, currentY)
