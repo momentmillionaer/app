@@ -50,27 +50,45 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
     try {
       // Load and draw background image (blurred)
       if (event.imageUrl) {
-        const img = new Image()
-        img.crossOrigin = 'anonymous'
-        
-        await new Promise((resolve, reject) => {
-          img.onload = resolve
-          img.onerror = () => {
-            console.log('Failed to load original image, trying without parameters')
-            // Try without URL parameters
-            const cleanUrl = event.imageUrl!.split('?')[0]
-            img.src = cleanUrl
-            
+        try {
+          const img = new Image()
+          img.crossOrigin = 'anonymous'
+          
+          await new Promise((resolve, reject) => {
             img.onload = resolve
-            img.onerror = reject
-          }
-          img.src = event.imageUrl
-        })
+            img.onerror = () => {
+              console.log('Failed to load original image, trying without parameters')
+              // Try without URL parameters
+              const cleanUrl = event.imageUrl!.split('?')[0]
+              const fallbackImg = new Image()
+              fallbackImg.crossOrigin = 'anonymous'
+              fallbackImg.onload = resolve
+              fallbackImg.onerror = () => {
+                console.log('Fallback also failed, using gradient background')
+                resolve(null)
+              }
+              fallbackImg.src = cleanUrl
+            }
+            img.src = event.imageUrl
+          })
 
-        // Draw blurred background
-        ctx.filter = 'blur(20px) brightness(0.4)'
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-        ctx.filter = 'none'
+          // Draw blurred background if image loaded
+          if (img.complete && img.naturalHeight !== 0) {
+            ctx.filter = 'blur(20px) brightness(0.4)'
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+            ctx.filter = 'none'
+          } else {
+            throw new Error('Image failed to load')
+          }
+        } catch (error) {
+          console.log('Using gradient background due to image error:', error)
+          // Fallback gradient background
+          const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
+          gradient.addColorStop(0, '#6366f1')
+          gradient.addColorStop(1, '#f59e0b')
+          ctx.fillStyle = gradient
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+        }
       } else {
         // Fallback gradient background
         const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
@@ -216,10 +234,17 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
   const downloadImage = () => {
     if (!generatedImage) return
     
-    const link = document.createElement('a')
-    link.download = `${event.title.replace(/[^a-z0-9]/gi, '-')}-share.png`
-    link.href = generatedImage
-    link.click()
+    try {
+      const link = document.createElement('a')
+      link.download = `${event.title.replace(/[^a-z0-9]/gi, '-')}-share.png`
+      link.href = generatedImage
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (error) {
+      console.error('Download failed:', error)
+      alert('Download fehlgeschlagen. Bitte versuchen Sie es erneut.')
+    }
   }
 
   const shareImage = async () => {
@@ -228,24 +253,48 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
     try {
       const response = await fetch(generatedImage)
       const blob = await response.blob()
-      const file = new File([blob], `${event.title}-share.png`, { type: 'image/png' })
+      const file = new File([blob], `${event.title.replace(/[^a-z0-9]/gi, '-')}-share.png`, { type: 'image/png' })
 
-      if (navigator.share && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: event.title,
-          text: `Schau dir dieses Event an: ${event.title}`,
-          files: [file]
-        })
-      } else {
-        // Fallback: copy image to clipboard
-        await navigator.clipboard.write([
-          new ClipboardItem({ 'image/png': blob })
-        ])
-        alert('Bild in Zwischenablage kopiert!')
+      // Check if native sharing is available
+      if (navigator.share) {
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: event.title,
+            text: `Schau dir dieses Event an: ${event.title}`,
+            files: [file]
+          })
+          return
+        } else {
+          // Try sharing without files
+          await navigator.share({
+            title: event.title,
+            text: `Schau dir dieses Event an: ${event.title}`,
+            url: eventUrl
+          })
+          return
+        }
       }
+
+      // Fallback: try clipboard
+      if (navigator.clipboard && window.ClipboardItem) {
+        try {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ])
+          alert('Bild in Zwischenablage kopiert!')
+          return
+        } catch (clipboardError) {
+          console.log('Clipboard failed, trying download:', clipboardError)
+        }
+      }
+
+      // Final fallback: download
+      downloadImage()
+      alert('Bild wird heruntergeladen, da Sharing nicht unterstützt wird.')
+      
     } catch (error) {
       console.error('Error sharing image:', error)
-      alert('Sharing nicht verfügbar. Bild wurde heruntergeladen.')
+      alert('Sharing fehlgeschlagen. Bild wird heruntergeladen.')
       downloadImage()
     }
   }

@@ -14,41 +14,61 @@ export function LatestEventPopup({ events, onEventClick }: LatestEventPopupProps
   const [lastEventId, setLastEventId] = useState<string | null>(null);
 
   // Get the latest event (most recently added to Notion, sorted by creation time)
+  // Priority: Future events first, then by date ascending (earliest upcoming events)
   const latestEvent = events.length > 0 
-    ? events.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())[0]
+    ? events
+        .filter(event => {
+          if (!event.date) return false
+          const eventDate = new Date(event.date)
+          const today = new Date()
+          today.setHours(0, 0, 0, 0)
+          return eventDate >= today // Only show future or today's events
+        })
+        .sort((a, b) => new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime())[0] // Earliest first
     : null;
 
   useEffect(() => {
-    // Check for 2x daily updates and new events
-    const currentEventId = latestEvent?.notionId;
+    if (!latestEvent) return;
+
+    const currentEventId = latestEvent.notionId;
     const storedEventId = localStorage.getItem('lastShownEventId');
     const storedTime = localStorage.getItem('lastShownEventTime');
     const now = Date.now();
-    const twelveHours = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
     
-    // Show popup if: 1) New event ID, or 2) Same event but 12+ hours passed (2x daily refresh)
-    const shouldShow = latestEvent && (
+    // Show popup if: 1) New event ID, or 2) 24+ hours passed (daily refresh)
+    const shouldShow = (
       currentEventId !== lastEventId || 
       currentEventId !== storedEventId ||
       !storedTime || 
-      (now - parseInt(storedTime)) >= twelveHours
+      (now - parseInt(storedTime)) >= twentyFourHours
     );
     
-    if (shouldShow) {
+    console.log('Latest event popup check:', {
+      currentEventId,
+      storedEventId,
+      storedTime,
+      timeDiff: storedTime ? now - parseInt(storedTime) : 'no stored time',
+      shouldShow,
+      eventTitle: latestEvent.title
+    });
+    
+    if (shouldShow && !hasBeenShown) {
       // Reset the popup for new/refreshed event
-      setHasBeenShown(false);
       setLastEventId(currentEventId);
       
       const timer = setTimeout(() => {
         setIsVisible(true);
         setHasBeenShown(true);
-        // Store last shown event ID and timestamp for 2x daily tracking
+        // Store last shown event ID and timestamp for daily tracking
         localStorage.setItem('lastShownEventId', currentEventId || '');
-        localStorage.setItem('lastShownEventTime', Date.now().toString());
-      }, 2000);
+        localStorage.setItem('lastShownEventTime', now.toString());
+        console.log('Latest event popup shown:', latestEvent.title);
+      }, 3000); // Show after 3 seconds
+      
       return () => clearTimeout(timer);
     }
-  }, [latestEvent, lastEventId]);
+  }, [latestEvent, lastEventId, hasBeenShown]);
 
   const handleClose = () => {
     setIsVisible(false);
