@@ -120,10 +120,19 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerWidth = canvas.width - 160
       const containerHeight = 780
 
-      // Glass morphism container with strong background for readability
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'
-      ctx.lineWidth = 2
+      // Glass morphism container with blur simulation and lower opacity
+      // Create blur effect with multiple layers
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)'
+      for (let i = 0; i < 8; i++) {
+        ctx.beginPath()
+        ctx.roundRect(containerX + i, containerY + i, containerWidth - 2*i, containerHeight - 2*i, radius - i/2)
+        ctx.fill()
+      }
+      
+      // Main container with reduced opacity for darker look
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.12)'
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'
+      ctx.lineWidth = 1.5
 
       // Rounded rectangle for glass container
       const radius = 40
@@ -238,7 +247,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       // Convert to blob and create URL with forced cache break
       const timestamp = Date.now()
       console.log('Converting canvas to blob...')
-      console.log('Generated at:', new Date().toLocaleTimeString(), 'COMPLETE REBUILD - All content visible v', timestamp)
+      console.log('Generated at:', new Date().toLocaleTimeString(), 'BLURRY DARK container with readable content v', timestamp)
       
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((blob) => {
