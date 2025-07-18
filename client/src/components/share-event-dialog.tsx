@@ -91,7 +91,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             const offsetX = (canvas.width - scaledWidth) / 2
             const offsetY = (canvas.height - scaledHeight) / 2
             
-            ctx.filter = 'blur(40px) saturate(140%) brightness(0.3)'
+            ctx.filter = 'blur(25px) saturate(140%) brightness(0.5)'
             ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight)
             ctx.filter = 'none'
           } else {
@@ -166,17 +166,37 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         currentY += 20
       }
 
-      // Category badge
+      // Category badges - show all categories
       const categoryY = currentY
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
-      ctx.beginPath()
-      ctx.roundRect(containerX + 40, categoryY - 30, 200, 50, 25)
-      ctx.fill()
+      let categoryX = containerX + 40
+      const categories = event.categories && event.categories.length > 0 ? event.categories : [event.category]
+      
+      categories.forEach((category, index) => {
+        // Measure text width to determine badge width
+        ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
+        const textWidth = ctx.measureText(category).width
+        const badgeWidth = textWidth + 40 // Add padding
+        
+        // Draw badge background
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
+        ctx.beginPath()
+        ctx.roundRect(categoryX, categoryY - 30, badgeWidth, 50, 25)
+        ctx.fill()
 
-      ctx.fillStyle = 'white'
-      ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
-      ctx.textAlign = 'center'
-      ctx.fillText(event.category, containerX + 140, categoryY)
+        // Draw badge text
+        ctx.fillStyle = 'white'
+        ctx.textAlign = 'center'
+        ctx.fillText(category, categoryX + badgeWidth / 2, categoryY)
+        
+        // Move to next position
+        categoryX += badgeWidth + 15 // Space between badges
+        
+        // Wrap to next line if needed
+        if (categoryX > containerX + containerWidth - 200 && index < categories.length - 1) {
+          categoryX = containerX + 40
+          currentY += 70
+        }
+      })
       
       currentY += 80
       ctx.textAlign = 'left'
@@ -211,14 +231,14 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       }
 
       // momentmillionär branding (positioned for 4:5 ratio)
-      ctx.font = 'bold 28px Helvetica, Arial, sans-serif'
+      ctx.font = 'bold 28px Connihof, serif'
       ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
       ctx.textAlign = 'center'
-      ctx.fillText('momentmillionär', canvas.width / 2, containerY + containerHeight + 80)
+      ctx.fillText('© momentmillionär', canvas.width / 2, containerY + containerHeight + 80)
 
       // Convert to blob and create URL
       console.log('Converting canvas to blob...')
-      console.log('Generated at:', new Date().toLocaleTimeString(), 'with 4% transparency & 40px blur')
+      console.log('Generated at:', new Date().toLocaleTimeString(), 'with 4% transparency & 25px blur')
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((blob) => {
           if (blob) {
