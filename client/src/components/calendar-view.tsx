@@ -306,9 +306,9 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
               variant="outline"
               size="sm"
               onClick={() => navigateWeek('prev')}
-              className="rounded-full bg-white/10 border-white/25 text-white hover:bg-white/20"
+              className="rounded-full bg-white/10 border-white/25 text-white hover:bg-white/20 w-10 h-10 p-0"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-3 w-3" />
             </Button>
             <Button
               variant="outline"
@@ -322,9 +322,9 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
               variant="outline"
               size="sm"
               onClick={() => navigateWeek('next')}
-              className="rounded-full bg-white/10 border-white/25 text-white hover:bg-white/20"
+              className="rounded-full bg-white/10 border-white/25 text-white hover:bg-white/20 w-10 h-10 p-0"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-3 w-3" />
             </Button>
           </div>
         </div>
@@ -509,17 +509,17 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
             variant="outline"
             size="sm"
             onClick={() => navigateMonth('prev')}
-            className="w-12 h-12 p-0 border-0 text-brand-blue liquid-glass-button rounded-full"
+            className="w-10 h-10 p-0 border-0 text-brand-blue liquid-glass-button rounded-full"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-3 w-3" />
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => navigateMonth('next')}
-            className="w-12 h-12 p-0 border-0 text-brand-blue liquid-glass-button rounded-full"
+            className="w-10 h-10 p-0 border-0 text-brand-blue liquid-glass-button rounded-full"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-3 w-3" />
           </Button>
         </div>
       </div>
