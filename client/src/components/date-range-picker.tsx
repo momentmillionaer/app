@@ -115,16 +115,16 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
           className={`
             rounded-full border-0 liquid-glass text-white bg-white/20 hover:bg-white/30
             ${isMobile 
-              ? 'w-12 h-12 p-0 justify-center' 
-              : 'px-4 h-12 min-w-[140px] justify-between'
+              ? 'w-10 h-10 p-0 justify-center' 
+              : 'py-2 px-3 min-w-[140px] justify-between'
             }
           `}
         >
           {isMobile ? (
-            <span className="text-lg">📅</span>
+            <span className="text-sm">📅</span>
           ) : (
             <>
-              <span className="text-lg mr-2">📅</span>
+              <span className="text-sm mr-2">📅</span>
               <span className="flex-1 text-left">{getButtonText()}</span>
               {hasSelection && (
                 <X 
