@@ -131,26 +131,29 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerWidth = canvas.width - 160
       const containerHeight = 780
 
-      // Glass morphism container with blur simulation and lower opacity
-      const radius = 40
-      // Create blur effect with multiple layers
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)'
-      for (let i = 0; i < 8; i++) {
-        ctx.beginPath()
-        ctx.roundRect(containerX + i, containerY + i, containerWidth - 2*i, containerHeight - 2*i, radius - i/2)
-        ctx.fill()
-      }
+      // Perfect liquid glass effect matching filter section and desktop calendar
+      const radius = 32 // Using same radius as filter section (rounded-2xl = 32px)
       
-      // Main container with reduced opacity for darker look
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.12)'
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'
-      ctx.lineWidth = 1.5
-
-      // Rounded rectangle for glass container
+      // Main liquid glass container with exact same styling as filter section
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)' // Same as bg-white/10
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)' // Same as border-white/20
+      ctx.lineWidth = 1
+      
+      // Create the liquid glass container
       ctx.beginPath()
       ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
       ctx.fill()
       ctx.stroke()
+      
+      // Add the backdrop filter effect simulation
+      // This simulates: backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
+      // Create multiple subtle layers for blur simulation
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.02)'
+      for (let i = 1; i <= 3; i++) {
+        ctx.beginPath()
+        ctx.roundRect(containerX + i, containerY + i, containerWidth - 2*i, containerHeight - 2*i, radius - i)
+        ctx.fill()
+      }
 
       // Text styling with strong contrast
       ctx.fillStyle = 'white'
@@ -296,14 +299,22 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         const containerHeight = 780
         const radius = 40
         
-        // Glass container
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.12)'
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'
-        ctx.lineWidth = 1.5
+        // Perfect liquid glass container (fallback version)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)' // Same as bg-white/10
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)' // Same as border-white/20
+        ctx.lineWidth = 1
         ctx.beginPath()
         ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
         ctx.fill()
         ctx.stroke()
+        
+        // Add backdrop filter effect simulation for fallback
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.02)'
+        for (let i = 1; i <= 3; i++) {
+          ctx.beginPath()
+          ctx.roundRect(containerX + i, containerY + i, containerWidth - 2*i, containerHeight - 2*i, radius - i)
+          ctx.fill()
+        }
         
         // Text styling
         ctx.fillStyle = 'white'
