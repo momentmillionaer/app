@@ -59,72 +59,40 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
     console.log('Container transparency: 4%, Background: no blur, Brightness: 0.5')
 
     try {
-      // Always start with gradient background as fallback
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-      gradient.addColorStop(0, '#6366f1')
-      gradient.addColorStop(1, '#f59e0b')
-      ctx.fillStyle = gradient
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-      console.log('Gradient background applied')
-
-      // Try to load and overlay the event image with better error handling
-      if (event.imageUrl) {
-        try {
-          console.log('Loading event image:', event.imageUrl)
-          const img = new Image()
-          img.crossOrigin = 'anonymous'
+      // Use the app's background image instead of gradient
+      console.log('Loading app background image for share image')
+      const backgroundImg = new Image()
+      backgroundImg.crossOrigin = 'anonymous'
+      
+      const backgroundLoaded = await new Promise<boolean>((resolve) => {
+        backgroundImg.onload = () => {
+          console.log('App background image loaded successfully')
+          // Draw the background image to fill the entire canvas
+          ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height)
           
-          const imagePromise = new Promise((resolve, reject) => {
-            const timeout = setTimeout(() => {
-              console.log('Image load timeout after 5 seconds, continuing with gradient')
-              resolve(false)
-            }, 5000)
-            
-            img.onload = () => {
-              clearTimeout(timeout)
-              console.log('Image loaded successfully, dimensions:', img.naturalWidth, 'x', img.naturalHeight)
-              resolve(true)
-            }
-            
-            img.onerror = (error: Event | string) => {
-              clearTimeout(timeout)
-              console.log('Image load error:', error, 'continuing with gradient')
-              resolve(false)
-            }
-            
-            // Set source to trigger loading
-            img.src = event.imageUrl || ''
-          })
-
-          const imageLoaded = await imagePromise
-
-          // Overlay the event image if loaded successfully
-          if (imageLoaded && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
-            console.log('Overlaying event image on gradient background')
-            
-            // Calculate scale to fill canvas without distortion (cover behavior)
-            const scale = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight)
-            const scaledWidth = img.naturalWidth * scale
-            const scaledHeight = img.naturalHeight * scale
-            const offsetX = (canvas.width - scaledWidth) / 2
-            const offsetY = (canvas.height - scaledHeight) / 2
-            
-            // Apply image with much stronger blur and darker background
-            ctx.save()
-            ctx.globalAlpha = 0.5
-            ctx.filter = 'brightness(0.2) saturate(120%) blur(8px)'
-            ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight)
-            ctx.restore()
-            console.log('Event image successfully overlaid')
-          } else {
-            console.log('Image not usable, keeping gradient background')
-          }
-        } catch (imageError) {
-          console.log('Image processing error:', imageError, 'keeping gradient background')
+          // Add the overlay with reduced opacity (same as app)
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+          console.log('App background with overlay applied')
+          resolve(true)
         }
-      } else {
-        console.log('No event image URL provided, using gradient background')
-      }
+        backgroundImg.onerror = () => {
+          console.log('App background failed to load, using gradient fallback')
+          // Fallback to gradient
+          const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
+          gradient.addColorStop(0, '#6366f1')
+          gradient.addColorStop(1, '#f59e0b')
+          ctx.fillStyle = gradient
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+          console.log('Gradient background applied as fallback')
+          resolve(false)
+        }
+        // Use the same background image as the app
+        backgroundImg.src = '/attached_assets/Unbenannt-1-05_1752751777817.png'
+      })
+
+      // Event image will only be used in the EventCard header, not as background overlay
+      console.log('App background ready, event image will be used only in card header')
 
       // Favorites EventCard-style layout (4:5 ratio - 1080x1350)
       console.log('🎨 Applying NEW Favorites EventCard styling!')
