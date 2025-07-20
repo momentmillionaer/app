@@ -131,36 +131,47 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerWidth = canvas.width - 160
       const containerHeight = 780
 
-      // Perfect liquid glass effect matching filter section exactly
-      const radius = 32 // Using same radius as filter section (rounded-2xl = 32px)
+      // EXACT liquid glass effect matching filter section (liquid-glass-strong)
+      const radius = 32 // rounded-[2rem] = 32px same as filter section
       
-      // Prominent liquid glass container - clearly visible like filter section
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)' // Same as liquid-glass-strong class
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)' // Same as liquid-glass-strong border
-      ctx.lineWidth = 1 // Normal border thickness
+      // Main container with EXACT liquid-glass-strong properties
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)' // Same as liquid-glass-strong: background: rgba(255, 255, 255, 0.15)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)' // Same as liquid-glass-strong: border: 1px solid rgba(255, 255, 255, 0.25)
+      ctx.lineWidth = 1
       
-      // Create the clearly visible liquid glass container
+      // Create main container
       ctx.beginPath()
       ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
       ctx.fill()
       ctx.stroke()
       
-      // Add backdrop blur simulation for authentic glass effect
-      // This creates the proper glass morphism look
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'
-      for (let i = 1; i <= 3; i++) {
-        ctx.beginPath()
-        ctx.roundRect(containerX + i, containerY + i, containerWidth - 2*i, containerHeight - 2*i, radius - i)
-        ctx.fill()
-      }
+      // Add box-shadow simulation to match liquid-glass-strong exactly
+      // Outer shadow: 0 8px 25px rgba(0, 0, 0, 0.25)
+      ctx.save()
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.25)'
+      ctx.shadowBlur = 25
+      ctx.shadowOffsetX = 0
+      ctx.shadowOffsetY = 8
+      ctx.beginPath()
+      ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
+      ctx.stroke()
+      ctx.restore()
+      
+      // Inner highlight: inset 0 1px 0 rgba(255, 255, 255, 0.25)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.roundRect(containerX + 1, containerY + 1, containerWidth - 2, containerHeight - 2, radius - 1)
+      ctx.stroke()
 
-      // Text styling with strong contrast
+      // Text styling with strong contrast - NO SHADOW
       ctx.fillStyle = 'white'
       ctx.textAlign = 'left'
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'
-      ctx.shadowBlur = 6
-      ctx.shadowOffsetX = 2
-      ctx.shadowOffsetY = 2
+      // Remove all shadow effects
+      ctx.shadowColor = 'transparent'
+      ctx.shadowBlur = 0
+      ctx.shadowOffsetX = 0
+      ctx.shadowOffsetY = 0
 
       let currentY = containerY + 80
 
