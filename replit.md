@@ -166,6 +166,9 @@ Preferred communication style: Simple, everyday language.
 - ✓ TypeScript compatibility issues resolved for event modal components
 - ✓ Favorites view correctly implemented with "Conni's Favorites" checkbox detection
 - ✓ Share image container updated to gray tone (rgba(128,128,128,0.7)) as requested
+- ✓ Share image layout redesigned to match EventCard style in 4:5 format (1080x1350)
+- ✓ Removed yellow star from favorites view header, kept only "conni's favoriten" in Connihof font
+- ✓ Cleaned up view toggle buttons - removed text from favorites button, kept only star icon
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server

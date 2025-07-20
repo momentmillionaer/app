@@ -125,155 +125,140 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         console.log('No event image URL provided, using gradient background')
       }
 
-      // Liquid glass container (adjusted for 4:5 ratio)
-      const containerX = 80
-      const containerY = 250
-      const containerWidth = canvas.width - 160
-      const containerHeight = 780
+      // EventCard-style layout (4:5 ratio - 1080x1350)
+      const cardPadding = 60
+      const cardX = cardPadding
+      const cardY = 150
+      const cardWidth = canvas.width - (cardPadding * 2)
+      const cardHeight = canvas.height - cardY - 120
+      const cardRadius = 32 // rounded-[2rem]
 
-      // ENHANCED liquid glass effect to match filter section opacity
-      const radius = 32 // rounded-[2rem] = 32px same as filter section
-      
-      // Canvas needs higher opacity to match backdrop-filter visual effect
-      // Multiple layers to simulate the blur/saturation/brightness effects
-      
-      // Base layer with gray tone matching user's reference image
-      ctx.fillStyle = 'rgba(128, 128, 128, 0.7)' // Gray container matching reference image
+      // EventCard liquid glass background matching grid view
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
       ctx.beginPath()
-      ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
+      ctx.roundRect(cardX, cardY, cardWidth, cardHeight, cardRadius)
       ctx.fill()
-      
-      // Add subtle overlapping layers with gray tone for depth
-      ctx.fillStyle = 'rgba(100, 100, 100, 0.15)'
-      for (let i = 1; i <= 5; i++) {
-        ctx.beginPath()
-        ctx.roundRect(containerX + i*0.5, containerY + i*0.5, containerWidth - i, containerHeight - i, radius - i*0.5)
-        ctx.fill()
-      }
-      
-      // Main border with moderate contrast
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)' // Moderate border visibility
-      ctx.lineWidth = 1.5 // Medium thickness
-      ctx.beginPath()
-      ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
-      ctx.stroke()
-      
-      // Add box-shadow simulation
-      ctx.save()
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'
-      ctx.shadowBlur = 30
-      ctx.shadowOffsetX = 0
-      ctx.shadowOffsetY = 10
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)'
-      ctx.lineWidth = 2
-      ctx.beginPath()
-      ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
-      ctx.stroke()
-      ctx.restore()
-      
-      // Inner highlight for glass effect
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)' // Brighter inner highlight
+
+      // EventCard border
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'
       ctx.lineWidth = 1
       ctx.beginPath()
-      ctx.roundRect(containerX + 2, containerY + 2, containerWidth - 4, containerHeight - 4, radius - 2)
+      ctx.roundRect(cardX, cardY, cardWidth, cardHeight, cardRadius)
       ctx.stroke()
 
-      // Text styling with strong contrast - NO SHADOW
+      // Event image area (if available) - top section like EventCard
+      const imageHeight = event.imageUrl ? 280 : 0
+      let contentStartY = cardY + 40
+
+      if (event.imageUrl && imageHeight > 0) {
+        // Create clipping path for rounded image
+        ctx.save()
+        ctx.beginPath()
+        ctx.roundRect(cardX + 20, cardY + 20, cardWidth - 40, imageHeight, 20)
+        ctx.clip()
+        
+        // Use existing loaded image if available
+        const img = new Image()
+        img.crossOrigin = 'anonymous'
+        try {
+          await new Promise((resolve, reject) => {
+            img.onload = resolve
+            img.onerror = reject
+            img.src = event.imageUrl || ''
+          })
+          
+          if (img.complete && img.naturalWidth > 0) {
+            // Scale to fill the image area
+            const scale = Math.max((cardWidth - 40) / img.naturalWidth, imageHeight / img.naturalHeight)
+            const scaledWidth = img.naturalWidth * scale
+            const scaledHeight = img.naturalHeight * scale
+            const imgX = cardX + 20 + ((cardWidth - 40) - scaledWidth) / 2
+            const imgY = cardY + 20 + (imageHeight - scaledHeight) / 2
+            
+            ctx.drawImage(img, imgX, imgY, scaledWidth, scaledHeight)
+          }
+        } catch (error) {
+          console.log('Image loading failed, continuing without image')
+        }
+        
+        ctx.restore()
+        contentStartY = cardY + imageHeight + 60
+      }
+
+      // Text content area - matches EventCard layout
+      let currentY = contentStartY
+
+      // Event title
       ctx.fillStyle = 'white'
+      ctx.font = 'bold 48px Helvetica, Arial, sans-serif'
       ctx.textAlign = 'left'
-      // Remove all shadow effects
-      ctx.shadowColor = 'transparent'
-      ctx.shadowBlur = 0
-      ctx.shadowOffsetX = 0
-      ctx.shadowOffsetY = 0
-
-      let currentY = containerY + 80
-
-      // Event title matching EventCard modal styling
-      ctx.font = 'bold 56px Helvetica, Arial, sans-serif'
-      // No stroke needed - shadow provides enough contrast
-      const titleLines = wrapText(ctx, event.title, containerWidth - 80)
+      const titleLines = wrapText(ctx, event.title, cardWidth - 80)
       titleLines.forEach(line => {
-        ctx.fillText(line, containerX + 40, currentY)
-        currentY += 70
+        ctx.fillText(line, cardX + 40, currentY)
+        currentY += 60
       })
 
-      currentY += 20
+      currentY += 15
 
       // Subtitle
       if (event.subtitle) {
-        ctx.font = 'italic 36px Helvetica, Arial, sans-serif'
+        ctx.font = 'italic 32px Helvetica, Arial, sans-serif'
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
-        const subtitleLines = wrapText(ctx, event.subtitle, containerWidth - 80)
+        const subtitleLines = wrapText(ctx, event.subtitle, cardWidth - 80)
         subtitleLines.forEach(line => {
-          ctx.fillText(line, containerX + 40, currentY)
-          currentY += 45
+          ctx.fillText(line, cardX + 40, currentY)
+          currentY += 40
         })
-        currentY += 20
+        currentY += 15
       }
 
-      // Category badges - show event category
-      const categoryY = currentY
-      let categoryX = containerX + 40
-      const categories = event.category ? [event.category] : []
-      
-      categories.forEach((category: string, index: number) => {
-        // Measure text width to determine badge width
+      // Category badge - like EventCard
+      if (event.category) {
         ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
-        const textWidth = ctx.measureText(category).width
-        const badgeWidth = textWidth + 40 // Add padding
+        const categoryText = event.category
+        const textWidth = ctx.measureText(categoryText).width
+        const badgeWidth = textWidth + 32
+        const badgeHeight = 36
         
-        // Draw badge background
+        // Badge background
         ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
         ctx.beginPath()
-        ctx.roundRect(categoryX, categoryY - 30, badgeWidth, 50, 25)
+        ctx.roundRect(cardX + 40, currentY - 26, badgeWidth, badgeHeight, 18)
         ctx.fill()
-
-        // Draw badge text
+        
+        // Badge text
         ctx.fillStyle = 'white'
         ctx.textAlign = 'center'
-        ctx.fillText(category, categoryX + badgeWidth / 2, categoryY)
+        ctx.fillText(categoryText, cardX + 40 + badgeWidth / 2, currentY)
         
-        // Move to next position
-        categoryX += badgeWidth + 15 // Space between badges
-        
-        // Wrap to next line if needed
-        if (categoryX > containerX + containerWidth - 200 && index < categories.length - 1) {
-          categoryX = containerX + 40
-          currentY += 70
-        }
-      })
-      
-      currentY += 80
+        currentY += 50
+      }
+
+      // Event details - compact like EventCard
+      ctx.font = 'bold 28px Helvetica, Arial, sans-serif'
+      ctx.fillStyle = 'white'
       ctx.textAlign = 'left'
 
-      // Date and time matching EventCard modal
-      ctx.font = 'bold 32px Helvetica, Arial, sans-serif'
-      ctx.fillStyle = 'white'
-      const eventDate = format(new Date(event.date + 'T12:00:00+02:00'), 'EEEE, dd. MMMM yyyy', { locale: de })
-      ctx.fillText(`📅 ${eventDate}`, containerX + 40, currentY)
-      currentY += 50
+      // Date
+      const eventDate = format(new Date(event.date + 'T12:00:00+02:00'), 'EE, dd.MM.yyyy', { locale: de })
+      ctx.fillText(`📅 ${eventDate}`, cardX + 40, currentY)
+      currentY += 40
 
+      // Time
       if (event.time) {
-        ctx.fillText(`🕐 ${event.time}`, containerX + 40, currentY)
-        currentY += 50
+        ctx.fillText(`🕐 ${event.time}`, cardX + 40, currentY)
+        currentY += 40
       }
 
       // Location
-      ctx.fillText(`📍 ${event.location}`, containerX + 40, currentY)
-      currentY += 50
+      ctx.fillText(`📍 ${event.location}`, cardX + 40, currentY)
+      currentY += 40
 
-      // Organizer
-      if (event.organizer) {
-        ctx.fillText(`👤 ${event.organizer}`, containerX + 40, currentY)
-        currentY += 50
-      }
-
-      // Price
+      // Price (if available)
       if (event.price) {
         const priceText = event.price === '0' ? '🆓 GRATIS' : `💰 ${event.price}€`
-        ctx.fillText(priceText, containerX + 40, currentY)
-        currentY += 50
+        ctx.fillText(priceText, cardX + 40, currentY)
+        currentY += 40
       }
 
       // momentmillionär branding (positioned for 4:5 ratio)

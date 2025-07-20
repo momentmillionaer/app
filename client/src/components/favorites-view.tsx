@@ -10,11 +10,6 @@ interface FavoritesViewProps {
 }
 
 export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
-  // Debug logging for favorites functionality
-  console.log('🌟 FavoritesView Debug Info:');
-  console.log('  - Passed events count:', events.length);
-  console.log('  - Events:', events.map(e => ({ title: e.title.substring(0, 20), isFavorite: e.isFavorite })));
-  
   if (events.length === 0) {
     return (
       <div className="text-center py-16">
@@ -34,10 +29,7 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
     <div className="space-y-8">
       {/* Header Section */}
       <div className="text-center mb-8">
-        <div className="relative mb-4">
-          <Star className="mx-auto h-12 w-12 text-yellow-400 mb-2" fill="currentColor" />
-        </div>
-        <h2 className="text-3xl font-bold text-white drop-shadow-sm mb-2">Conni's Favorites</h2>
+        <h2 className="text-3xl font-bold text-white drop-shadow-sm mb-2" style={{ fontFamily: 'Connihof, serif' }}>conni's favoriten</h2>
         <p className="text-white/80 drop-shadow-sm">
           {events.length} {events.length === 1 ? 'besonderes Event' : 'besondere Events'} für unvergessliche Momente
         </p>
