@@ -126,6 +126,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       }
 
       // Favorites EventCard-style layout (4:5 ratio - 1080x1350)
+      console.log('🎨 Applying NEW Favorites EventCard styling!')
       const cardPadding = 48
       const cardX = cardPadding
       const cardY = 100
@@ -138,6 +139,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.beginPath()
       ctx.roundRect(cardX, cardY, cardWidth, cardHeight, cardRadius)
       ctx.fill()
+      console.log('✅ Liquid glass background applied')
 
       // Favorites EventCard border with purple accent
       ctx.strokeStyle = 'rgba(147, 51, 234, 0.3)' // Purple border like favorites
@@ -145,6 +147,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.beginPath()
       ctx.roundRect(cardX, cardY, cardWidth, cardHeight, cardRadius)
       ctx.stroke()
+      console.log('✅ Purple border applied')
 
       // Inner border for enhanced glass effect
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'
