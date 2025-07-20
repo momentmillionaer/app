@@ -196,18 +196,9 @@ export function SearchFilters({
         {/* Add Event Button */}
         <Button
           onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-          className={`liquid-glass-button rounded-full text-white text-sm font-medium transition-all duration-300 border border-white/25 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 ${
-            isMobile ? 'w-12 h-12 p-0' : 'px-4 py-3'
-          }`}
+          className="liquid-glass-button rounded-full text-white text-sm font-medium transition-all duration-300 border border-white/25 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 w-12 h-12 p-0"
         >
-          {isMobile ? (
-            <span className="text-lg">➕</span>
-          ) : (
-            <>
-              <Plus className="h-4 w-4 mr-2" />
-              Event hinzufügen
-            </>
-          )}
+          <span className="text-lg">➕</span>
         </Button>
 
         {/* Clear Filters Button - Simple Trash Icon */}

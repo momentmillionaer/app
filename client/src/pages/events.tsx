@@ -481,46 +481,36 @@ export default function EventsPage() {
           
           {/* View Mode Toggle - Always Centered */}
           <div className="flex flex-col items-center space-y-4">
-            <div className="flex items-center liquid-glass-button rounded-full p-2">
-              <Button
-                variant={viewMode === "calendar" ? "default" : "ghost"}
-                size="sm"
+            <div className="flex items-center gap-2">
+              <button
                 onClick={() => {
                   setViewMode("calendar");
                   setUserChangedView(true);
                 }}
-                className="flex items-center space-x-2 rounded-full px-3 py-2"
+                className={`w-12 h-12 rounded-full transition-all duration-300 ${
+                  viewMode === "calendar"
+                    ? 'liquid-glass-button border border-white/25 text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600'
+                    : 'text-white/60 hover:text-white/80'
+                }`}
               >
-                <Calendar className="h-4 w-4" />
-                <span>Kalender</span>
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => {
-                  setViewMode("list");
-                  setUserChangedView(true);
-                }}
-                className="flex items-center space-x-2 rounded-full px-3 py-2"
-              >
-                <List className="h-4 w-4" />
-                <span>Liste</span>
-              </Button>
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
+                <Calendar className="h-5 w-5 mx-auto" />
+              </button>
+              <button
                 onClick={() => {
                   setViewMode("grid");
                   setUserChangedView(true);
                 }}
-                className="flex items-center space-x-2 rounded-full px-3 py-2"
+                className={`w-12 h-12 rounded-full transition-all duration-300 ${
+                  viewMode === "grid"
+                    ? 'liquid-glass-button border border-white/25 text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600'
+                    : 'text-white/60 hover:text-white/80'
+                }`}
               >
-                <Grid3X3 className="h-4 w-4" />
-                <span>Raster</span>
-              </Button>
+                <Grid3X3 className="h-5 w-5 mx-auto" />
+              </button>
             </div>
             
-            {(viewMode === "list" || viewMode === "grid") && (
+            {viewMode === "grid" && (
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-white/80 drop-shadow-sm">Sortierung:</span>
                 <Select value={sortOption} onValueChange={setSortOption}>
@@ -576,19 +566,8 @@ export default function EventsPage() {
           </div>
         ) : viewMode === "calendar" ? (
           <CalendarView events={eventsForCalendar} onEventClick={handleEventClick} />
-        ) : viewMode === "grid" ? (
-          <GridView events={eventsForListAndGrid} onEventClick={handleEventClick} />
         ) : (
-          <div className="space-y-4">
-            {eventsForListAndGrid.map((event) => (
-              <EventCard 
-                key={event.notionId} 
-                event={event} 
-                onClick={() => handleEventClick(event)}
-                viewMode="list"
-              />
-            ))}
-          </div>
+          <GridView events={eventsForListAndGrid} onEventClick={handleEventClick} />
         )}
 
         {/* Event Modal */}

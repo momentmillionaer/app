@@ -124,7 +124,7 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
             <span className="text-lg">📅</span>
           ) : (
             <>
-              <CalendarDays className="h-4 w-4 mr-2" />
+              <span className="text-lg mr-2">📅</span>
               <span className="flex-1 text-left">{getButtonText()}</span>
               {hasSelection && (
                 <X 
