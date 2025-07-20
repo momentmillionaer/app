@@ -33,11 +33,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("🔄 Manual sync triggered - clearing caches...");
       
       // Clear all relevant caches
-      cache.del("events");
-      cache.del("events-backup");
-      cache.del("categories");
-      cache.del("categories-backup");
-      cache.del("audiences");
+      cache.delete("events");
+      cache.delete("events-backup");
+      cache.delete("categories");
+      cache.delete("categories-backup");
+      cache.delete("audiences");
       
       console.log("✅ Caches cleared, forcing fresh Notion sync...");
       
@@ -304,7 +304,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           notionId: page.id,
           title: properties.Name?.title?.[0]?.plain_text || "Untitled Event",
           subtitle: properties.Untertitel?.rich_text?.[0]?.plain_text || "",
-          description: properties.Beschreibung?.rich_text?.[0]?.plain_text || "",
+          description: properties.Details?.rich_text?.[0]?.plain_text || properties.Beschreibung?.rich_text?.[0]?.plain_text || "",
           category: primaryCategory,
           categories: categories, // Send all categories
           location: properties.Ort?.select?.name || "",

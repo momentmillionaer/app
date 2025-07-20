@@ -108,10 +108,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             const offsetX = (canvas.width - scaledWidth) / 2
             const offsetY = (canvas.height - scaledHeight) / 2
             
-            // Apply image with reduced opacity and filters for better text readability
+            // Apply image with much stronger blur and darker background
             ctx.save()
-            ctx.globalAlpha = 0.7
-            ctx.filter = 'brightness(0.4) saturate(120%)'
+            ctx.globalAlpha = 0.5
+            ctx.filter = 'brightness(0.2) saturate(120%) blur(8px)'
             ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight)
             ctx.restore()
             console.log('Event image successfully overlaid')
@@ -137,23 +137,23 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       // Canvas needs higher opacity to match backdrop-filter visual effect
       // Multiple layers to simulate the blur/saturation/brightness effects
       
-      // Base layer with higher opacity to match visual appearance
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)' // Increased from 0.15 to match visual density
+      // Base layer with much darker container for better contrast
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)' // Dark container instead of white
       ctx.beginPath()
       ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
       ctx.fill()
       
-      // Add subtle blur simulation with overlapping layers
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
+      // Add darker overlapping layers for stronger container effect
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'
       for (let i = 1; i <= 5; i++) {
         ctx.beginPath()
         ctx.roundRect(containerX + i*0.5, containerY + i*0.5, containerWidth - i, containerHeight - i, radius - i*0.5)
         ctx.fill()
       }
       
-      // Main border matching liquid-glass-strong
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)' // Slightly more visible border
-      ctx.lineWidth = 1.5 // Slightly thicker for better visibility
+      // Main border with stronger contrast
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)' // Much more visible border
+      ctx.lineWidth = 2 // Thicker for better visibility
       ctx.beginPath()
       ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
       ctx.stroke()
