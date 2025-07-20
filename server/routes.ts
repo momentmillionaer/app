@@ -14,6 +14,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       uptime: process.uptime()
     });
   });
+
+  // Manual sync trigger - clears cache and forces fresh data
+  app.post("/api/sync", async (req, res) => {
+    try {
+      console.log("🔄 Manual sync triggered - clearing caches...");
+      
+      // Clear all relevant caches
+      cache.del("events");
+      cache.del("events-backup");
+      cache.del("categories");
+      cache.del("categories-backup");
+      cache.del("audiences");
+      
+      console.log("✅ Caches cleared, forcing fresh Notion sync...");
+      
+      // Trigger a fresh fetch by making a request to our own events endpoint
+      // This will force a new Notion API call since cache is cleared
+      const response = await fetch(`http://localhost:${process.env.PORT || 5000}/api/events`);
+      
+      if (response.ok) {
+        const events = await response.json();
+        res.json({ 
+          success: true, 
+          message: "Sync completed successfully",
+          eventCount: events.length,
+          timestamp: new Date().toISOString()
+        });
+      } else {
+        throw new Error(`Events API returned ${response.status}`);
+      }
+    } catch (error) {
+      console.error("❌ Manual sync failed:", error);
+      res.status(500).json({ 
+        success: false, 
+        error: "Sync failed", 
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
   
   // Get all events from Notion database
   app.get("/api/events", async (req, res) => {
