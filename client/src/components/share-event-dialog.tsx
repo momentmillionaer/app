@@ -85,14 +85,14 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
               resolve(true)
             }
             
-            img.onerror = (error) => {
+            img.onerror = (error: Event | string) => {
               clearTimeout(timeout)
               console.log('Image load error:', error, 'continuing with gradient')
               resolve(false)
             }
             
             // Set source to trigger loading
-            img.src = event.imageUrl
+            img.src = event.imageUrl || ''
           })
 
           const imageLoaded = await imagePromise
@@ -132,6 +132,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerHeight = 780
 
       // Glass morphism container with blur simulation and lower opacity
+      const radius = 40
       // Create blur effect with multiple layers
       ctx.fillStyle = 'rgba(255, 255, 255, 0.03)'
       for (let i = 0; i < 8; i++) {
@@ -146,7 +147,6 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.lineWidth = 1.5
 
       // Rounded rectangle for glass container
-      const radius = 40
       ctx.beginPath()
       ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
       ctx.fill()
@@ -185,12 +185,12 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         currentY += 20
       }
 
-      // Category badges - show all categories
+      // Category badges - show event category
       const categoryY = currentY
       let categoryX = containerX + 40
-      const categories = event.categories && event.categories.length > 0 ? event.categories : [event.category]
+      const categories = event.category ? [event.category] : []
       
-      categories.forEach((category, index) => {
+      categories.forEach((category: string, index: number) => {
         // Measure text width to determine badge width
         ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
         const textWidth = ctx.measureText(category).width
