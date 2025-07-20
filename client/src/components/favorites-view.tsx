@@ -10,6 +10,11 @@ interface FavoritesViewProps {
 }
 
 export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
+  // Debug logging for favorites functionality
+  console.log('🌟 FavoritesView Debug Info:');
+  console.log('  - Passed events count:', events.length);
+  console.log('  - Events:', events.map(e => ({ title: e.title.substring(0, 20), isFavorite: e.isFavorite })));
+  
   if (events.length === 0) {
     return (
       <div className="text-center py-16">

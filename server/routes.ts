@@ -375,7 +375,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           attendees: properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name).join(", ") || "",
           imageUrl: imageUrl,
           documentsUrls: documentsUrls,
-          isFavorite: properties["conni's favorites"]?.checkbox || false // Extract Conni's Favorites checkbox
+          isFavorite: properties["Conni's Favorites"]?.checkbox === true // Extract Conni's Favorites checkbox (must be explicitly true)
         };
       }));
 
