@@ -329,18 +329,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
             {/* Share Button - Bottom Left */}
             <button
               onClick={() => setShowShareDialog(true)}
-              className="liquid-glass-button flex items-center px-6 py-3 rounded-full text-white font-medium drop-shadow-lg transition-all duration-300 border border-white/20 hover:border-white/40 hover:backdrop-blur-xl"
-              style={{
-                background: 'rgba(128, 0, 128, 0.3)',
-                backdropFilter: 'blur(20px) saturate(150%)',
-                WebkitBackdropFilter: 'blur(20px) saturate(150%)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 165, 0, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(128, 0, 128, 0.3)';
-              }}
+              className="liquid-glass-button flex items-center px-6 py-3 rounded-full text-white font-medium drop-shadow-lg transition-all duration-300 border border-white/20 hover:bg-gradient-to-r hover:from-purple-500 hover:to-orange-500"
             >
               <Share2 className="w-4 h-4 mr-2" />
               Teilen

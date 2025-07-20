@@ -551,7 +551,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             <button
               onClick={downloadImage}
               disabled={!generatedImage || isGenerating}
-              className="flex items-center justify-center px-6 py-3 bg-purple-500/80 hover:bg-purple-600/80 disabled:bg-white/20 disabled:text-white/50 text-white rounded-full backdrop-blur-sm border border-white/20 transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
+              className="liquid-glass-button flex items-center justify-center px-6 py-3 disabled:bg-white/10 disabled:text-white/50 text-white rounded-full border border-white/20 transition-all duration-300 disabled:cursor-not-allowed hover:bg-gradient-to-r hover:from-purple-500 hover:to-orange-500"
             >
               <Download className="w-4 h-4 mr-2" />
               Herunterladen
@@ -560,7 +560,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             <button
               onClick={shareImage}
               disabled={!generatedImage || isGenerating}
-              className="flex items-center justify-center px-6 py-3 bg-orange-500/80 hover:bg-orange-600/80 disabled:bg-white/20 disabled:text-white/50 text-white rounded-full backdrop-blur-sm border border-white/20 transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
+              className="liquid-glass-button flex items-center justify-center px-6 py-3 disabled:bg-white/10 disabled:text-white/50 text-white rounded-full border border-white/20 transition-all duration-300 disabled:cursor-not-allowed hover:bg-gradient-to-r hover:from-purple-500 hover:to-orange-500"
             >
               <Share2 className="w-4 h-4 mr-2" />
               Teilen
@@ -568,7 +568,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
             <button
               onClick={copyEventLink}
-              className="flex items-center justify-center px-6 py-3 bg-blue-500/80 hover:bg-blue-600/80 text-white rounded-full backdrop-blur-sm border border-white/20 transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="liquid-glass-button flex items-center justify-center px-6 py-3 text-white rounded-full border border-white/20 transition-all duration-300 hover:bg-gradient-to-r hover:from-purple-500 hover:to-orange-500"
             >
               {copied ? (
                 <Check className="w-4 h-4 mr-2" />

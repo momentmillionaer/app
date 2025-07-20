@@ -178,14 +178,12 @@ export function SearchFilters({
         <Button
           variant={showFreeEventsOnly ? "default" : "outline"}
           onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
-          className={`rounded-full text-sm font-medium transition-all duration-200 ${
+          className={`liquid-glass-button rounded-full text-sm font-medium transition-all duration-300 border border-white/25 ${
             isMobile ? 'w-12 h-12 p-0' : 'px-4 py-3'
           } ${
             showFreeEventsOnly 
-              ? 'bg-brand-purple hover:bg-brand-orange text-black shadow-lg' 
-              : isMobile
-                ? 'bg-white/20 hover:bg-white/30 text-white border-0 liquid-glass'
-                : 'bg-white/10 hover:bg-white/20 text-white border-white/25'
+              ? 'hover:bg-gradient-to-r hover:from-purple-500 hover:to-orange-500 text-white' 
+              : 'text-white hover:bg-white/20'
           }`}
         >
           {isMobile ? (
@@ -198,7 +196,7 @@ export function SearchFilters({
         {/* Add Event Button */}
         <Button
           onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-          className={`rounded-full bg-brand-orange hover:bg-brand-purple text-white text-sm font-medium transition-all duration-200 shadow-lg ${
+          className={`liquid-glass-button rounded-full text-white text-sm font-medium transition-all duration-300 border border-white/25 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 ${
             isMobile ? 'w-12 h-12 p-0' : 'px-4 py-3'
           }`}
         >
