@@ -122,9 +122,9 @@ export function SearchFilters({
       </div>
 
       {/* Filter Controls - Horizontal Layout */}
-      <div className={isMobile ? 'flex justify-between items-center' : 'flex justify-between items-center gap-4'}>
+      <div className={isMobile ? 'flex justify-between items-center gap-2' : 'grid grid-cols-6 gap-4 items-center'}>
         {/* Category Filter */}
-        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
+        <div className={isMobile ? "flex-shrink-0" : "col-span-1"}>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
             <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : 'h-12'}`}>
               {isMobile ? (
@@ -145,7 +145,7 @@ export function SearchFilters({
         </div>
 
         {/* Audience Filter */}
-        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
+        <div className={isMobile ? "flex-shrink-0" : "col-span-1"}>
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
             <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : 'h-12'}`}>
               {isMobile ? (
@@ -167,7 +167,7 @@ export function SearchFilters({
         </div>
 
         {/* Date Range Filter */}
-        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
+        <div className={isMobile ? "flex-shrink-0" : "col-span-1"}>
           <DateRangePicker
             dateFrom={dateFrom}
             dateTo={dateTo}
@@ -177,7 +177,7 @@ export function SearchFilters({
         </div>
 
         {/* Free Events Filter */}
-        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
+        <div className={isMobile ? "flex-shrink-0" : "col-span-1"}>
           <Button
             variant={showFreeEventsOnly ? "default" : "outline"}
             onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
@@ -198,7 +198,7 @@ export function SearchFilters({
         </div>
 
         {/* Add Event Button */}
-        <div className="flex-shrink-0">
+        <div className={isMobile ? "flex-shrink-0" : "col-span-1 flex justify-center"}>
           <Button
             onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
             className={`liquid-glass-button rounded-full text-white text-sm font-medium transition-all duration-300 border border-white/25 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 ${
@@ -211,7 +211,7 @@ export function SearchFilters({
 
         {/* Clear Filters Button - Simple Trash Icon */}
         {hasActiveFilters && (
-          <div className="flex-shrink-0">
+          <div className={isMobile ? "flex-shrink-0" : "col-span-1 flex justify-center"}>
             <Button
               variant="outline"
               onClick={onClearFilters}
