@@ -169,6 +169,8 @@ Preferred communication style: Simple, everyday language.
 - ✓ Share image layout redesigned to match EventCard style in 4:5 format (1080x1350)
 - ✓ Removed yellow star from favorites view header, kept only "conni's favoriten" in Connihof font
 - ✓ Cleaned up view toggle buttons - removed text from favorites button, kept only star icon
+- ✓ Fixed double "conni's favoriten" title - now appears only once in favorites view
+- ✓ Share image redesigned to match favorites EventCard style with purple border and glass effect
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server

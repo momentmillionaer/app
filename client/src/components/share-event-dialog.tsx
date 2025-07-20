@@ -125,42 +125,48 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         console.log('No event image URL provided, using gradient background')
       }
 
-      // EventCard-style layout (4:5 ratio - 1080x1350)
-      const cardPadding = 60
+      // Favorites EventCard-style layout (4:5 ratio - 1080x1350)
+      const cardPadding = 48
       const cardX = cardPadding
-      const cardY = 150
+      const cardY = 100
       const cardWidth = canvas.width - (cardPadding * 2)
-      const cardHeight = canvas.height - cardY - 120
-      const cardRadius = 32 // rounded-[2rem]
+      const cardHeight = canvas.height - cardY - 100
+      const cardRadius = 32 // rounded-[2rem] like favorites cards
 
-      // EventCard liquid glass background matching grid view
+      // Favorites EventCard liquid glass background - exact match to favorites view
       ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
       ctx.beginPath()
       ctx.roundRect(cardX, cardY, cardWidth, cardHeight, cardRadius)
       ctx.fill()
 
-      // EventCard border
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'
-      ctx.lineWidth = 1
+      // Favorites EventCard border with purple accent
+      ctx.strokeStyle = 'rgba(147, 51, 234, 0.3)' // Purple border like favorites
+      ctx.lineWidth = 2
       ctx.beginPath()
       ctx.roundRect(cardX, cardY, cardWidth, cardHeight, cardRadius)
       ctx.stroke()
 
-      // Event image area (if available) - top section like EventCard
-      const imageHeight = event.imageUrl ? 280 : 0
-      let contentStartY = cardY + 40
+      // Inner border for enhanced glass effect
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.roundRect(cardX + 2, cardY + 2, cardWidth - 4, cardHeight - 4, cardRadius - 2)
+      ctx.stroke()
+
+      // Event image area at top like favorites cards
+      const imageHeight = event.imageUrl ? 320 : 0
+      let contentStartY = cardY + 48
 
       if (event.imageUrl && imageHeight > 0) {
-        // Create clipping path for rounded image
+        // Create clipping path for rounded image exactly like favorites cards
         ctx.save()
         ctx.beginPath()
-        ctx.roundRect(cardX + 20, cardY + 20, cardWidth - 40, imageHeight, 20)
+        ctx.roundRect(cardX + 24, cardY + 24, cardWidth - 48, imageHeight, 20)
         ctx.clip()
         
-        // Use existing loaded image if available
-        const img = new Image()
-        img.crossOrigin = 'anonymous'
         try {
+          const img = new Image()
+          img.crossOrigin = 'anonymous'
           await new Promise((resolve, reject) => {
             img.onload = resolve
             img.onerror = reject
@@ -168,12 +174,12 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           })
           
           if (img.complete && img.naturalWidth > 0) {
-            // Scale to fill the image area
-            const scale = Math.max((cardWidth - 40) / img.naturalWidth, imageHeight / img.naturalHeight)
+            // Scale to cover the image area exactly like favorites cards
+            const scale = Math.max((cardWidth - 48) / img.naturalWidth, imageHeight / img.naturalHeight)
             const scaledWidth = img.naturalWidth * scale
             const scaledHeight = img.naturalHeight * scale
-            const imgX = cardX + 20 + ((cardWidth - 40) - scaledWidth) / 2
-            const imgY = cardY + 20 + (imageHeight - scaledHeight) / 2
+            const imgX = cardX + 24 + ((cardWidth - 48) - scaledWidth) / 2
+            const imgY = cardY + 24 + (imageHeight - scaledHeight) / 2
             
             ctx.drawImage(img, imgX, imgY, scaledWidth, scaledHeight)
           }
@@ -182,83 +188,84 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         }
         
         ctx.restore()
-        contentStartY = cardY + imageHeight + 60
+        contentStartY = cardY + imageHeight + 72
       }
 
-      // Text content area - matches EventCard layout
+      // Content area with padding like favorites cards
       let currentY = contentStartY
 
-      // Event title
-      ctx.fillStyle = 'white'
-      ctx.font = 'bold 48px Helvetica, Arial, sans-serif'
-      ctx.textAlign = 'left'
-      const titleLines = wrapText(ctx, event.title, cardWidth - 80)
-      titleLines.forEach(line => {
-        ctx.fillText(line, cardX + 40, currentY)
-        currentY += 60
-      })
-
-      currentY += 15
-
-      // Subtitle
-      if (event.subtitle) {
-        ctx.font = 'italic 32px Helvetica, Arial, sans-serif'
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
-        const subtitleLines = wrapText(ctx, event.subtitle, cardWidth - 80)
-        subtitleLines.forEach(line => {
-          ctx.fillText(line, cardX + 40, currentY)
-          currentY += 40
-        })
-        currentY += 15
-      }
-
-      // Category badge - like EventCard
+      // Category badge at top like favorites cards
       if (event.category) {
-        ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
+        ctx.font = 'bold 28px Helvetica, Arial, sans-serif'
         const categoryText = event.category
         const textWidth = ctx.measureText(categoryText).width
-        const badgeWidth = textWidth + 32
-        const badgeHeight = 36
+        const badgeWidth = textWidth + 40
+        const badgeHeight = 44
         
-        // Badge background
+        // Badge background with rounded corners
         ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
         ctx.beginPath()
-        ctx.roundRect(cardX + 40, currentY - 26, badgeWidth, badgeHeight, 18)
+        ctx.roundRect(cardX + 48, currentY - 32, badgeWidth, badgeHeight, 22)
         ctx.fill()
         
         // Badge text
         ctx.fillStyle = 'white'
         ctx.textAlign = 'center'
-        ctx.fillText(categoryText, cardX + 40 + badgeWidth / 2, currentY)
+        ctx.fillText(categoryText, cardX + 48 + badgeWidth / 2, currentY)
+        ctx.textAlign = 'left'
         
-        currentY += 50
+        currentY += 60
       }
 
-      // Event details - compact like EventCard
-      ctx.font = 'bold 28px Helvetica, Arial, sans-serif'
+      // Event title - larger and bold like favorites cards
       ctx.fillStyle = 'white'
-      ctx.textAlign = 'left'
+      ctx.font = 'bold 56px Helvetica, Arial, sans-serif'
+      const titleLines = wrapText(ctx, event.title, cardWidth - 96)
+      titleLines.forEach(line => {
+        ctx.fillText(line, cardX + 48, currentY)
+        currentY += 70
+      })
 
-      // Date
-      const eventDate = format(new Date(event.date + 'T12:00:00+02:00'), 'EE, dd.MM.yyyy', { locale: de })
-      ctx.fillText(`📅 ${eventDate}`, cardX + 40, currentY)
-      currentY += 40
+      currentY += 20
 
-      // Time
-      if (event.time) {
-        ctx.fillText(`🕐 ${event.time}`, cardX + 40, currentY)
-        currentY += 40
+      // Subtitle in italic
+      if (event.subtitle) {
+        ctx.font = 'italic 36px Helvetica, Arial, sans-serif'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+        const subtitleLines = wrapText(ctx, event.subtitle, cardWidth - 96)
+        subtitleLines.forEach(line => {
+          ctx.fillText(line, cardX + 48, currentY)
+          currentY += 45
+        })
+        currentY += 20
       }
 
-      // Location
-      ctx.fillText(`📍 ${event.location}`, cardX + 40, currentY)
-      currentY += 40
+      // Event details with icons - spaced like favorites cards
+      ctx.font = 'bold 34px Helvetica, Arial, sans-serif'
+      ctx.fillStyle = 'white'
 
-      // Price (if available)
+      // Date with calendar icon
+      const eventDate = format(new Date(event.date + 'T12:00:00+02:00'), 'dd. MMMM yyyy', { locale: de })
+      ctx.fillText(`📅  ${eventDate}`, cardX + 48, currentY)
+      currentY += 55
+
+      // Time with clock icon
+      if (event.time) {
+        ctx.fillText(`🕐  ${event.time} Uhr`, cardX + 48, currentY)
+        currentY += 55
+      }
+
+      // Location with map pin
+      ctx.fillText(`📍  ${event.location}`, cardX + 48, currentY)
+      currentY += 55
+
+      // Price in bottom right like favorites cards
       if (event.price) {
-        const priceText = event.price === '0' ? '🆓 GRATIS' : `💰 ${event.price}€`
-        ctx.fillText(priceText, cardX + 40, currentY)
-        currentY += 40
+        ctx.font = 'bold 48px Helvetica, Arial, sans-serif'
+        ctx.textAlign = 'right'
+        const priceText = event.price === '0' ? 'GRATIS' : `€${event.price}`
+        ctx.fillText(priceText, cardX + cardWidth - 48, cardY + cardHeight - 60)
+        ctx.textAlign = 'left'
       }
 
       // momentmillionär branding (positioned for 4:5 ratio)
