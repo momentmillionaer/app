@@ -37,6 +37,7 @@ export const events = pgTable("events", {
   attendees: text("attendees"),
   imageUrl: text("image_url"),
   documentsUrls: text("documents_urls").array(), // For documents from Notion files property
+  isFavorite: boolean("is_favorite").default(false), // For Conni's Favorites checkbox
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

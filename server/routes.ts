@@ -318,7 +318,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           })(),
           attendees: properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name).join(", ") || "",
           imageUrl: imageUrl,
-          documentsUrls: documentsUrls
+          documentsUrls: documentsUrls,
+          isFavorite: properties["conni's favorites"]?.checkbox || false // Extract Conni's Favorites checkbox
         };
       }));
 

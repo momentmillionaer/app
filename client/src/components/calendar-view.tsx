@@ -266,19 +266,24 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
     return dayOfWeek === 0 || dayOfWeek === 6; // Sunday or Saturday
   };
 
-  // Function to check if a day is a holiday (simplified - you can expand this)
+  // Function to check if a day is a holiday (Austrian holidays)
   const isHoliday = (day: number): boolean => {
     const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
     const month = date.getMonth();
     const dayOfMonth = date.getDate();
+    const year = date.getFullYear();
     
-    // Austrian holidays (simplified list)
+    // Fixed Austrian holidays
     const holidays = [
-      { month: 0, day: 1 },   // New Year
-      { month: 4, day: 1 },   // Labour Day
-      { month: 9, day: 26 },  // National Day
-      { month: 11, day: 25 }, // Christmas Day
-      { month: 11, day: 26 }, // Boxing Day
+      { month: 0, day: 1 },   // Neujahr (New Year)
+      { month: 0, day: 6 },   // Heilige Drei Könige (Epiphany)
+      { month: 4, day: 1 },   // Staatsfeiertag (Labour Day)
+      { month: 7, day: 15 },  // Mariä Himmelfahrt (Assumption)
+      { month: 9, day: 26 },  // Nationalfeiertag (National Day)
+      { month: 10, day: 1 },  // Allerheiligen (All Saints)
+      { month: 11, day: 8 },  // Mariä Empfängnis (Immaculate Conception)
+      { month: 11, day: 25 }, // Christtag (Christmas Day)
+      { month: 11, day: 26 }, // Stefanitag (Boxing Day)
     ];
     
     return holidays.some(holiday => holiday.month === month && holiday.day === dayOfMonth);
@@ -559,11 +564,11 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                   key={`day-${day}`}
                   className={`p-3 h-32 border-0 rounded-2xl relative overflow-hidden transition-all duration-300 ${
                     isToday 
-                      ? 'ring-2 ring-[#9DFF00]/70' 
-                      : weekend
+                      ? 'ring-2 ring-[#9DFF00]/70 glow-lime' 
+                      : holiday
+                        ? 'liquid-glass bg-purple-500/20 hover:liquid-glass-strong ring-2 ring-purple-500/50 glow-purple'
+                        : weekend
                         ? 'liquid-glass bg-black/30 hover:liquid-glass-strong'
-                        : holiday
-                        ? 'liquid-glass bg-brand-purple/20 hover:liquid-glass-strong'
                         : 'liquid-glass hover:liquid-glass-strong'
                   }`}
                   style={isToday ? { 
@@ -577,12 +582,14 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                   <div className={`text-sm font-bold mb-1 ${
                     isToday 
                       ? 'text-black drop-shadow-lg font-extrabold' 
-                      : isSpecialDay 
+                      : holiday
+                        ? 'text-purple-300 drop-shadow-sm'
+                        : weekend 
                         ? 'text-brand-purple drop-shadow-sm'
                         : 'text-white drop-shadow-sm'
                   }`}>
                     {day}
-                    {holiday && <span className="ml-1">🎄</span>}
+                    {holiday && <span className="ml-1">🎉</span>}
                   </div>
                   
                   {/* Events for this day */}

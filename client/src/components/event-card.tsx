@@ -271,6 +271,10 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
 
           {/* Category Emojis above title */}
           <div className="flex items-center gap-2 mb-2">
+            {/* Favorite event emoji */}
+            {event.isFavorite && (
+              <span className="text-lg">💫</span>
+            )}
             {/* Free event emoji */}
             {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
               <span className="text-lg">🆓</span>
@@ -473,6 +477,10 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
             
             {/* Badges - right side */}
             <div className="flex gap-2 flex-shrink-0 items-center">
+              {/* Favorite event emoji */}
+              {event.isFavorite && (
+                <span className="text-xl">💫</span>
+              )}
               {/* Free event emoji - only show for events with price explicitly set to 0 */}
               {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
                 <span className="text-xl">🆓</span>

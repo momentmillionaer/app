@@ -191,6 +191,16 @@
     outline: none;
     box-shadow: 0 0 0 4px rgba(243, 220, 250, 0.3);
   }
+
+  /* Glow effect for today's date in calendar */
+  .glow-lime {
+    box-shadow: 0 0 20px rgba(157, 255, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Glow effect for holidays in calendar */
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(147, 51, 234, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
 }
 
 /* Custom utility classes */
