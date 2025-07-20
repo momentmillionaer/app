@@ -4,12 +4,13 @@ import { Header } from "@/components/header";
 import { SearchFilters } from "@/components/search-filters";
 import { CalendarView } from "@/components/calendar-view";
 import { GridView } from "@/components/grid-view";
+import { FavoritesView } from "@/components/favorites-view";
 import { EventCard } from "@/components/event-card";
 import { EventModal } from "@/components/event-modal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CalendarX, List, Calendar, Grid3X3 } from "lucide-react";
+import { CalendarX, List, Calendar, Grid3X3, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InstagramPreview } from "@/components/instagram-preview";
 import { Footer } from "@/components/footer";
@@ -24,7 +25,7 @@ export default function EventsPage() {
   const [dateTo, setDateTo] = useState("");
   const [showFreeEventsOnly, setShowFreeEventsOnly] = useState(false);
   const [sortOption, setSortOption] = useState("date-asc");
-  const [viewMode, setViewMode] = useState<"calendar" | "list" | "grid">("calendar");
+  const [viewMode, setViewMode] = useState<"calendar" | "list" | "grid" | "favorites">("calendar");
   const [userChangedView, setUserChangedView] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -232,11 +233,6 @@ export default function EventsPage() {
       filtered = filtered.filter(event => 
         event.date && event.date >= dateFrom && event.date <= dateTo
       );
-    } else if (dateFrom) {
-      // Only dateFrom specified (fallback)
-      filtered = filtered.filter(event => 
-        event.date && event.date >= dateFrom
-      );
     }
 
     // Apply sorting
@@ -272,6 +268,11 @@ export default function EventsPage() {
       return hasEventFutureDates(event);
     });
   }, [filteredEvents, hasEventFutureDates]);
+
+  // Events for favorites view - only show favorite events
+  const favoriteEvents = useMemo(() => {
+    return eventsForListAndGrid.filter(event => event.isFavorite);
+  }, [eventsForListAndGrid]);
 
   // Events for calendar view - show all events with original dates (past events will be grayed out in calendar component)
   const eventsForCalendar = useMemo(() => {
@@ -463,7 +464,9 @@ export default function EventsPage() {
             showFreeEventsOnly={showFreeEventsOnly}
             onFreeEventsChange={setShowFreeEventsOnly}
             onClearFilters={clearFilters}
-            eventCount={viewMode === "calendar" ? eventsForCalendar.length : eventsForListAndGrid.length}
+            eventCount={viewMode === "calendar" ? eventsForCalendar.length : 
+                       viewMode === "favorites" ? favoriteEvents.length : 
+                       eventsForListAndGrid.length}
           />
         </div>
 
@@ -490,6 +493,19 @@ export default function EventsPage() {
               </button>
               <button
                 onClick={() => {
+                  setViewMode("list");
+                  setUserChangedView(true);
+                }}
+                className={`w-12 h-12 rounded-full transition-all duration-300 ${
+                  viewMode === "list"
+                    ? 'liquid-glass-button border border-white/25 text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600'
+                    : 'text-white/60 hover:text-white/80'
+                }`}
+              >
+                <List className="h-5 w-5 mx-auto" />
+              </button>
+              <button
+                onClick={() => {
                   setViewMode("grid");
                   setUserChangedView(true);
                 }}
@@ -501,9 +517,22 @@ export default function EventsPage() {
               >
                 <Grid3X3 className="h-5 w-5 mx-auto" />
               </button>
+              <button
+                onClick={() => {
+                  setViewMode("favorites");
+                  setUserChangedView(true);
+                }}
+                className={`w-12 h-12 rounded-full transition-all duration-300 ${
+                  viewMode === "favorites"
+                    ? 'liquid-glass-button border border-white/25 text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600'
+                    : 'text-white/60 hover:text-white/80'
+                }`}
+              >
+                <Star className="h-5 w-5 mx-auto" />
+              </button>
             </div>
             
-            {viewMode === "grid" && (
+            {(viewMode === "grid" || viewMode === "favorites") && (
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-white/80 drop-shadow-sm">Sortierung:</span>
                 <Select value={sortOption} onValueChange={setSortOption}>
@@ -538,14 +567,20 @@ export default function EventsPage() {
               </div>
             ))}
           </div>
-        ) : (viewMode === "calendar" ? eventsForCalendar.length : eventsForListAndGrid.length) === 0 ? (
+        ) : (viewMode === "calendar" ? eventsForCalendar.length : 
+              viewMode === "favorites" ? favoriteEvents.length : 
+              eventsForListAndGrid.length) === 0 ? (
           <div className="text-center py-12">
             <CalendarX className="mx-auto h-12 w-12 text-white/50 mb-4" />
-            <h3 className="text-lg font-medium text-white drop-shadow-sm mb-2">Keine Events gefunden</h3>
+            <h3 className="text-lg font-medium text-white drop-shadow-sm mb-2">
+              {viewMode === "favorites" ? "Keine Favoriten gefunden" : "Keine Events gefunden"}
+            </h3>
             <p className="text-white/80 drop-shadow-sm mb-6">
-              {events.length === 0 
-                ? "Es sind noch keine Events in der Datenbank verfügbar."
-                : "Versuchen Sie, Ihre Suchkriterien oder Filter anzupassen."
+              {viewMode === "favorites" 
+                ? "Markiere Events als Favoriten, um sie hier zu sehen."
+                : events.length === 0 
+                  ? "Es sind noch keine Events in der Datenbank verfügbar."
+                  : "Versuchen Sie, Ihre Suchkriterien oder Filter anzupassen."
               }
             </p>
             {(searchQuery || selectedCategory || dateFrom || dateTo) && (
@@ -559,6 +594,19 @@ export default function EventsPage() {
           </div>
         ) : viewMode === "calendar" ? (
           <CalendarView events={eventsForCalendar} onEventClick={handleEventClick} />
+        ) : viewMode === "favorites" ? (
+          <FavoritesView events={favoriteEvents} onEventClick={handleEventClick} />
+        ) : viewMode === "list" ? (
+          <div className="space-y-6">
+            {eventsForListAndGrid.map((event, index) => (
+              <EventCard 
+                key={`${event.notionId}-${index}`} 
+                event={event} 
+                onClick={() => handleEventClick(event)}
+                variant="list"
+              />
+            ))}
+          </div>
         ) : (
           <GridView events={eventsForListAndGrid} onEventClick={handleEventClick} />
         )}
