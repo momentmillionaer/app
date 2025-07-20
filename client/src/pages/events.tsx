@@ -476,12 +476,7 @@ export default function EventsPage() {
         <div className="flex flex-col items-center mb-6 space-y-4">
           
           {/* Conni's Favoriten Title - Only for Favorites View */}
-          {viewMode === "favorites" && (
-            <h2 className="text-4xl font-bold text-white drop-shadow-lg mb-4" 
-                style={{ fontFamily: 'Connihof, serif' }}>
-              conni's favoriten
-            </h2>
-          )}
+
 
           {/* View Mode Toggle - Always Centered */}
           <div className="flex flex-col items-center space-y-4">
