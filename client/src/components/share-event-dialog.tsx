@@ -41,7 +41,8 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
     }
 
     setIsGenerating(true)
-    console.log('Starting image generation for:', event.title)
+    console.log('🚀 CACHE BUST v2.0 - Starting FAVORITES STYLE image generation for:', event.title)
+    console.log('🎨 Using NEW EventCard layout with purple border and liquid glass!')
     
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
@@ -275,7 +276,8 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.font = 'bold 28px Connihof, serif'
       ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
       ctx.textAlign = 'center'
-      ctx.fillText('© momentmillionär', canvas.width / 2, containerY + containerHeight + 80)
+      ctx.fillText('© momentmillionär', canvas.width / 2, cardY + cardHeight + 80)
+      console.log('✅ NEW Favorites EventCard styling applied successfully!')
 
       // Convert to blob and create URL with forced cache break
       const timestamp = Date.now()
@@ -293,9 +295,9 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       })
       
       console.log('Blob created, size:', blob.size, 'bytes')
-      const url = URL.createObjectURL(blob)
+      const url = URL.createObjectURL(blob) + '?v=' + timestamp
       setGeneratedImage(url)
-      console.log('Share image generated successfully, URL:', url)
+      console.log('🎉 NEW FAVORITES STYLE share image generated successfully! URL:', url)
       
     } catch (error) {
       console.error('Error generating share image:', error)
