@@ -250,7 +250,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       // Date and time matching EventCard modal
       ctx.font = 'bold 32px Helvetica, Arial, sans-serif'
       ctx.fillStyle = 'white'
-      const eventDate = format(new Date(event.date), 'EEEE, dd. MMMM yyyy', { locale: de })
+      const eventDate = format(new Date(event.date + 'T12:00:00+02:00'), 'EEEE, dd. MMMM yyyy', { locale: de })
       ctx.fillText(`📅 ${eventDate}`, containerX + 40, currentY)
       currentY += 50
 

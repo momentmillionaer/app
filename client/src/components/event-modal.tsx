@@ -127,7 +127,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                 </div>
                 {/* Category emojis */}
                 <div className="mt-2 flex gap-2">
-                  {getCategoryEmojis(event.categories).map((emoji, index) => (
+                  {getCategoryEmojis(event.categories || []).map((emoji, index) => (
                     <span key={index} className="text-2xl">{emoji}</span>
                   ))}
                 </div>
@@ -219,11 +219,12 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                     <div>
                       <p className="text-sm text-white/70 drop-shadow-sm">Datum</p>
                       <p className="text-white font-medium drop-shadow-sm">
-                        {new Date(event.date).toLocaleDateString('de-DE', {
+                        {new Date(event.date).toLocaleDateString('de-AT', {
                           weekday: 'long',
                           year: 'numeric',
                           month: 'long',
-                          day: 'numeric'
+                          day: 'numeric',
+                          timeZone: 'Europe/Vienna'
                         })}
                       </p>
                     </div>
@@ -338,7 +339,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
             {/* Website Button - Bottom Right */}
             {event.website && (
               <button
-                onClick={() => window.open(event.website, '_blank')}
+                onClick={() => window.open(event.website || '', '_blank')}
                 className="liquid-glass-button flex items-center px-6 py-3 rounded-full text-white font-medium drop-shadow-lg transition-all duration-300 border border-white/20 hover:border-white/40 hover:backdrop-blur-xl"
                 style={{
                   background: 'rgba(0, 0, 255, 0.3)',
@@ -361,7 +362,18 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
 
       {/* Share Dialog */}
       <ShareEventDialog
-        event={event}
+        event={{
+          ...event,
+          subtitle: event.subtitle || '',
+          description: event.description || '',
+          location: event.location || '',
+          organizer: event.organizer || '',
+          website: event.website || '',
+          attendees: event.attendees || '',
+          imageUrl: event.imageUrl || '',
+          categories: event.categories || [],
+          documentsUrls: event.documentsUrls || []
+        }}
         isOpen={showShareDialog}
         onClose={() => setShowShareDialog(false)}
       />

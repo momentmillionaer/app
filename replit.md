@@ -154,6 +154,17 @@ Preferred communication style: Simple, everyday language.
 - ✓ Text shadows and strokes reduced for consistency with app's design language
 - ✓ Share image container transparency minimized (4% opacity) with stronger blur (40px) for better readability
 
+**July 20, 2025 - Timezone Implementation & Notion Sync Enhancement**
+- ✓ Comprehensive timezone update to GMT+2 (Europe/Vienna) for Weiz, Austria
+- ✓ All date/time displays now use Austrian locale (de-AT) and Vienna timezone
+- ✓ Server health endpoint includes local Vienna time for monitoring (21:19:43 confirmed)
+- ✓ Event card date comparisons updated for accurate Austrian time zones
+- ✓ Event modal, latest event popup, and share dialogs use Vienna timezone
+- ✓ Manual Notion sync endpoint (/api/sync) created for forced data updates
+- ✓ "conni's favoriten" text added in Connihof font for favorites view
+- ✓ 199 events successfully synchronized from Notion (no favorites marked yet)
+- ✓ TypeScript compatibility issues resolved for event modal components
+
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
 - ✓ Added health check endpoints at / and /health for deployment monitoring

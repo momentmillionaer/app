@@ -24,22 +24,24 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
     }
   })();
 
-  // Check if event has any future dates (simplified since main date is now the next future date)
+  // Check if event has any future dates (using Vienna timezone)
   const hasEventFutureDates = (() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Get current date in Vienna timezone
+    const todayDate = new Date();
+    const viennaDate = new Date(todayDate.toLocaleString("en-US", { timeZone: "Europe/Vienna" }));
+    viennaDate.setHours(0, 0, 0, 0);
     
     // Since we now process events to set the main date to the next future date,
     // we just need to check if the main date is in the future
     if (event.date) {
       const mainDate = new Date(event.date);
-      return mainDate >= today;
+      return mainDate >= viennaDate;
     }
     
     return false;
   })();
 
-  // Check if event is in the past
+  // Check if event is in the past (using Vienna timezone)
   const isEventPast = (() => {
     if (!event.date) return false;
     
@@ -49,10 +51,12 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
     const eventMonth = parseInt(eventDateParts[1]) - 1; // Month is 0-indexed
     const eventDay = parseInt(eventDateParts[2]);
     
+    // Get current date in Vienna timezone
     const todayDate = new Date();
-    const todayYear = todayDate.getFullYear();
-    const todayMonth = todayDate.getMonth();
-    const todayDay = todayDate.getDate();
+    const viennaDate = new Date(todayDate.toLocaleString("en-US", { timeZone: "Europe/Vienna" }));
+    const todayYear = viennaDate.getFullYear();
+    const todayMonth = viennaDate.getMonth();
+    const todayDay = viennaDate.getDate();
     
     // Compare dates without time components
     if (eventYear < todayYear) return true;

@@ -7,10 +7,22 @@ import { z } from "zod";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Health check endpoint for deployment monitoring (only /health, not root)
   app.get("/health", (req, res) => {
+    const viennaTime = new Date().toLocaleString("de-AT", { 
+      timeZone: "Europe/Vienna",
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+    
     res.json({ 
       status: "healthy", 
       message: "Momentmillionär Event Calendar API", 
       timestamp: new Date().toISOString(),
+      localTime: viennaTime,
+      timezone: "Europe/Vienna (GMT+2)",
       uptime: process.uptime()
     });
   });
@@ -193,19 +205,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const categories = properties.Kategorie?.multi_select?.map((cat: any) => cat.name) || [];
         const primaryCategory = categories.length > 0 ? categories[0] : "Sonstiges";
 
-        // Extract time from datetime if available
+        // Extract date and time with Austrian timezone handling
         let eventDate = null;
         let eventTime = "";
         if (properties.Datum?.date?.start) {
-          const fullDate = new Date(properties.Datum.date.start);
-          eventDate = fullDate.toISOString().split('T')[0];
-          // If it includes time, extract it
-          if (properties.Datum.date.start.includes('T')) {
-            eventTime = fullDate.toLocaleTimeString('de-DE', { 
+          const dateString = properties.Datum.date.start;
+          // Handle both date-only and datetime formats with Austrian timezone
+          if (dateString.includes('T')) {
+            // DateTime format - ensure we use Vienna timezone
+            const fullDate = new Date(dateString);
+            eventDate = fullDate.toLocaleDateString('sv-SE', { timeZone: 'Europe/Vienna' });
+            eventTime = fullDate.toLocaleTimeString('de-AT', { 
               hour: '2-digit', 
               minute: '2-digit',
               timeZone: 'Europe/Vienna'
             });
+          } else {
+            // Date-only format
+            eventDate = dateString;
           }
         }
 

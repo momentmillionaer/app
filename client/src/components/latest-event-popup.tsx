@@ -135,10 +135,11 @@ export function LatestEventPopup({ events, onEventClick }: LatestEventPopupProps
           <div className="space-y-1 text-xs">
             {latestEvent.date && (
               <p className="text-white/80">
-                📅 {new Date(latestEvent.date).toLocaleDateString('de-DE', {
+                📅 {new Date(latestEvent.date).toLocaleDateString('de-AT', {
                   day: '2-digit',
                   month: '2-digit',
-                  year: 'numeric'
+                  year: 'numeric',
+                  timeZone: 'Europe/Vienna'
                 })}
                 {latestEvent.time && ` um ${latestEvent.time}`}
               </p>
