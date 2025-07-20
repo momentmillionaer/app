@@ -518,7 +518,6 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
   }
 
   useEffect(() => {
-    console.log('🔍 useEffect check:', { isOpen, generatedImage: !!generatedImage, isGenerating })
     if (isOpen && !generatedImage && !isGenerating) {
       // Start generation with small delay to ensure canvas is ready
       const timer = setTimeout(() => {
@@ -556,15 +555,12 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
                 src={generatedImage}
                 alt="Share preview"
                 className="w-full max-w-md mx-auto rounded-[1.5rem] shadow-lg"
-                onLoad={() => console.log('✅ Share preview image loaded successfully!')}
-                onError={(e) => console.error('❌ Share preview image failed to load:', e)}
+
               />
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-64 bg-white/10 backdrop-blur-sm rounded-[2rem] border border-white/20 space-y-2">
-              <div className="text-white/70 drop-shadow-lg">Share Preview</div>
-              <div className="text-white/50 text-sm">Debug: generatedImage = {generatedImage ? 'EXISTS' : 'NULL'}</div>
-              <div className="text-white/50 text-sm">Debug: isGenerating = {isGenerating ? 'TRUE' : 'FALSE'}</div>
+              <div className="text-white/70 drop-shadow-lg">Vorschau wird geladen...</div>
               <button 
                 onClick={() => {
                   console.log('🔄 Manual regeneration clicked')
