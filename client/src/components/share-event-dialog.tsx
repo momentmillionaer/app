@@ -58,13 +58,72 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
     console.log('Container transparency: 4%, Background: no blur, Brightness: 0.5')
 
     try {
-      // Simple gradient background - reliable and always works
+      // Always start with gradient background as fallback
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
       gradient.addColorStop(0, '#6366f1')
       gradient.addColorStop(1, '#f59e0b')
       ctx.fillStyle = gradient
       ctx.fillRect(0, 0, canvas.width, canvas.height)
-      console.log('Gradient background applied successfully')
+      console.log('Gradient background applied')
+
+      // Try to load and overlay the event image with better error handling
+      if (event.imageUrl) {
+        try {
+          console.log('Loading event image:', event.imageUrl)
+          const img = new Image()
+          img.crossOrigin = 'anonymous'
+          
+          const imagePromise = new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              console.log('Image load timeout after 5 seconds, continuing with gradient')
+              resolve(false)
+            }, 5000)
+            
+            img.onload = () => {
+              clearTimeout(timeout)
+              console.log('Image loaded successfully, dimensions:', img.naturalWidth, 'x', img.naturalHeight)
+              resolve(true)
+            }
+            
+            img.onerror = (error) => {
+              clearTimeout(timeout)
+              console.log('Image load error:', error, 'continuing with gradient')
+              resolve(false)
+            }
+            
+            // Set source to trigger loading
+            img.src = event.imageUrl
+          })
+
+          const imageLoaded = await imagePromise
+
+          // Overlay the event image if loaded successfully
+          if (imageLoaded && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+            console.log('Overlaying event image on gradient background')
+            
+            // Calculate scale to fill canvas without distortion (cover behavior)
+            const scale = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight)
+            const scaledWidth = img.naturalWidth * scale
+            const scaledHeight = img.naturalHeight * scale
+            const offsetX = (canvas.width - scaledWidth) / 2
+            const offsetY = (canvas.height - scaledHeight) / 2
+            
+            // Apply image with reduced opacity and filters for better text readability
+            ctx.save()
+            ctx.globalAlpha = 0.7
+            ctx.filter = 'brightness(0.4) saturate(120%)'
+            ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight)
+            ctx.restore()
+            console.log('Event image successfully overlaid')
+          } else {
+            console.log('Image not usable, keeping gradient background')
+          }
+        } catch (imageError) {
+          console.log('Image processing error:', imageError, 'keeping gradient background')
+        }
+      } else {
+        console.log('No event image URL provided, using gradient background')
+      }
 
       // Liquid glass container (adjusted for 4:5 ratio)
       const containerX = 80
@@ -199,7 +258,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       // Convert to blob and create URL with forced cache break
       const timestamp = Date.now()
       console.log('Converting canvas to blob...')
-      console.log('Generated at:', new Date().toLocaleTimeString(), 'ROBUST FALLBACK - Always shows complete content v', timestamp)
+      console.log('Generated at:', new Date().toLocaleTimeString(), 'EVENT IMAGES with reliable fallback v', timestamp)
       
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((blob) => {
