@@ -295,9 +295,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       })
       
       console.log('Blob created, size:', blob.size, 'bytes')
-      const url = URL.createObjectURL(blob) + '?v=' + timestamp
+      const url = URL.createObjectURL(blob)
       setGeneratedImage(url)
       console.log('🎉 NEW FAVORITES STYLE share image generated successfully! URL:', url)
+      console.log('🔍 Setting generated image state with URL length:', url.length)
       
     } catch (error) {
       console.error('Error generating share image:', error)
@@ -517,10 +518,11 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
   }
 
   useEffect(() => {
+    console.log('🔍 useEffect check:', { isOpen, generatedImage: !!generatedImage, isGenerating })
     if (isOpen && !generatedImage && !isGenerating) {
       // Start generation with small delay to ensure canvas is ready
       const timer = setTimeout(() => {
-        console.log('Dialog opened, starting image generation...')
+        console.log('📸 Dialog opened, starting image generation...')
         generateShareImage()
       }, 100)
       return () => clearTimeout(timer)
@@ -554,13 +556,20 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
                 src={generatedImage}
                 alt="Share preview"
                 className="w-full max-w-md mx-auto rounded-[1.5rem] shadow-lg"
+                onLoad={() => console.log('✅ Share preview image loaded successfully!')}
+                onError={(e) => console.error('❌ Share preview image failed to load:', e)}
               />
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-64 bg-white/10 backdrop-blur-sm rounded-[2rem] border border-white/20 space-y-2">
-              <div className="text-white/70 drop-shadow-lg">Vorschau wird geladen...</div>
+              <div className="text-white/70 drop-shadow-lg">Share Preview</div>
+              <div className="text-white/50 text-sm">Debug: generatedImage = {generatedImage ? 'EXISTS' : 'NULL'}</div>
+              <div className="text-white/50 text-sm">Debug: isGenerating = {isGenerating ? 'TRUE' : 'FALSE'}</div>
               <button 
-                onClick={generateShareImage}
+                onClick={() => {
+                  console.log('🔄 Manual regeneration clicked')
+                  generateShareImage()
+                }}
                 className="text-sm text-white/50 hover:text-white/80 underline"
               >
                 Erneut versuchen
