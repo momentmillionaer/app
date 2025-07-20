@@ -122,9 +122,9 @@ export function SearchFilters({
       </div>
 
       {/* Filter Controls - Horizontal Layout */}
-      <div className={isMobile ? 'flex justify-between items-center' : 'flex flex-wrap gap-4 items-start'}>
+      <div className={isMobile ? 'flex justify-between items-center' : 'flex justify-between items-center gap-4'}>
         {/* Category Filter */}
-        <div className={isMobile ? "flex-shrink-0" : "min-w-[200px]"}>
+        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
             <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : 'h-12'}`}>
               {isMobile ? (
@@ -145,7 +145,7 @@ export function SearchFilters({
         </div>
 
         {/* Audience Filter */}
-        <div className={isMobile ? "flex-shrink-0" : "min-w-[200px]"}>
+        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
             <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : 'h-12'}`}>
               {isMobile ? (
@@ -167,7 +167,7 @@ export function SearchFilters({
         </div>
 
         {/* Date Range Filter */}
-        <div className={isMobile ? "flex-shrink-0" : "min-w-[200px]"}>
+        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
           <DateRangePicker
             dateFrom={dateFrom}
             dateTo={dateTo}
@@ -177,48 +177,54 @@ export function SearchFilters({
         </div>
 
         {/* Free Events Filter */}
-        <Button
-          variant={showFreeEventsOnly ? "default" : "outline"}
-          onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
-          className={`liquid-glass-button rounded-full text-sm font-medium transition-all duration-300 border border-white/25 ${
-            isMobile ? 'w-12 h-12 p-0' : 'px-4 h-12'
-          } ${
-            showFreeEventsOnly 
-              ? 'hover:bg-gradient-to-r hover:from-purple-500 hover:to-orange-500 text-white' 
-              : 'text-white hover:bg-white/20'
-          }`}
-        >
-          {isMobile ? (
-            <span className="text-lg">🆓</span>
-          ) : (
-            "🆓 Nur kostenlose Events"
-          )}
-        </Button>
+        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
+          <Button
+            variant={showFreeEventsOnly ? "default" : "outline"}
+            onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
+            className={`liquid-glass-button rounded-full text-sm font-medium transition-all duration-300 border border-white/25 w-full ${
+              isMobile ? 'w-12 h-12 p-0' : 'px-4 h-12'
+            } ${
+              showFreeEventsOnly 
+                ? 'hover:bg-gradient-to-r hover:from-purple-500 hover:to-orange-500 text-white' 
+                : 'text-white hover:bg-white/20'
+            }`}
+          >
+            {isMobile ? (
+              <span className="text-lg">🆓</span>
+            ) : (
+              "🆓 Nur kostenlose Events"
+            )}
+          </Button>
+        </div>
 
         {/* Add Event Button */}
-        <Button
-          onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-          className={`liquid-glass-button rounded-full text-white text-sm font-medium transition-all duration-300 border border-white/25 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 ${
-            isMobile ? 'w-12 h-12 p-0' : 'h-12 w-12 p-0'
-          }`}
-        >
-          <span className="text-lg">➕</span>
-        </Button>
+        <div className="flex-shrink-0">
+          <Button
+            onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
+            className={`liquid-glass-button rounded-full text-white text-sm font-medium transition-all duration-300 border border-white/25 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 ${
+              isMobile ? 'w-12 h-12 p-0' : 'h-12 w-12 p-0'
+            }`}
+          >
+            <span className="text-lg">➕</span>
+          </Button>
+        </div>
 
         {/* Clear Filters Button - Simple Trash Icon */}
         {hasActiveFilters && (
-          <Button
-            variant="outline"
-            onClick={onClearFilters}
-            className={`rounded-full p-0 transition-all duration-200 ${
-              isMobile 
-                ? 'w-12 h-12 border-0 bg-white/20 text-white hover:bg-white/30 liquid-glass'
-                : 'w-12 h-12 border-white/20 bg-white/10 text-white hover:bg-white/20'
-            }`}
-            title="Filter löschen"
-          >
-            <span className="text-lg">🗑️</span>
-          </Button>
+          <div className="flex-shrink-0">
+            <Button
+              variant="outline"
+              onClick={onClearFilters}
+              className={`rounded-full p-0 transition-all duration-200 ${
+                isMobile 
+                  ? 'w-12 h-12 border-0 bg-white/20 text-white hover:bg-white/30 liquid-glass'
+                  : 'w-12 h-12 border-white/20 bg-white/10 text-white hover:bg-white/20'
+              }`}
+              title="Filter löschen"
+            >
+              <span className="text-lg">🗑️</span>
+            </Button>
+          </div>
         )}
       </div>
 
