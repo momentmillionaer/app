@@ -137,14 +137,14 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       // Canvas needs higher opacity to match backdrop-filter visual effect
       // Multiple layers to simulate the blur/saturation/brightness effects
       
-      // Base layer with medium opacity for balanced readability
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)' // Medium dark container
+      // Base layer with gray tone matching user's reference image
+      ctx.fillStyle = 'rgba(128, 128, 128, 0.7)' // Gray container matching reference image
       ctx.beginPath()
       ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
       ctx.fill()
       
-      // Add subtle overlapping layers for gentle container effect
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
+      // Add subtle overlapping layers with gray tone for depth
+      ctx.fillStyle = 'rgba(100, 100, 100, 0.15)'
       for (let i = 1; i <= 5; i++) {
         ctx.beginPath()
         ctx.roundRect(containerX + i*0.5, containerY + i*0.5, containerWidth - i, containerHeight - i, radius - i*0.5)

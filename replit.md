@@ -162,8 +162,10 @@ Preferred communication style: Simple, everyday language.
 - ✓ Event modal, latest event popup, and share dialogs use Vienna timezone
 - ✓ Manual Notion sync endpoint (/api/sync) created for forced data updates
 - ✓ "conni's favoriten" text added in Connihof font for favorites view
-- ✓ 199 events successfully synchronized from Notion (no favorites marked yet)
+- ✓ 199 events successfully synchronized from Notion (1 favorite confirmed: "Cirque Le Roux")
 - ✓ TypeScript compatibility issues resolved for event modal components
+- ✓ Favorites view correctly implemented with "Conni's Favorites" checkbox detection
+- ✓ Share image container updated to gray tone (rgba(128,128,128,0.7)) as requested
 
 **July 15, 2025 - Deployment Fixes & Production Readiness**
 - ✓ Fixed critical deployment issue: Removed process.exit() from sync check that terminated server
