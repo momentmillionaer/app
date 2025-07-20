@@ -116,7 +116,7 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
             rounded-full border-0 liquid-glass text-white bg-white/20 hover:bg-white/30
             ${isMobile 
               ? 'w-12 h-12 p-0 justify-center' 
-              : 'px-4 py-2 min-w-[140px] justify-between'
+              : 'px-4 h-12 min-w-[140px] justify-between'
             }
           `}
         >

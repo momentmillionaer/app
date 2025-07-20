@@ -463,6 +463,7 @@ export default function EventsPage() {
             showFreeEventsOnly={showFreeEventsOnly}
             onFreeEventsChange={setShowFreeEventsOnly}
             onClearFilters={clearFilters}
+            eventCount={viewMode === "calendar" ? eventsForCalendar.length : eventsForListAndGrid.length}
           />
         </div>
 
@@ -470,14 +471,6 @@ export default function EventsPage() {
 
         {/* View Mode Toggle */}
         <div className="flex flex-col items-center mb-6 space-y-4">
-          {/* Event Count */}
-          <div className="text-white/80 drop-shadow-sm text-center">
-            {isLoading ? (
-              <Skeleton className="h-4 w-32" />
-            ) : (
-              <span className="text-sm">{viewMode === "calendar" ? eventsForCalendar.length : eventsForListAndGrid.length} Events gefunden</span>
-            )}
-          </div>
           
           {/* View Mode Toggle - Always Centered */}
           <div className="flex flex-col items-center space-y-4">

@@ -23,6 +23,7 @@ interface SearchFiltersProps {
   showFreeEventsOnly: boolean;
   onFreeEventsChange: (showFree: boolean) => void;
   onClearFilters: () => void;
+  eventCount?: number;
 }
 
 export function SearchFilters({
@@ -39,6 +40,7 @@ export function SearchFilters({
   showFreeEventsOnly,
   onFreeEventsChange,
   onClearFilters,
+  eventCount,
 }: SearchFiltersProps) {
   const isMobile = useIsMobile();
   
@@ -112,7 +114,7 @@ export function SearchFilters({
           <Input
             type="text"
             placeholder="Events, Veranstaltungsorte oder Beschreibungen durchsuchen..."
-            className="pl-10 py-4 rounded-full border-0 liquid-glass bg-white/20 text-white placeholder:text-white/50"
+            className="pl-10 h-12 rounded-full border-0 liquid-glass bg-white/20 text-white placeholder:text-white/50"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -124,7 +126,7 @@ export function SearchFilters({
         {/* Category Filter */}
         <div className={isMobile ? "flex-shrink-0" : "min-w-[200px]"}>
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : ''}`}>
+            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : 'h-12'}`}>
               {isMobile ? (
                 <span className="text-lg">🗃️</span>
               ) : (
@@ -145,7 +147,7 @@ export function SearchFilters({
         {/* Audience Filter */}
         <div className={isMobile ? "flex-shrink-0" : "min-w-[200px]"}>
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
-            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : ''}`}>
+            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-12 h-12 p-0 justify-center [&>svg]:hidden' : 'h-12'}`}>
               {isMobile ? (
                 <span className="text-lg">
                   {selectedAudience === "all" ? "🎯" : audienceOptions.find(opt => opt.value === selectedAudience)?.emoji || "🎯"}
@@ -179,7 +181,7 @@ export function SearchFilters({
           variant={showFreeEventsOnly ? "default" : "outline"}
           onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
           className={`liquid-glass-button rounded-full text-sm font-medium transition-all duration-300 border border-white/25 ${
-            isMobile ? 'w-12 h-12 p-0' : 'px-4 py-3'
+            isMobile ? 'w-12 h-12 p-0' : 'px-4 h-12'
           } ${
             showFreeEventsOnly 
               ? 'hover:bg-gradient-to-r hover:from-purple-500 hover:to-orange-500 text-white' 
@@ -196,7 +198,9 @@ export function SearchFilters({
         {/* Add Event Button */}
         <Button
           onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-          className="liquid-glass-button rounded-full text-white text-sm font-medium transition-all duration-300 border border-white/25 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 w-12 h-12 p-0"
+          className={`liquid-glass-button rounded-full text-white text-sm font-medium transition-all duration-300 border border-white/25 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 ${
+            isMobile ? 'w-12 h-12 p-0' : 'h-12 w-12 p-0'
+          }`}
         >
           <span className="text-lg">➕</span>
         </Button>

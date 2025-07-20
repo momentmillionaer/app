@@ -509,7 +509,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
             variant="outline"
             size="sm"
             onClick={() => navigateMonth('prev')}
-            className="p-3 border-0 text-brand-blue liquid-glass-button rounded-2xl"
+            className="w-12 h-12 p-0 border-0 text-brand-blue liquid-glass-button rounded-full"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -517,7 +517,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
             variant="outline"
             size="sm"
             onClick={() => navigateMonth('next')}
-            className="p-3 border-0 text-brand-blue liquid-glass-button rounded-2xl"
+            className="w-12 h-12 p-0 border-0 text-brand-blue liquid-glass-button rounded-full"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
