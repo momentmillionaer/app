@@ -131,25 +131,24 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerWidth = canvas.width - 160
       const containerHeight = 780
 
-      // Perfect liquid glass effect matching filter section and desktop calendar
+      // Perfect liquid glass effect matching filter section exactly
       const radius = 32 // Using same radius as filter section (rounded-2xl = 32px)
       
-      // Main liquid glass container with exact same styling as filter section
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)' // Same as bg-white/10
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)' // Same as border-white/20
-      ctx.lineWidth = 1
+      // Ultra-subtle liquid glass container - barely visible like filter section
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)' // Much more subtle than before
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)' // Very faint border
+      ctx.lineWidth = 0.5 // Thinner border
       
-      // Create the liquid glass container
+      // Create the nearly invisible liquid glass container
       ctx.beginPath()
       ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
       ctx.fill()
       ctx.stroke()
       
-      // Add the backdrop filter effect simulation
-      // This simulates: backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
-      // Create multiple subtle layers for blur simulation
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.02)'
-      for (let i = 1; i <= 3; i++) {
+      // Add extremely subtle backdrop blur simulation
+      // This creates the glass effect without being too visible
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.01)'
+      for (let i = 1; i <= 2; i++) {
         ctx.beginPath()
         ctx.roundRect(containerX + i, containerY + i, containerWidth - 2*i, containerHeight - 2*i, radius - i)
         ctx.fill()
@@ -299,18 +298,18 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         const containerHeight = 780
         const radius = 40
         
-        // Perfect liquid glass container (fallback version)
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)' // Same as bg-white/10
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)' // Same as border-white/20
-        ctx.lineWidth = 1
+        // Ultra-subtle liquid glass container (fallback version)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.03)' // Much more subtle
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)' // Very faint border  
+        ctx.lineWidth = 0.5 // Thinner border
         ctx.beginPath()
         ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
         ctx.fill()
         ctx.stroke()
         
-        // Add backdrop filter effect simulation for fallback
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.02)'
-        for (let i = 1; i <= 3; i++) {
+        // Add extremely subtle backdrop filter effect simulation
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.01)'
+        for (let i = 1; i <= 2; i++) {
           ctx.beginPath()
           ctx.roundRect(containerX + i, containerY + i, containerWidth - 2*i, containerHeight - 2*i, radius - i)
           ctx.fill()
