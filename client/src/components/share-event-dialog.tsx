@@ -131,37 +131,51 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const containerWidth = canvas.width - 160
       const containerHeight = 780
 
-      // EXACT liquid glass effect matching filter section (liquid-glass-strong)
+      // ENHANCED liquid glass effect to match filter section opacity
       const radius = 32 // rounded-[2rem] = 32px same as filter section
       
-      // Main container with EXACT liquid-glass-strong properties
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)' // Same as liquid-glass-strong: background: rgba(255, 255, 255, 0.15)
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)' // Same as liquid-glass-strong: border: 1px solid rgba(255, 255, 255, 0.25)
-      ctx.lineWidth = 1
+      // Canvas needs higher opacity to match backdrop-filter visual effect
+      // Multiple layers to simulate the blur/saturation/brightness effects
       
-      // Create main container
+      // Base layer with higher opacity to match visual appearance
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)' // Increased from 0.15 to match visual density
       ctx.beginPath()
       ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
       ctx.fill()
+      
+      // Add subtle blur simulation with overlapping layers
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
+      for (let i = 1; i <= 5; i++) {
+        ctx.beginPath()
+        ctx.roundRect(containerX + i*0.5, containerY + i*0.5, containerWidth - i, containerHeight - i, radius - i*0.5)
+        ctx.fill()
+      }
+      
+      // Main border matching liquid-glass-strong
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)' // Slightly more visible border
+      ctx.lineWidth = 1.5 // Slightly thicker for better visibility
+      ctx.beginPath()
+      ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
       ctx.stroke()
       
-      // Add box-shadow simulation to match liquid-glass-strong exactly
-      // Outer shadow: 0 8px 25px rgba(0, 0, 0, 0.25)
+      // Add box-shadow simulation
       ctx.save()
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.25)'
-      ctx.shadowBlur = 25
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'
+      ctx.shadowBlur = 30
       ctx.shadowOffsetX = 0
-      ctx.shadowOffsetY = 8
+      ctx.shadowOffsetY = 10
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)'
+      ctx.lineWidth = 2
       ctx.beginPath()
       ctx.roundRect(containerX, containerY, containerWidth, containerHeight, radius)
       ctx.stroke()
       ctx.restore()
       
-      // Inner highlight: inset 0 1px 0 rgba(255, 255, 255, 0.25)
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'
+      // Inner highlight for glass effect
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)' // Brighter inner highlight
       ctx.lineWidth = 1
       ctx.beginPath()
-      ctx.roundRect(containerX + 1, containerY + 1, containerWidth - 2, containerHeight - 2, radius - 1)
+      ctx.roundRect(containerX + 2, containerY + 2, containerWidth - 4, containerHeight - 4, radius - 2)
       ctx.stroke()
 
       // Text styling with strong contrast - NO SHADOW
