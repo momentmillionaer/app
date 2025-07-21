@@ -98,10 +98,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           // Draw the background image to fill the entire canvas
           ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height)
           
-          // Add the overlay with reduced opacity (same as app)
-          ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'
+          // Add stronger overlay for better text readability and blur effect
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.6)' // Increased from 0.4 to 0.6 for stronger blur effect
           ctx.fillRect(0, 0, canvas.width, canvas.height)
-          console.log('🎨 Classical painting background with overlay applied')
+          console.log('🎨 Classical painting background with stronger overlay applied for better blur')
           resolve(true)
         }
         backgroundImg.onerror = () => {
@@ -135,9 +135,9 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             altImg.onload = () => {
               console.log(`Alternative app background loaded successfully from path: ${paths[pathIndex]}`)
               ctx.drawImage(altImg, 0, 0, canvas.width, canvas.height)
-              ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.6)' // Stronger overlay for better blur effect
               ctx.fillRect(0, 0, canvas.width, canvas.height)
-              console.log('App background with overlay applied (alternative path)')
+              console.log('App background with stronger overlay applied (alternative path)')
               resolve(true)
             }
             altImg.onerror = () => {
@@ -166,12 +166,12 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const cardHeight = canvas.height - cardY - 100
       const cardRadius = 32 // rounded-[2rem] like favorites cards
 
-      // Favorites EventCard liquid glass background - exact match to favorites view
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
+      // Enhanced liquid glass background with less transparency and stronger blur effect
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)' // Less transparent (increased from 0.15 to 0.25)
       ctx.beginPath()
       ctx.roundRect(cardX, cardY, cardWidth, cardHeight, cardRadius)
       ctx.fill()
-      console.log('✅ Liquid glass background applied')
+      console.log('✅ Enhanced liquid glass background applied with less transparency')
 
       // Variable colored border using random glow color instead of fixed purple
       ctx.strokeStyle = `rgba(${randomGlow.rgba}, 0.4)` // Dynamic color border
@@ -288,19 +288,29 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         currentY += 15
       }
 
-      // DESCRIPTION TEXT - NEW addition as requested
+      // DESCRIPTION TEXT - filter out Termine: section for share images
       if (event.description && event.description !== 'Details') {
-        ctx.font = '30px Helvetica, Arial, sans-serif'
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'
-        const descLines = wrapText(ctx, event.description, cardWidth - 96)
-        // Limit to 3 lines to maintain layout
-        const limitedDescLines = descLines.slice(0, 3)
-        limitedDescLines.forEach((line, index) => {
-          const displayLine = index === 2 && descLines.length > 3 ? line + '...' : line
-          ctx.fillText(displayLine, cardX + 48, currentY)
-          currentY += 36
-        })
-        currentY += 20
+        let displayDescription = event.description
+        
+        // Remove the "Termine:" section and everything after it from description
+        if (displayDescription.includes('Termine:')) {
+          displayDescription = displayDescription.split('Termine:')[0].trim()
+        }
+        
+        // Only show description if there's content left after filtering
+        if (displayDescription && displayDescription.length > 0) {
+          ctx.font = '30px Helvetica, Arial, sans-serif'
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'
+          const descLines = wrapText(ctx, displayDescription, cardWidth - 96)
+          // Limit to 3 lines to maintain layout
+          const limitedDescLines = descLines.slice(0, 3)
+          limitedDescLines.forEach((line, index) => {
+            const displayLine = index === 2 && descLines.length > 3 ? line + '...' : line
+            ctx.fillText(displayLine, cardX + 48, currentY)
+            currentY += 36
+          })
+          currentY += 20
+        }
       }
 
       // Event details with icons - CONSISTENT font size throughout
