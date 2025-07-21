@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,18 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
   const [isGenerating, setIsGenerating] = useState(false);
   const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Auto-generate image when dialog opens and reset on close
+  React.useEffect(() => {
+    if (isOpen) {
+      // Reset state and generate new image every time dialog opens
+      setShareImageUrl(null);
+      setIsGenerating(false);
+      setTimeout(() => {
+        generateShareImage();
+      }, 100); // Small delay to ensure state is reset
+    }
+  }, [isOpen]);
 
   // Helper function to wrap text
   const wrapText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] => {
@@ -466,50 +478,48 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           Erstelle ein schönes Bild für Social Media
         </DialogDescription>
         <div className="space-y-6">
-          
-          {!shareImageUrl && !isGenerating && (
-            <div className="text-center">
-              <Button 
-                onClick={generateShareImage} 
-                className="bg-gradient-to-r from-purple-500 to-orange-500 hover:from-purple-600 hover:to-orange-600 text-white px-8 py-3 rounded-full"
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                Bild erstellen
-              </Button>
+          {/* Loading State */}
+          {isGenerating && (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto"></div>
+              <p className="mt-4 text-white/80">Bild wird erstellt...</p>
             </div>
           )}
           
+          {/* Share Image and Actions */}
           {shareImageUrl && (
             <div className="space-y-4">
               <img 
                 src={shareImageUrl} 
                 alt="Share preview" 
-                className="w-full rounded-lg shadow-lg"
+                className="w-full rounded-xl shadow-lg border border-white/20"
                 style={{ aspectRatio: '4/5' }}
               />
               
-              <div className="flex gap-2">
-                <Button onClick={handleDownload} variant="outline" className="flex-1">
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </Button>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleDownload}
+                  className="flex-1 flex items-center justify-center gap-2 p-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all border border-white/20"
+                >
+                  <Download className="h-4 w-4" />
+                  Herunterladen
+                </button>
                 
-                <Button onClick={handleShare} className="flex-1 bg-gradient-to-r from-brand-purple to-brand-orange">
-                  <Share2 className="h-4 w-4 mr-2" />
+                <button
+                  onClick={handleShare}
+                  className="flex-1 flex items-center justify-center gap-2 p-3 bg-gradient-to-r from-purple-500 to-orange-500 hover:from-purple-600 hover:to-orange-600 text-white rounded-xl font-medium transition-all"
+                >
+                  <Share2 className="h-4 w-4" />
                   Teilen
-                </Button>
+                </button>
                 
-                <Button onClick={handleCopyLink} variant="outline">
+                <button
+                  onClick={handleCopyLink}
+                  className="flex items-center justify-center p-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all border border-white/20 w-12"
+                >
                   <Link className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
-            </div>
-          )}
-          
-          {isGenerating && (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-purple mx-auto"></div>
-              <p className="mt-2 text-sm text-gray-500">Bild wird erstellt...</p>
             </div>
           )}
         </div>
