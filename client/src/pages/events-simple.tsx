@@ -82,7 +82,7 @@ export default function Events() {
 
     // Free events filter - only show as free if price is explicitly "0"
     if (showFreeOnly) {
-      if (!event.price || event.price === "" || event.price !== "0") {
+      if (event.price !== "0") {
         return false;
       }
     }

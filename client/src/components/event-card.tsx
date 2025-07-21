@@ -158,6 +158,15 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
               <span>{event.time}</span>
             </div>
           )}
+          {/* Price Display */}
+          {event.price && (
+            <div className="flex items-center space-x-2">
+              <span className="h-4 w-4 flex-shrink-0 text-center">💰</span>
+              <span className="font-semibold">
+                {event.price === "0" ? "Kostenlos" : `${event.price}€`}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Badges */}
