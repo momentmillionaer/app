@@ -77,33 +77,54 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           resolve(true)
         }
         backgroundImg.onerror = () => {
-          console.log('App background failed to load, trying alternative path...')
-          // Try alternative path
-          const altImg = new Image()
-          altImg.crossOrigin = 'anonymous'
-          altImg.onload = () => {
-            console.log('Alternative app background loaded successfully')
-            ctx.drawImage(altImg, 0, 0, canvas.width, canvas.height)
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
-            console.log('App background with overlay applied (alternative path)')
-            resolve(true)
+          console.log('App background failed to load, trying alternative paths...')
+          
+          // Try multiple paths in sequence
+          const paths = [
+            '/client/src/assets/Unbenannt-1-05_1752751777817.png',
+            'client/src/assets/Unbenannt-1-05_1752751777817.png',
+            '/attached_assets/Unbenannt-1-05_1752751777817.png',
+            'attached_assets/Unbenannt-1-05_1752751777817.png'
+          ]
+          
+          let pathIndex = 0
+          
+          const tryNextPath = () => {
+            if (pathIndex >= paths.length) {
+              console.log('All background paths failed, using gradient fallback')
+              // Fallback to gradient
+              const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
+              gradient.addColorStop(0, '#6366f1')
+              gradient.addColorStop(1, '#f59e0b')
+              ctx.fillStyle = gradient
+              ctx.fillRect(0, 0, canvas.width, canvas.height)
+              console.log('Gradient background applied as fallback')
+              resolve(false)
+              return
+            }
+            
+            const altImg = new Image()
+            altImg.crossOrigin = 'anonymous'
+            altImg.onload = () => {
+              console.log(`Alternative app background loaded successfully from path: ${paths[pathIndex]}`)
+              ctx.drawImage(altImg, 0, 0, canvas.width, canvas.height)
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'
+              ctx.fillRect(0, 0, canvas.width, canvas.height)
+              console.log('App background with overlay applied (alternative path)')
+              resolve(true)
+            }
+            altImg.onerror = () => {
+              console.log(`Path ${paths[pathIndex]} failed, trying next...`)
+              pathIndex++
+              tryNextPath()
+            }
+            altImg.src = paths[pathIndex]
           }
-          altImg.onerror = () => {
-            console.log('All background paths failed, using gradient fallback')
-            // Fallback to gradient
-            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-            gradient.addColorStop(0, '#6366f1')
-            gradient.addColorStop(1, '#f59e0b')
-            ctx.fillStyle = gradient
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
-            console.log('Gradient background applied as fallback')
-            resolve(false)
-          }
-          altImg.src = '/attached_assets/Unbenannt-1-05_1752751777817.png'
+          
+          tryNextPath()
         }
         // Try multiple paths for the app background image
-        backgroundImg.src = 'client/src/assets/Unbenannt-1-05_1752751777817.png'
+        backgroundImg.src = '/Unbenannt-1-05_1752751777817.png'
       })
 
       // Event image will only be used in the EventCard header, not as background overlay
@@ -296,14 +317,9 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
       leftY += 20 // Space before future dates
 
-      // WEITERE TERMINE - show only future dates as badges
+      // WEITERE TERMINE - show only future dates as badges (no text label)
       const hasMultipleDates = event.description && event.description.includes('Termine:')
       if (hasMultipleDates) {
-        // Show "Weitere Termine:" label
-        ctx.font = 'bold 28px Helvetica, Arial, sans-serif'
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
-        ctx.fillText('📅 Weitere Termine:', leftColumnX, leftY)
-        leftY += 50
 
         // Extract and show only next 3 future dates as badges
         const dateMatches = event.description.match(/\d{1,2}\.\d{1,2}\.\d{4}/g) || []
@@ -322,7 +338,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           .slice(0, 3)
         
         if (futureDates.length > 0) {
-          // Create horizontal layout for badges
+          // Create horizontal layout for badges (no text label above)
           let badgeX = leftColumnX
           futureDates.forEach(({ date }, index) => {
             const formattedDate = format(date, 'dd. MMM', { locale: de })
@@ -381,6 +397,12 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           }
         }
       }
+
+      // momentmillionär branding (positioned for 4:5 ratio)
+      ctx.font = 'bold 28px Connihof, serif'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
+      ctx.textAlign = 'center'
+      ctx.fillText('© momentmillionär', canvas.width / 2, cardY + cardHeight + 80)
 
       // momentmillionär branding (positioned for 4:5 ratio)
       ctx.font = 'bold 28px Connihof, serif'
