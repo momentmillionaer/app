@@ -33,11 +33,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("🔄 Manual sync triggered - clearing caches...");
       
       // Clear all relevant caches
-      cache.delete("events");
-      cache.delete("events-backup");
-      cache.delete("categories");
-      cache.delete("categories-backup");
-      cache.delete("audiences");
+      if (cache.delete) {
+        cache.delete("events");
+        cache.delete("events-backup");
+        cache.delete("categories");
+        cache.delete("categories-backup");
+        cache.delete("audiences");
+      } else {
+        // Alternative cache clearing if delete method not available
+        cache.set("events", null, 0);
+        cache.set("events-backup", null, 0);
+        cache.set("categories", null, 0);
+        cache.set("categories-backup", null, 0);
+        cache.set("audiences", null, 0);
+      }
       
       console.log("✅ Caches cleared, forcing fresh Notion sync...");
       
@@ -311,7 +320,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           date: eventDate,
           endDate: properties.Datum?.date?.end || null, // Add end date support
           time: eventTime,
-          price: properties.Preis?.number ? properties.Preis.number.toString() : "",
+          price: properties.Preis?.number !== undefined && properties.Preis?.number !== null ? properties.Preis.number.toString() : "",
           website: properties.URL?.url || "",
           organizer: await (async () => {
             // Handle relation field for organizer
