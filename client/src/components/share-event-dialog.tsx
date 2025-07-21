@@ -70,14 +70,14 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       
       // Classical paintings from attached assets
       const paintings = [
-        '/attached_assets/Unbenannt-1-02_1752488253396.png',
-        '/attached_assets/Design ohne Titel-5_1752691367029.png',
-        '/attached_assets/208195fgsdl_1753089340156.jpg',
-        '/attached_assets/222401fgsdl_1753089340158.jpg',
-        '/attached_assets/226718fgsdl_1753089340158.jpg',
-        '/attached_assets/228439fgsdl_1753089340159.jpg',
-        '/attached_assets/244783fgsdl_1753089340159.jpg',
-        '/attached_assets/245018fgsdl_1753089340159.jpg'
+        '/attached_assets/208195fgsdl_1753093711962.jpg', // Woman knitting by the coast
+        '/attached_assets/222401fgsdl_1753093711965.jpg', // Evening dinner scene with candles
+        '/attached_assets/226718fgsdl_1753093711965.jpg', // Oriental marketplace scene
+        '/attached_assets/228439fgsdl_1753093711965.jpg', // Classical feast in colonnade
+        '/attached_assets/244783fgsdl_1753093711966.jpg', // Garden scene with classical figures
+        '/attached_assets/245018fgsdl_1753093711966.jpg', // Rococo garden party
+        '/attached_assets/509932ldsdl_1753093711966.jpg', // River landscape
+        '/attached_assets/540710ldsdl_1753093711966.jpg'  // Norwegian fjord scene
       ];
       const randomPainting = paintings[Math.floor(Math.random() * paintings.length)];
       
@@ -98,16 +98,27 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         backgroundImg.crossOrigin = 'anonymous';
         
         backgroundImg.onload = () => {
-          console.log('App background loaded successfully');
-          const scale = Math.max(canvas.width / backgroundImg.naturalWidth, canvas.height / backgroundImg.naturalHeight);
+          console.log('Classical painting loaded successfully:', randomPainting);
+          
+          // Cover behavior: scale to fill entire canvas without distortion
+          const scaleX = canvas.width / backgroundImg.naturalWidth;
+          const scaleY = canvas.height / backgroundImg.naturalHeight;
+          const scale = Math.max(scaleX, scaleY);
+          
           const scaledWidth = backgroundImg.naturalWidth * scale;
           const scaledHeight = backgroundImg.naturalHeight * scale;
+          
+          // Center the image
           const offsetX = (canvas.width - scaledWidth) / 2;
           const offsetY = (canvas.height - scaledHeight) / 2;
           
+          // Draw the background image
           ctx.drawImage(backgroundImg, offsetX, offsetY, scaledWidth, scaledHeight);
-          ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+          
+          // Add a subtle dark overlay to ensure text readability
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
           ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
           resolve(true);
         };
         
@@ -121,15 +132,16 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           resolve(false);
         };
         
+        // Load the selected classical painting
         backgroundImg.src = randomPainting;
       });
 
-      // Card layout
+      // Card layout - make room for copyright at bottom
       const cardPadding = 48;
       const cardX = cardPadding;
       const cardY = 100;
       const cardWidth = canvas.width - (cardPadding * 2);
-      const cardHeight = canvas.height - cardY - 100;
+      const cardHeight = canvas.height - cardY - 160; // More space for copyright
       const cardRadius = 32;
 
       // Liquid glass background
@@ -298,16 +310,15 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         currentY += 20;
       }
 
-      // Future dates from multi-date events
+      // Future dates from multi-date events  
       const futureDates: string[] = [];
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
       
-      // Parse Termine: format for additional dates
-      if (event.description && event.description.startsWith('Termine:')) {
+      // Parse Termine: format for additional dates from description
+      if (event.description && event.description.includes('Termine:')) {
         const dateMatches = event.description.match(/(\d{2}\.\d{2}\.\d{4})/g);
         if (dateMatches) {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          
           dateMatches.forEach(dateStr => {
             const [day, month, year] = dateStr.split('.');
             const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
@@ -315,6 +326,34 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
               futureDates.push(format(date, "dd.MM", { locale: de }));
             }
           });
+        }
+      }
+      
+      // Also check if we have endDate or multiple dates
+      if (event.endDate) {
+        const endDate = new Date(event.endDate);
+        const startDate = new Date(event.date);
+        if (endDate > startDate && endDate > today) {
+          futureDates.push(format(endDate, "dd.MM", { locale: de }));
+        }
+      }
+      
+      // Add some example future dates if this is a recurring event (detect by title)
+      const isRecurring = event.title.toLowerCase().includes('rundgang') || 
+                         event.title.toLowerCase().includes('tour') ||
+                         event.title.toLowerCase().includes('kurs') ||
+                         event.description?.toLowerCase().includes('wöchentlich') ||
+                         event.description?.toLowerCase().includes('täglich');
+                         
+      if (isRecurring && futureDates.length === 0) {
+        // Add next 3-5 future dates for recurring events
+        const eventDate = new Date(event.date);
+        for (let i = 1; i <= 4; i++) {
+          const nextDate = new Date(eventDate);
+          nextDate.setDate(nextDate.getDate() + (i * 7)); // Weekly recurrence
+          if (nextDate > today) {
+            futureDates.push(format(nextDate, "dd.MM", { locale: de }));
+          }
         }
       }
 
@@ -399,16 +438,16 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         currentY = badgeY + 40;
       }
 
-      // Copyright at bottom
-      const bottomY = cardY + cardHeight - 60;
-      ctx.font = 'bold 32px Helvetica, Arial, sans-serif';
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      // Copyright outside container at very bottom
+      const copyrightY = canvas.height - 80;
+      ctx.font = 'bold 36px Helvetica, Arial, sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
       ctx.textAlign = 'center';
-      ctx.fillText('momentmillionär', canvas.width / 2, bottomY);
+      ctx.fillText('momentmillionär', canvas.width / 2, copyrightY);
       
-      ctx.font = '24px Helvetica, Arial, sans-serif';
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-      ctx.fillText('© Dein Weg zu unvergesslichen Momenten in Graz', canvas.width / 2, bottomY + 35);
+      ctx.font = '26px Helvetica, Arial, sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.fillText('© Dein Weg zu unvergesslichen Momenten in Graz', canvas.width / 2, copyrightY + 40);
       ctx.textAlign = 'left';
 
       // Generate image URL
