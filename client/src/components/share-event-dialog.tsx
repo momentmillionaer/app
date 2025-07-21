@@ -334,13 +334,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         currentY += 44;
       }
 
-      // Price (if free)
+      // Free event emoji (positioned top right)
       if (event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0) {
-        ctx.fillStyle = 'rgba(208, 254, 29, 1)';
-        ctx.font = 'bold 36px Helvetica, Arial, sans-serif';
-        ctx.fillText(`🆓 KOSTENLOS`, leftColumnX, currentY);
-        ctx.font = '32px Helvetica, Arial, sans-serif';
-        currentY += 50;
+        ctx.font = '48px Arial, sans-serif';
+        ctx.fillText('🆓', cardX + cardWidth - 100, cardY + 80);
       }
 
       currentY += 20;
