@@ -2,8 +2,13 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { setupSyncMonitor } from "./setup-sync-monitor";
+import path from 'path';
 
 const app = express();
+
+// Serve attached assets statically
+app.use('/attached_assets', express.static(path.join(process.cwd(), 'attached_assets')));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
