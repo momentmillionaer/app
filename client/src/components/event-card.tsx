@@ -17,7 +17,7 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
   
   const eventDate = (() => {
     try {
-      return event.date ? parseISO(event.date) : null;
+      return event.date ? parseISO(String(event.date)) : null;
     } catch (error) {
       console.error('Date parsing error:', error, event.date);
       return null;
@@ -46,7 +46,7 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
     if (!event.date) return false;
     
     // Parse dates as local dates to avoid timezone issues
-    const eventDateParts = event.date.split('-');
+    const eventDateParts = String(event.date).split('-');
     const eventYear = parseInt(eventDateParts[0]);
     const eventMonth = parseInt(eventDateParts[1]) - 1; // Month is 0-indexed
     const eventDay = parseInt(eventDateParts[2]);
@@ -183,23 +183,20 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
         style={{
           background: isEventPast ? 'rgba(128, 128, 128, 0.15)' : 'rgba(255, 255, 255, 0.15)',
           backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
-          WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
           border: isEventPast ? '1px solid rgba(128, 128, 128, 0.25)' : '1px solid rgba(255, 255, 255, 0.25)',
           boxShadow: '0 8px 25px rgba(0, 0, 0, 0.25), 0 3px 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
-          minHeight: '320px' // Smaller height for banner layout
-        }}
+          minHeight: '320px'
+        } as React.CSSProperties}
         onMouseEnter={(e) => {
           if (!isEventPast) {
             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
             e.currentTarget.style.backdropFilter = 'blur(35px) saturate(160%) brightness(1.15)';
-            e.currentTarget.style.WebkitBackdropFilter = 'blur(35px) saturate(160%) brightness(1.15)';
           }
         }}
         onMouseLeave={(e) => {
           if (!isEventPast) {
             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
             e.currentTarget.style.backdropFilter = 'blur(30px) saturate(140%) brightness(1.1)';
-            e.currentTarget.style.WebkitBackdropFilter = 'blur(30px) saturate(140%) brightness(1.1)';
           }
         }}
         onClick={onClick}
@@ -285,7 +282,7 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
             )}
             {/* Category emojis */}
             <div className="flex gap-1">
-              {getCategoryEmojis(event.categories).map((emoji, index) => (
+              {getCategoryEmojis(event.categories || []).map((emoji, index) => (
                 <span key={index} className="text-lg">{emoji}</span>
               ))}
             </div>
@@ -350,22 +347,19 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
       style={{
         background: isEventPast ? 'rgba(128, 128, 128, 0.15)' : 'rgba(255, 255, 255, 0.15)',
         backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
-        WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
         border: isEventPast ? '1px solid rgba(128, 128, 128, 0.25)' : '1px solid rgba(255, 255, 255, 0.25)',
         boxShadow: '0 8px 25px rgba(0, 0, 0, 0.25), 0 3px 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.25)'
-      }}
+      } as React.CSSProperties}
       onMouseEnter={(e) => {
         if (!isEventPast) {
           e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
           e.currentTarget.style.backdropFilter = 'blur(35px) saturate(160%) brightness(1.15)';
-          e.currentTarget.style.WebkitBackdropFilter = 'blur(35px) saturate(160%) brightness(1.15)';
         }
       }}
       onMouseLeave={(e) => {
         if (!isEventPast) {
           e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
           e.currentTarget.style.backdropFilter = 'blur(30px) saturate(140%) brightness(1.1)';
-          e.currentTarget.style.WebkitBackdropFilter = 'blur(30px) saturate(140%) brightness(1.1)';
         }
       }}
       onClick={onClick}
@@ -376,7 +370,9 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
           className="absolute bottom-4 right-4 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-200 hover:scale-110 z-10"
           onClick={(e) => {
             e.stopPropagation();
-            window.open(event.website, '_blank');
+            if (event.website) {
+              window.open(event.website, '_blank');
+            }
           }}
           title="Website öffnen"
         >
@@ -491,7 +487,7 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
               )}
               {/* Category emojis */}
               <div className="flex gap-1">
-                {getCategoryEmojis(event.categories).map((emoji, index) => (
+                {getCategoryEmojis(event.categories || []).map((emoji, index) => (
                   <span key={index} className="text-xl">{emoji}</span>
                 ))}
               </div>

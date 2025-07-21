@@ -100,10 +100,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             console.log('Gradient background applied as fallback')
             resolve(false)
           }
-          altImg.src = './attached_assets/Unbenannt-1-05_1752751777817.png'
+          altImg.src = '/attached_assets/Unbenannt-1-05_1752751777817.png'
         }
-        // Use the same background image as the app (try multiple paths)
-        backgroundImg.src = 'attached_assets/Unbenannt-1-05_1752751777817.png'
+        // Try multiple paths for the app background image
+        backgroundImg.src = './client/src/assets/Unbenannt-1-05_1752751777817.png'
       })
 
       // Event image will only be used in the EventCard header, not as background overlay
@@ -252,13 +252,13 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       let leftY = currentY
       let rightY = currentY
 
-      // Date with calendar icon (left column) - show max 5 dates if multiple
+      // Date badges - show max 5 future dates as badges
       const eventDate = format(new Date(event.date + 'T12:00:00+02:00'), 'dd. MMMM yyyy', { locale: de })
       
       // Check if event has multiple dates in description
       const hasMultipleDates = event.description && event.description.includes('Termine:')
       if (hasMultipleDates) {
-        // Extract and show only next 5 dates
+        // Extract and show only next 5 future dates as badges
         const dateMatches = event.description.match(/\d{1,2}\.\d{1,2}\.\d{4}/g) || []
         const today = new Date()
         const futureDates = dateMatches
@@ -272,22 +272,92 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         if (futureDates.length > 0) {
           futureDates.forEach((date, index) => {
             const formattedDate = format(date, 'dd. MMM', { locale: de })
-            ctx.fillText(`📅  ${formattedDate}`, leftColumnX, leftY)
-            leftY += 45
+            
+            // Create date badge
+            ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
+            const badgeText = formattedDate
+            const textWidth = ctx.measureText(badgeText).width
+            const badgeWidth = textWidth + 24
+            const badgeHeight = 36
+            
+            // Badge background
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
+            ctx.beginPath()
+            ctx.roundRect(leftColumnX, leftY - 28, badgeWidth, badgeHeight, 18)
+            ctx.fill()
+            
+            // Badge text
+            ctx.fillStyle = 'white'
+            ctx.textAlign = 'center'
+            ctx.fillText(badgeText, leftColumnX + badgeWidth / 2, leftY - 8)
+            ctx.textAlign = 'left'
+            
+            leftY += 50
           })
           
           if (dateMatches.length > 5) {
-            ctx.fillText(`📅  + weitere Termine`, leftColumnX, leftY)
-            leftY += 45
+            // "+ weitere Termine" badge
+            ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
+            const moreText = '+ weitere Termine'
+            const textWidth = ctx.measureText(moreText).width
+            const badgeWidth = textWidth + 24
+            const badgeHeight = 36
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
+            ctx.beginPath()
+            ctx.roundRect(leftColumnX, leftY - 28, badgeWidth, badgeHeight, 18)
+            ctx.fill()
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
+            ctx.textAlign = 'center'
+            ctx.fillText(moreText, leftColumnX + badgeWidth / 2, leftY - 8)
+            ctx.textAlign = 'left'
+            
+            leftY += 50
           }
         } else {
-          ctx.fillText(`📅  ${eventDate}`, leftColumnX, leftY)
+          // Single date badge
+          ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
+          const badgeText = format(new Date(event.date + 'T12:00:00+02:00'), 'dd. MMM', { locale: de })
+          const textWidth = ctx.measureText(badgeText).width
+          const badgeWidth = textWidth + 24
+          const badgeHeight = 36
+          
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
+          ctx.beginPath()
+          ctx.roundRect(leftColumnX, leftY - 28, badgeWidth, badgeHeight, 18)
+          ctx.fill()
+          
+          ctx.fillStyle = 'white'
+          ctx.textAlign = 'center'
+          ctx.fillText(badgeText, leftColumnX + badgeWidth / 2, leftY - 8)
+          ctx.textAlign = 'left'
+          
           leftY += 50
         }
       } else {
-        ctx.fillText(`📅  ${eventDate}`, leftColumnX, leftY)
+        // Single date badge
+        ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
+        const badgeText = format(new Date(event.date + 'T12:00:00+02:00'), 'dd. MMM', { locale: de })
+        const textWidth = ctx.measureText(badgeText).width
+        const badgeWidth = textWidth + 24
+        const badgeHeight = 36
+        
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
+        ctx.beginPath()
+        ctx.roundRect(leftColumnX, leftY - 28, badgeWidth, badgeHeight, 18)
+        ctx.fill()
+        
+        ctx.fillStyle = 'white'
+        ctx.textAlign = 'center'
+        ctx.fillText(badgeText, leftColumnX + badgeWidth / 2, leftY - 8)
+        ctx.textAlign = 'left'
+        
         leftY += 50
       }
+      
+      // Reset font for other details
+      ctx.font = 'bold 32px Helvetica, Arial, sans-serif'
 
       // Time with clock icon (left column)
       if (event.time) {
