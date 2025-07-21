@@ -70,15 +70,24 @@ export default function Events() {
     // Date filters
     if (dateFrom || dateTo) {
       const eventDate = new Date(event.date || '');
-      // Reset time to start of day for accurate date comparison
       eventDate.setHours(0, 0, 0, 0);
       
-      if (dateFrom) {
+      if (dateFrom && !dateTo) {
+        // Single date selection - show only events on this exact date
         const fromDate = new Date(dateFrom);
         fromDate.setHours(0, 0, 0, 0);
-        if (eventDate < fromDate) return false;
-      }
-      if (dateTo) {
+        const fromDateEnd = new Date(dateFrom);
+        fromDateEnd.setHours(23, 59, 59, 999);
+        if (eventDate < fromDate || eventDate > fromDateEnd) return false;
+      } else if (dateFrom && dateTo) {
+        // Date range selection
+        const fromDate = new Date(dateFrom);
+        fromDate.setHours(0, 0, 0, 0);
+        const toDate = new Date(dateTo);
+        toDate.setHours(23, 59, 59, 999);
+        if (eventDate < fromDate || eventDate > toDate) return false;
+      } else if (!dateFrom && dateTo) {
+        // Only end date selected
         const toDate = new Date(dateTo);
         toDate.setHours(23, 59, 59, 999);
         if (eventDate > toDate) return false;

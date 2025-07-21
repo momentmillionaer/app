@@ -348,10 +348,18 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
             return (
               <div
                 key={index}
-                className="rounded-2xl transition-all duration-300 bg-white/10 border border-white/20"
+                className={`rounded-2xl transition-all duration-300 ${
+                  isToday 
+                    ? 'ring-2 ring-brand-lime/70 bg-white/10' 
+                    : 'bg-white/10 border border-white/20'
+                }`}
                 style={{
                   backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
-                  WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
+                  WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
+                  ...(isToday && {
+                    border: '2px solid rgba(157, 255, 0, 0.8)',
+                    boxShadow: '0 0 15px rgba(157, 255, 0, 0.4)'
+                  })
                 }}
               >
                 {/* Day Header */}
@@ -361,12 +369,16 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                       <span className="font-semibold text-white text-sm">
                         {dayName}
                       </span>
-                      <span className="text-lg font-bold text-white">
+                      <span className={`text-lg font-bold ${isToday ? 'text-brand-lime drop-shadow-lg font-extrabold' : 'text-white'}`}>
                         {date.getDate()}
                       </span>
                     </div>
                     {dayEvents.length > 0 && (
-                      <Badge className="text-xs bg-brand-purple/20 text-white border-brand-purple/30">
+                      <Badge className={`text-xs ${
+                        isToday 
+                          ? 'bg-brand-lime/20 text-brand-lime border-brand-lime/40 font-bold' 
+                          : 'bg-brand-purple/20 text-white border-brand-purple/30'
+                      }`}>
                         {dayEvents.length} Event{dayEvents.length !== 1 ? 's' : ''}
                       </Badge>
                     )}
@@ -552,19 +564,30 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                 <div
                   key={`day-${day}`}
                   className={`p-3 h-32 border-0 rounded-2xl relative overflow-hidden transition-all duration-300 ${
-                    holiday
-                      ? 'liquid-glass bg-purple-500/20 hover:liquid-glass-strong ring-2 ring-purple-500/50 glow-purple'
-                      : weekend
-                      ? 'liquid-glass bg-black/30 hover:liquid-glass-strong'
-                      : 'liquid-glass hover:liquid-glass-strong'
+                    isToday 
+                      ? 'ring-2 ring-[#9DFF00]/70 glow-lime' 
+                      : holiday
+                        ? 'liquid-glass bg-purple-500/20 hover:liquid-glass-strong ring-2 ring-purple-500/50 glow-purple'
+                        : weekend
+                        ? 'liquid-glass bg-black/30 hover:liquid-glass-strong'
+                        : 'liquid-glass hover:liquid-glass-strong'
                   }`}
+                  style={isToday ? { 
+                    backgroundColor: 'rgba(157, 255, 0, 0.25)',
+                    backdropFilter: 'blur(30px) saturate(140%) brightness(1.2)',
+                    WebkitBackdropFilter: 'blur(30px) saturate(140%) brightness(1.2)',
+                    border: '2px solid rgba(157, 255, 0, 0.6)',
+                    boxShadow: '0 0 20px rgba(157, 255, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+                  } : {}}
                 >
                   <div className={`text-sm font-bold mb-1 ${
-                    holiday
-                      ? 'text-purple-300 drop-shadow-sm'
-                      : weekend 
-                      ? 'text-brand-purple drop-shadow-sm'
-                      : 'text-white drop-shadow-sm'
+                    isToday 
+                      ? 'text-black drop-shadow-lg font-extrabold' 
+                      : holiday
+                        ? 'text-purple-300 drop-shadow-sm'
+                        : weekend 
+                        ? 'text-brand-purple drop-shadow-sm'
+                        : 'text-white drop-shadow-sm'
                   }`}>
                     {day}
                     {holiday && <span className="ml-1">🎉</span>}
