@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Share2, Download, Copy, Link } from "lucide-react";
 import { Event } from "@shared/schema";
 
@@ -318,9 +318,24 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md liquid-glass-strong border border-white/20">
+        <DialogTitle className="text-xl font-bold text-white text-center">Event teilen</DialogTitle>
+        <DialogDescription className="text-white/70 text-sm text-center mb-4">
+          Erstelle ein schönes Bild für Social Media
+        </DialogDescription>
         <div className="space-y-6">
-          <h3 className="text-xl font-bold text-center">Event teilen</h3>
+          
+          {!shareImageUrl && !isGenerating && (
+            <div className="text-center">
+              <Button 
+                onClick={generateShareImage} 
+                className="bg-gradient-to-r from-purple-500 to-orange-500 hover:from-purple-600 hover:to-orange-600 text-white px-8 py-3 rounded-full"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Bild erstellen
+              </Button>
+            </div>
+          )}
           
           {shareImageUrl && (
             <div className="space-y-4">
