@@ -175,7 +175,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         }
         
         ctx.restore()
-        contentStartY = cardY + imageHeight + 48  // Reduced spacing after image
+        contentStartY = cardY + imageHeight + 80  // Increased spacing after image
       }
 
       // Content area with padding like favorites cards
@@ -201,7 +201,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         ctx.fillText(categoryText, cardX + 48 + badgeWidth / 2, currentY)
         ctx.textAlign = 'left'
         
-        currentY += 60
+        currentY += 80  // Increased spacing between category badge and content
       }
 
       // Event title - optimized for better space usage
@@ -242,7 +242,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         currentY += 20
       }
 
-      // Event details with icons - BETTER distribution in two columns
+      // Event details with icons - CONSISTENT font size throughout
       ctx.font = 'bold 32px Helvetica, Arial, sans-serif'
       ctx.fillStyle = 'white'
 
@@ -252,10 +252,42 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       let leftY = currentY
       let rightY = currentY
 
-      // Date with calendar icon (left column)
+      // Date with calendar icon (left column) - show max 5 dates if multiple
       const eventDate = format(new Date(event.date + 'T12:00:00+02:00'), 'dd. MMMM yyyy', { locale: de })
-      ctx.fillText(`📅  ${eventDate}`, leftColumnX, leftY)
-      leftY += 50
+      
+      // Check if event has multiple dates in description
+      const hasMultipleDates = event.description && event.description.includes('Termine:')
+      if (hasMultipleDates) {
+        // Extract and show only next 5 dates
+        const dateMatches = event.description.match(/\d{1,2}\.\d{1,2}\.\d{4}/g) || []
+        const today = new Date()
+        const futureDates = dateMatches
+          .map(dateStr => {
+            const [day, month, year] = dateStr.split('.')
+            return new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+          })
+          .filter(date => date >= today)
+          .slice(0, 5)
+        
+        if (futureDates.length > 0) {
+          futureDates.forEach((date, index) => {
+            const formattedDate = format(date, 'dd. MMM', { locale: de })
+            ctx.fillText(`📅  ${formattedDate}`, leftColumnX, leftY)
+            leftY += 45
+          })
+          
+          if (dateMatches.length > 5) {
+            ctx.fillText(`📅  + weitere Termine`, leftColumnX, leftY)
+            leftY += 45
+          }
+        } else {
+          ctx.fillText(`📅  ${eventDate}`, leftColumnX, leftY)
+          leftY += 50
+        }
+      } else {
+        ctx.fillText(`📅  ${eventDate}`, leftColumnX, leftY)
+        leftY += 50
+      }
 
       // Time with clock icon (left column)
       if (event.time) {
@@ -267,11 +299,9 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.fillText(`📍  ${event.location}`, rightColumnX, rightY)
       rightY += 50
 
-      // Organizer (right column if there's space)
+      // Organizer (right column) - SAME font size
       if (event.organizer) {
-        ctx.font = 'bold 28px Helvetica, Arial, sans-serif'
         ctx.fillText(`👥  ${event.organizer}`, rightColumnX, rightY)
-        ctx.font = 'bold 32px Helvetica, Arial, sans-serif'  // Reset font
         rightY += 50
       }
 
