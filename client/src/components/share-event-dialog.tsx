@@ -100,10 +100,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             console.log('Gradient background applied as fallback')
             resolve(false)
           }
-          altImg.src = './client/src/assets/Unbenannt-1-05_1752751777817.png'
+          altImg.src = '/attached_assets/Unbenannt-1-05_1752751777817.png'
         }
-        // Try multiple paths for the app background image
-        backgroundImg.src = '/attached_assets/Unbenannt-1-05_1752751777817.png'
+        // Try the correct path for the app background image
+        backgroundImg.src = './attached_assets/Unbenannt-1-05_1752751777817.png'
       })
 
       // Event image will only be used in the EventCard header, not as background overlay
