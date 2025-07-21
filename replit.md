@@ -154,6 +154,21 @@ Preferred communication style: Simple, everyday language.
 - ✓ Text shadows and strokes reduced for consistency with app's design language
 - ✓ Share image container transparency minimized (4% opacity) with stronger blur (40px) for better readability
 
+**July 21, 2025 - Final Share Image & EventCard Future-Date Filtering**
+- ✓ App background image (classical painting) correctly implemented in share images
+- ✓ Share images now display event dates as elegant rounded badges instead of text
+- ✓ "weitere Termine" badge added for overflow dates in share functionality
+- ✓ EventCards completely filtered to show only future dates in all views (list, grid, calendar)
+- ✓ "Weitere Termine" sections in all EventCards now display only future dates as badges
+- ✓ Grid view EventCards include compact future date badges (max 3) with overflow indicator
+- ✓ List view EventCards show up to 5 future date badges with "weitere Termine" overflow
+- ✓ Share images use proper app background instead of gradient fallback
+- ✓ TypeScript compatibility issues resolved across all EventCard components
+- ✓ Multiple background image path attempts implemented for reliable loading
+- ✓ Future date filtering uses Vienna timezone for accurate local date comparison
+- ✓ Badge styling consistent across all views with proper liquid glass transparency
+- ✓ Past events automatically hidden from list and grid views, grayed in calendar view
+
 **July 20, 2025 - Timezone Implementation & Notion Sync Enhancement**
 - ✓ Comprehensive timezone update to GMT+2 (Europe/Vienna) for Weiz, Austria
 - ✓ All date/time displays now use Austrian locale (de-AT) and Vienna timezone

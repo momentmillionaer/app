@@ -100,10 +100,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             console.log('Gradient background applied as fallback')
             resolve(false)
           }
-          altImg.src = '/attached_assets/Unbenannt-1-05_1752751777817.png'
+          altImg.src = './client/src/assets/Unbenannt-1-05_1752751777817.png'
         }
         // Try multiple paths for the app background image
-        backgroundImg.src = './client/src/assets/Unbenannt-1-05_1752751777817.png'
+        backgroundImg.src = '/attached_assets/Unbenannt-1-05_1752751777817.png'
       })
 
       // Event image will only be used in the EventCard header, not as background overlay
@@ -295,7 +295,15 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             leftY += 50
           })
           
-          if (dateMatches.length > 5) {
+          // Check if we have more future dates to show
+          const totalFutureDates = dateMatches
+            .map(dateStr => {
+              const [day, month, year] = dateStr.split('.')
+              return new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+            })
+            .filter(date => date >= today)
+          
+          if (totalFutureDates.length > 5) {
             // "+ weitere Termine" badge
             ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
             const moreText = '+ weitere Termine'

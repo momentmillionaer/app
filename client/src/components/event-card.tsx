@@ -327,10 +327,69 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
             </div>
 
             {/* Description */}
-            {event.description && event.description !== "Details" && !event.description.startsWith('Termine:') && (
+            {event.description && event.description !== "Details" && !event.description.includes('Termine:') && (
               <p className="text-white/70 text-xs line-clamp-2 drop-shadow-sm">
                 {event.description}
               </p>
+            )}
+            
+            {/* Additional dates section for grid view - show only future dates */}
+            {event.description && event.description.includes('Termine:') && (
+              <div className="mt-2">
+                <div className="text-white/80 text-xs mb-1 drop-shadow-sm font-medium">
+                  📅 Weitere Termine:
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {(() => {
+                    // Extract dates from description using regex
+                    const dateMatches = event.description.match(/\d{1,2}\.\d{1,2}\.\d{4}/g) || []
+                    const today = new Date()
+                    today.setHours(0, 0, 0, 0)
+                    
+                    // Filter only future dates and limit to next 3 for grid view
+                    const futureDates = dateMatches
+                      .map(dateStr => {
+                        const [day, month, year] = dateStr.split('.')
+                        return {
+                          date: new Date(parseInt(year), parseInt(month) - 1, parseInt(day)),
+                          original: dateStr
+                        }
+                      })
+                      .filter(({ date }) => date >= today)
+                      .slice(0, 3)
+                    
+                    const badges = futureDates.map(({ date }, index) => (
+                      <Badge 
+                        key={index} 
+                        className="bg-white/15 text-white border-white/25 text-xs px-2 py-1"
+                      >
+                        {format(date, "dd. MMM", { locale: de })}
+                      </Badge>
+                    ))
+                    
+                    // Add "weitere Termine" badge if there are more future dates
+                    const totalFutureDates = dateMatches
+                      .map(dateStr => {
+                        const [day, month, year] = dateStr.split('.')
+                        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+                      })
+                      .filter(date => date >= today)
+                    
+                    if (totalFutureDates.length > 3) {
+                      badges.push(
+                        <Badge 
+                          key="more" 
+                          className="bg-white/10 text-white/70 border-white/20 text-xs px-2 py-1"
+                        >
+                          + weitere
+                        </Badge>
+                      )
+                    }
+                    
+                    return badges.length > 0 ? badges : null
+                  })()}
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -545,41 +604,60 @@ export function EventCard({ event, onClick, viewMode = 'list' }: EventCardProps)
             </div>
           )}
 
-          {/* Additional dates section */}
-          {event.description && event.description.startsWith('Termine:') && (
+          {/* Additional dates section - show only future dates */}
+          {event.description && event.description.includes('Termine:') && (
             <div className="mb-3">
               <div className="text-white/80 text-xs mb-2 drop-shadow-sm font-medium">
                 📅 Weitere Termine:
               </div>
               <div className="flex flex-wrap gap-1">
                 {(() => {
-                  const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
-                  if (termineMatch) {
-                    const dates = termineMatch[1].split(',').map(d => d.trim());
-                    return dates.slice(1, 3).map((dateStr, index) => {
-                      try {
-                        const dateObj = new Date(dateStr);
-                        return (
-                          <Badge 
-                            key={index} 
-                            className="bg-white/15 text-white border-white/25 text-xs px-2 py-1"
-                          >
-                            {format(dateObj, "dd.MM", { locale: de })}
-                          </Badge>
-                        );
-                      } catch (error) {
-                        return (
-                          <Badge 
-                            key={index} 
-                            className="bg-white/15 text-white border-white/25 text-xs px-2 py-1"
-                          >
-                            {dateStr}
-                          </Badge>
-                        );
+                  // Extract dates from description using regex
+                  const dateMatches = event.description.match(/\d{1,2}\.\d{1,2}\.\d{4}/g) || []
+                  const today = new Date()
+                  today.setHours(0, 0, 0, 0)
+                  
+                  // Filter only future dates and limit to next 5
+                  const futureDates = dateMatches
+                    .map(dateStr => {
+                      const [day, month, year] = dateStr.split('.')
+                      return {
+                        date: new Date(parseInt(year), parseInt(month) - 1, parseInt(day)),
+                        original: dateStr
                       }
-                    });
+                    })
+                    .filter(({ date }) => date >= today)
+                    .slice(0, 5)
+                  
+                  const badges = futureDates.map(({ date, original }, index) => (
+                    <Badge 
+                      key={index} 
+                      className="bg-white/15 text-white border-white/25 text-xs px-2 py-1"
+                    >
+                      {format(date, "dd. MMM", { locale: de })}
+                    </Badge>
+                  ))
+                  
+                  // Add "weitere Termine" badge if there are more future dates
+                  const totalFutureDates = dateMatches
+                    .map(dateStr => {
+                      const [day, month, year] = dateStr.split('.')
+                      return new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+                    })
+                    .filter(date => date >= today)
+                  
+                  if (totalFutureDates.length > 5) {
+                    badges.push(
+                      <Badge 
+                        key="more" 
+                        className="bg-white/10 text-white/70 border-white/20 text-xs px-2 py-1"
+                      >
+                        + weitere Termine
+                      </Badge>
+                    )
                   }
-                  return null;
+                  
+                  return badges.length > 0 ? badges : null
                 })()}
               </div>
             </div>
