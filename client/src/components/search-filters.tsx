@@ -303,52 +303,52 @@ export function SearchFilters({
       <div className="mt-6 flex justify-center">
         <div className="flex items-center gap-2 liquid-glass-strong rounded-full p-2">
           <Button
-            variant={view === "calendar" ? "default" : "ghost"}
+            variant="ghost"
             size="sm"
             onClick={() => onViewChange("calendar")}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
+            className={`rounded-full w-10 h-10 p-0 text-lg transition-all duration-300 ${
               view === "calendar" 
-                ? "bg-white/20 text-white shadow-lg" 
-                : "text-white/80 hover:text-white hover:bg-white/10"
+                ? "bg-white/20 text-white shadow-lg border border-white/30" 
+                : "text-white/60 hover:text-white/80 border-0"
             }`}
           >
-            📅 Kalender
+            📅
           </Button>
           <Button
-            variant={view === "list" ? "default" : "ghost"}
+            variant="ghost"
             size="sm"
             onClick={() => onViewChange("list")}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
+            className={`rounded-full w-10 h-10 p-0 text-lg transition-all duration-300 ${
               view === "list" 
-                ? "bg-white/20 text-white shadow-lg" 
-                : "text-white/80 hover:text-white hover:bg-white/10"
+                ? "bg-white/20 text-white shadow-lg border border-white/30" 
+                : "text-white/60 hover:text-white/80 border-0"
             }`}
           >
-            📋 Liste
+            📋
           </Button>
           <Button
-            variant={view === "grid" ? "default" : "ghost"}
+            variant="ghost"
             size="sm"
             onClick={() => onViewChange("grid")}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
+            className={`rounded-full w-10 h-10 p-0 text-lg transition-all duration-300 ${
               view === "grid" 
-                ? "bg-white/20 text-white shadow-lg" 
-                : "text-white/80 hover:text-white hover:bg-white/10"
+                ? "bg-white/20 text-white shadow-lg border border-white/30" 
+                : "text-white/60 hover:text-white/80 border-0"
             }`}
           >
-            🗂️ Raster
+            🗂️
           </Button>
           <Button
-            variant={view === "favorites" ? "default" : "ghost"}
+            variant="ghost"
             size="sm"
             onClick={() => onViewChange("favorites")}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
+            className={`rounded-full w-10 h-10 p-0 text-lg transition-all duration-300 ${
               view === "favorites" 
-                ? "bg-white/20 text-white shadow-lg" 
-                : "text-white/80 hover:text-white hover:bg-white/10"
+                ? "bg-white/20 text-white shadow-lg border border-white/30" 
+                : "text-white/60 hover:text-white/80 border-0"
             }`}
           >
-            ⭐
+            💫
           </Button>
         </div>
       </div>

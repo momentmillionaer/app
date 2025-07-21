@@ -156,9 +156,17 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
         {/* Badges */}
         <div className="flex flex-wrap gap-2">
           {/* Free Event Badge */}
-          {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
+          {(event.price === "0" || event.price === 0 || 
+            (event.price && !isNaN(parseFloat(String(event.price))) && parseFloat(String(event.price)) === 0)) && (
             <Badge className="bg-brand-lime/20 text-brand-lime border-brand-lime/40 font-bold text-xs px-3 py-1">
               🆓 GRATIS
+            </Badge>
+          )}
+          
+          {/* Favorite Badge */}
+          {event.isFavorite && (
+            <Badge className="bg-purple-500/20 text-purple-200 border-purple-400/40 font-bold text-xs px-3 py-1">
+              💫 Conni's Favorit
             </Badge>
           )}
           

@@ -14,7 +14,9 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
     return (
       <div className="text-center py-16">
         <div className="relative mb-6">
-          <Star className="mx-auto h-16 w-16 text-purple-400/50 mb-4" />
+          <div className="mx-auto w-16 h-16 flex items-center justify-center text-purple-400/50 mb-4">
+            <span className="text-6xl">💫</span>
+          </div>
           <Heart className="absolute top-1 right-1/2 translate-x-6 h-6 w-6 text-orange-400/60" />
         </div>
         <h3 className="text-2xl font-bold text-white drop-shadow-sm mb-3">Noch keine Favoriten</h3>
@@ -46,7 +48,7 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
             {/* Favorite Star Badge */}
             <div className="absolute -top-3 -right-3 z-10">
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-orange-500 rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg">
-                <Star className="h-4 w-4 text-white" fill="currentColor" />
+                <span className="text-white text-sm">💫</span>
               </div>
             </div>
 
