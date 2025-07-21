@@ -102,8 +102,8 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           }
           altImg.src = '/attached_assets/Unbenannt-1-05_1752751777817.png'
         }
-        // Try the correct path for the app background image
-        backgroundImg.src = './attached_assets/Unbenannt-1-05_1752751777817.png'
+        // Try multiple paths for the app background image
+        backgroundImg.src = 'client/src/assets/Unbenannt-1-05_1752751777817.png'
       })
 
       // Event image will only be used in the EventCard header, not as background overlay
@@ -252,25 +252,79 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       let leftY = currentY
       let rightY = currentY
 
-      // Date badges - show max 5 future dates as badges
-      const eventDate = format(new Date(event.date + 'T12:00:00+02:00'), 'dd. MMMM yyyy', { locale: de })
+      // Date info - styled like the other event info (NOT as badge)
+      if (event.date) {
+        ctx.font = '32px Helvetica, Arial, sans-serif'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+        const eventDate = new Date(event.date + 'T12:00:00+02:00')
+        const dateText = `📅 ${format(eventDate, "EEEE, dd. MMMM yyyy", { locale: de })}`
+        ctx.fillText(dateText, leftColumnX, leftY)
+        leftY += 44
+      }
       
-      // Check if event has multiple dates in description
+      // Time info
+      if (event.time) {
+        ctx.font = '32px Helvetica, Arial, sans-serif'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+        ctx.fillText(`🕐 ${event.time}`, leftColumnX, leftY)
+        leftY += 44
+      }
+
+      // Location info
+      if (event.location) {
+        ctx.font = '32px Helvetica, Arial, sans-serif'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+        ctx.fillText(`📍 ${event.location}`, leftColumnX, leftY)
+        leftY += 44
+      }
+
+      // Price info
+      if (event.price && event.price !== '0' && parseFloat(event.price) > 0) {
+        ctx.font = '32px Helvetica, Arial, sans-serif'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+        ctx.fillText(`💰 €${event.price}`, leftColumnX, leftY)
+        leftY += 44
+      }
+
+      // Organizer info  
+      if (event.organizer) {
+        ctx.font = '32px Helvetica, Arial, sans-serif'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+        ctx.fillText(`👥 ${event.organizer}`, leftColumnX, leftY)
+        leftY += 44
+      }
+
+      leftY += 20 // Space before future dates
+
+      // WEITERE TERMINE - show only future dates as badges
       const hasMultipleDates = event.description && event.description.includes('Termine:')
       if (hasMultipleDates) {
-        // Extract and show only next 5 future dates as badges
+        // Show "Weitere Termine:" label
+        ctx.font = 'bold 28px Helvetica, Arial, sans-serif'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+        ctx.fillText('📅 Weitere Termine:', leftColumnX, leftY)
+        leftY += 50
+
+        // Extract and show only next 3 future dates as badges
         const dateMatches = event.description.match(/\d{1,2}\.\d{1,2}\.\d{4}/g) || []
         const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        
         const futureDates = dateMatches
           .map(dateStr => {
             const [day, month, year] = dateStr.split('.')
-            return new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+            return {
+              date: new Date(parseInt(year), parseInt(month) - 1, parseInt(day)),
+              original: dateStr
+            }
           })
-          .filter(date => date >= today)
-          .slice(0, 5)
+          .filter(({ date }) => date >= today)
+          .slice(0, 3)
         
         if (futureDates.length > 0) {
-          futureDates.forEach((date, index) => {
+          // Create horizontal layout for badges
+          let badgeX = leftColumnX
+          futureDates.forEach(({ date }, index) => {
             const formattedDate = format(date, 'dd. MMM', { locale: de })
             
             // Create date badge
@@ -283,17 +337,19 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             // Badge background
             ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
             ctx.beginPath()
-            ctx.roundRect(leftColumnX, leftY - 28, badgeWidth, badgeHeight, 18)
+            ctx.roundRect(badgeX, leftY - 28, badgeWidth, badgeHeight, 18)
             ctx.fill()
             
             // Badge text
             ctx.fillStyle = 'white'
             ctx.textAlign = 'center'
-            ctx.fillText(badgeText, leftColumnX + badgeWidth / 2, leftY - 8)
+            ctx.fillText(badgeText, badgeX + badgeWidth / 2, leftY - 8)
             ctx.textAlign = 'left'
             
-            leftY += 50
+            badgeX += badgeWidth + 12 // Space between badges
           })
+          
+          leftY += 50
           
           // Check if we have more future dates to show
           const totalFutureDates = dateMatches
@@ -303,7 +359,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             })
             .filter(date => date >= today)
           
-          if (totalFutureDates.length > 5) {
+          if (totalFutureDates.length > 3) {
             // "+ weitere Termine" badge
             ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
             const moreText = '+ weitere Termine'
@@ -323,73 +379,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             
             leftY += 50
           }
-        } else {
-          // Single date badge
-          ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
-          const badgeText = format(new Date(event.date + 'T12:00:00+02:00'), 'dd. MMM', { locale: de })
-          const textWidth = ctx.measureText(badgeText).width
-          const badgeWidth = textWidth + 24
-          const badgeHeight = 36
-          
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
-          ctx.beginPath()
-          ctx.roundRect(leftColumnX, leftY - 28, badgeWidth, badgeHeight, 18)
-          ctx.fill()
-          
-          ctx.fillStyle = 'white'
-          ctx.textAlign = 'center'
-          ctx.fillText(badgeText, leftColumnX + badgeWidth / 2, leftY - 8)
-          ctx.textAlign = 'left'
-          
-          leftY += 50
         }
-      } else {
-        // Single date badge
-        ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
-        const badgeText = format(new Date(event.date + 'T12:00:00+02:00'), 'dd. MMM', { locale: de })
-        const textWidth = ctx.measureText(badgeText).width
-        const badgeWidth = textWidth + 24
-        const badgeHeight = 36
-        
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
-        ctx.beginPath()
-        ctx.roundRect(leftColumnX, leftY - 28, badgeWidth, badgeHeight, 18)
-        ctx.fill()
-        
-        ctx.fillStyle = 'white'
-        ctx.textAlign = 'center'
-        ctx.fillText(badgeText, leftColumnX + badgeWidth / 2, leftY - 8)
-        ctx.textAlign = 'left'
-        
-        leftY += 50
-      }
-      
-      // Reset font for other details
-      ctx.font = 'bold 32px Helvetica, Arial, sans-serif'
-
-      // Time with clock icon (left column)
-      if (event.time) {
-        ctx.fillText(`🕐  ${event.time} Uhr`, leftColumnX, leftY)
-        leftY += 50
-      }
-
-      // Location with map pin (right column)
-      ctx.fillText(`📍  ${event.location}`, rightColumnX, rightY)
-      rightY += 50
-
-      // Organizer (right column) - SAME font size
-      if (event.organizer) {
-        ctx.fillText(`👥  ${event.organizer}`, rightColumnX, rightY)
-        rightY += 50
-      }
-
-      // Price in bottom right like favorites cards
-      if (event.price) {
-        ctx.font = 'bold 48px Helvetica, Arial, sans-serif'
-        ctx.textAlign = 'right'
-        const priceText = event.price === '0' ? 'GRATIS' : `€${event.price}`
-        ctx.fillText(priceText, cardX + cardWidth - 48, cardY + cardHeight - 60)
-        ctx.textAlign = 'left'
       }
 
       // momentmillionär branding (positioned for 4:5 ratio)
