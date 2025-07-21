@@ -68,16 +68,16 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       canvas.width = 1080;
       canvas.height = 1350;
       
-      // Classical paintings from attached assets
+      // Classical paintings from attached assets - using correct file names
       const paintings = [
-        '/attached_assets/208195fgsdl_1753093711962.jpg', // Woman knitting by the coast
-        '/attached_assets/222401fgsdl_1753093711965.jpg', // Evening dinner scene with candles
-        '/attached_assets/226718fgsdl_1753093711965.jpg', // Oriental marketplace scene
-        '/attached_assets/228439fgsdl_1753093711965.jpg', // Classical feast in colonnade
-        '/attached_assets/244783fgsdl_1753093711966.jpg', // Garden scene with classical figures
-        '/attached_assets/245018fgsdl_1753093711966.jpg', // Rococo garden party
-        '/attached_assets/509932ldsdl_1753093711966.jpg', // River landscape
-        '/attached_assets/540710ldsdl_1753093711966.jpg'  // Norwegian fjord scene
+        '/attached_assets/208195fgsdl_1753089340156.jpg', // Woman knitting by the coast
+        '/attached_assets/222401fgsdl_1753089340158.jpg', // Evening dinner scene with candles
+        '/attached_assets/226718fgsdl_1753089340158.jpg', // Oriental marketplace scene
+        '/attached_assets/228439fgsdl_1753089340159.jpg', // Classical feast in colonnade
+        '/attached_assets/244783fgsdl_1753089340159.jpg', // Garden scene with classical figures
+        '/attached_assets/245018fgsdl_1753089340159.jpg', // Rococo garden party
+        '/attached_assets/509932ldsdl_1753089340159.jpg', // River landscape
+        '/attached_assets/540710ldsdl_1753089340159.jpg'  // Norwegian fjord scene
       ];
       const randomPainting = paintings[Math.floor(Math.random() * paintings.length)];
       
@@ -123,16 +123,63 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         };
         
         backgroundImg.onerror = () => {
-          console.log('Background failed, using gradient');
-          const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-          gradient.addColorStop(0, '#6366f1');
-          gradient.addColorStop(1, '#f59e0b');
-          ctx.fillStyle = gradient;
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          resolve(false);
+          console.log('Background failed for:', randomPainting, 'trying alternative paths...');
+          
+          // Try alternative paths
+          const fileName = randomPainting.split('/').pop();
+          const alternativePaths = [
+            `/${fileName}`,
+            `/assets/${fileName}`,
+            `./attached_assets/${fileName}`,
+            randomPainting.replace('/attached_assets/', '/'),
+            randomPainting.replace('/attached_assets/', '/assets/')
+          ];
+          
+          let pathIndex = 0;
+          const tryNextPath = () => {
+            if (pathIndex < alternativePaths.length) {
+              console.log('Trying path:', alternativePaths[pathIndex]);
+              const testImg = new Image();
+              testImg.crossOrigin = 'anonymous';
+              testImg.onload = () => {
+                console.log('Successfully loaded from:', alternativePaths[pathIndex]);
+                // Use the same scaling logic
+                const scaleX = canvas.width / testImg.naturalWidth;
+                const scaleY = canvas.height / testImg.naturalHeight;
+                const scale = Math.max(scaleX, scaleY);
+                
+                const scaledWidth = testImg.naturalWidth * scale;
+                const scaledHeight = testImg.naturalHeight * scale;
+                const offsetX = (canvas.width - scaledWidth) / 2;
+                const offsetY = (canvas.height - scaledHeight) / 2;
+                
+                ctx.drawImage(testImg, offsetX, offsetY, scaledWidth, scaledHeight);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                resolve(true);
+              };
+              testImg.onerror = () => {
+                pathIndex++;
+                tryNextPath();
+              };
+              testImg.src = alternativePaths[pathIndex];
+            } else {
+              // All paths failed, use gradient fallback
+              console.log('All paths failed, using gradient fallback');
+              const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+              gradient.addColorStop(0, '#6366f1');
+              gradient.addColorStop(1, '#f59e0b');
+              ctx.fillStyle = gradient;
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              resolve(false);
+            }
+          };
+          
+          tryNextPath();
         };
         
         // Load the selected classical painting
+        console.log('Attempting to load:', randomPainting);
         backgroundImg.src = randomPainting;
       });
 
