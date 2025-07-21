@@ -93,6 +93,9 @@ export default function Events() {
   const favoriteEvents = events.filter(event => event.isFavorite);
   const eventsToShow = view === "favorites" ? favoriteEvents : filteredEvents;
 
+  // Check if any filter is active
+  const hasActiveFilters = searchTerm || selectedCategory || selectedAudience || dateFrom || dateTo || showFreeOnly;
+
   // Clear all filters
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -162,11 +165,30 @@ export default function Events() {
             onViewChange={setView}
           />
 
-          {view === "calendar" && (
+          {view === "calendar" && !hasActiveFilters && (
             <CalendarView 
               events={events} 
               onEventClick={handleEventClick}
             />
+          )}
+
+          {view === "calendar" && hasActiveFilters && (
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {eventsToShow.map((event) => (
+                <EventCard
+                  key={event.notionId}
+                  event={event}
+                  onClick={() => handleEventClick(event)}
+                  view="grid"
+                />
+              ))}
+              {eventsToShow.length === 0 && (
+                <div className="col-span-full text-center py-12 text-white">
+                  <p className="text-lg font-semibold mb-2 drop-shadow-sm">Keine Events gefunden</p>
+                  <p className="text-white/80 drop-shadow-sm">Probiere andere Filter oder erweitere den Zeitraum.</p>
+                </div>
+              )}
+            </div>
           )}
 
           {view === "favorites" && (
