@@ -19,7 +19,7 @@ export default function Events() {
   const [dateFrom, setDateFrom] = useState<Date | null>(null);
   const [dateTo, setDateTo] = useState<Date | null>(null);
   const [showFreeOnly, setShowFreeOnly] = useState(false);
-  const [view, setView] = useState<"calendar" | "list" | "grid" | "favorites">("calendar");
+  const [view, setView] = useState<"calendar" | "grid" | "favorites">("calendar");
 
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -346,24 +346,19 @@ export default function Events() {
               />
             )}
 
-            {(view === "list" || view === "grid") && (
-              <div className={`grid gap-6 ${
-                view === "grid" 
-                  ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-                  : "grid-cols-1"
-              }`}>
+            {view === "grid" && (
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {eventsToShow.map((event) => (
                   <EventCard
                     key={event.notionId}
                     event={event}
                     onClick={() => handleEventClick(event)}
-                    view={view}
                   />
                 ))}
                 {eventsToShow.length === 0 && (
-                  <div className="text-center py-12 text-gray-600">
-                    <p className="text-lg font-semibold mb-2">Keine Events gefunden</p>
-                    <p>Probiere andere Filter oder erweitere den Zeitraum.</p>
+                  <div className="text-center py-12 text-white">
+                    <p className="text-lg font-semibold mb-2 drop-shadow-sm">Keine Events gefunden</p>
+                    <p className="text-white/80 drop-shadow-sm">Probiere andere Filter oder erweitere den Zeitraum.</p>
                   </div>
                 )}
               </div>

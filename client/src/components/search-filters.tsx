@@ -24,8 +24,8 @@ interface SearchFiltersProps {
   onFreeEventsChange: (showFree: boolean) => void;
   onClearFilters: () => void;
   eventCount?: number;
-  view: "calendar" | "list" | "grid" | "favorites";
-  onViewChange: (view: "calendar" | "list" | "grid" | "favorites") => void;
+  view: "calendar" | "grid" | "favorites";
+  onViewChange: (view: "calendar" | "grid" | "favorites") => void;
 }
 
 export function SearchFilters({
@@ -125,17 +125,14 @@ export function SearchFilters({
         </div>
       </div>
 
-      {/* Filter Controls - Horizontal Layout */}
-      <div className={isMobile ? 'flex justify-between items-center gap-2' : 'flex items-center justify-between gap-4'}>
+      {/* Filter Controls - Horizontal Layout with uniform buttons */}
+      <div className="flex items-center gap-3">
         {/* Category Filter */}
-        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
+        <div className="flex-1">
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-10 h-10 p-0 justify-center [&>svg]:hidden text-sm' : 'py-2 px-3 text-sm'}`}>
-              {isMobile ? (
-                <span className="text-sm">🗃️</span>
-              ) : (
-                <SelectValue placeholder="Alle Kategorien" className="text-white" />
-              )}
+            <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm px-4">
+              <span className="mr-2">🎭</span>
+              <SelectValue placeholder="Kategorien" className="text-white" />
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
@@ -149,16 +146,11 @@ export function SearchFilters({
         </div>
 
         {/* Audience Filter */}
-        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
+        <div className="flex-1">
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
-            <SelectTrigger className={`rounded-full border-0 liquid-glass bg-white/20 text-white ${isMobile ? 'w-10 h-10 p-0 justify-center [&>svg]:hidden text-sm' : 'py-2 px-3 text-sm'}`}>
-              {isMobile ? (
-                <span className="text-sm">
-                  {selectedAudience === "all" ? "🎯" : audienceOptions.find(opt => opt.value === selectedAudience)?.emoji || "🎯"}
-                </span>
-              ) : (
-                <SelectValue placeholder="Alle Zielgruppen" className="text-white" />
-              )}
+            <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm px-4">
+              <span className="mr-2">🎯</span>
+              <SelectValue placeholder="Zielgruppe" className="text-white" />
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               {audienceOptions.map((option) => (
@@ -171,7 +163,7 @@ export function SearchFilters({
         </div>
 
         {/* Date Range Filter */}
-        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
+        <div className="flex-1">
           <DateRangePicker
             dateFrom={dateFrom}
             dateTo={dateTo}
@@ -181,54 +173,40 @@ export function SearchFilters({
         </div>
 
         {/* Free Events Filter */}
-        <div className={isMobile ? "flex-shrink-0" : "flex-1"}>
+        <div className="flex-1">
           <Button
             variant={showFreeEventsOnly ? "default" : "outline"}
             onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
-            className={`liquid-glass-button rounded-full text-sm font-medium transition-all duration-300 border border-white/25 w-full ${
-              isMobile ? 'w-10 h-10 p-0' : 'py-2 px-3'
-            } ${
+            className={`h-10 rounded-full liquid-glass-button text-sm font-medium transition-all duration-300 border border-white/25 w-full px-4 ${
               showFreeEventsOnly 
-                ? 'hover:bg-gradient-to-r hover:from-purple-500 hover:to-orange-500 text-white' 
-                : 'text-white hover:bg-white/20'
+                ? 'bg-gradient-to-r from-purple-500 to-orange-500 text-white hover:from-purple-600 hover:to-orange-600' 
+                : 'bg-white/20 text-white hover:bg-white/30'
             }`}
           >
-            {isMobile ? (
-              <span className="text-sm">🆓</span>
-            ) : (
-              "🆓 Nur kostenlose Events"
-            )}
+            <span className="mr-2">🆓</span>
+            Kostenlos
           </Button>
         </div>
 
         {/* Add Event Button */}
-        <div className="flex-shrink-0">
-          <Button
-            onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-            className={`liquid-glass-button rounded-full text-white text-sm font-medium transition-all duration-300 border border-white/25 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 ${
-              isMobile ? 'w-10 h-10 p-0' : 'w-10 h-10 p-0'
-            }`}
-          >
-            <span className="text-sm">➕</span>
-          </Button>
-        </div>
+        <Button
+          onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
+          className="h-10 w-10 p-0 rounded-full liquid-glass-button text-white transition-all duration-300 border border-white/25 bg-white/20 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600"
+          title="Event hinzufügen"
+        >
+          <span className="text-sm">➕</span>
+        </Button>
 
         {/* Clear Filters Button - Simple Trash Icon */}
         {hasActiveFilters && (
-          <div className="flex-shrink-0">
-            <Button
-              variant="outline"
-              onClick={onClearFilters}
-              className={`rounded-full p-0 transition-all duration-200 ${
-                isMobile 
-                  ? 'w-10 h-10 border-0 bg-white/20 text-white hover:bg-white/30 liquid-glass'
-                  : 'w-10 h-10 border-white/20 bg-white/10 text-white hover:bg-white/20'
-              }`}
-              title="Filter löschen"
-            >
-              <span className="text-sm">🗑️</span>
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            onClick={onClearFilters}
+            className="h-10 w-10 p-0 rounded-full border-white/25 bg-white/20 text-white hover:bg-white/30 transition-all duration-200"
+            title="Filter löschen"
+          >
+            <span className="text-sm">🗑️</span>
+          </Button>
         )}
       </div>
 
@@ -314,18 +292,7 @@ export function SearchFilters({
           >
             <CalendarDays className="h-5 w-5" />
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onViewChange("list")}
-            className={`rounded-full w-10 h-10 p-0 transition-all duration-300 ${
-              view === "list" 
-                ? "bg-white/20 text-white shadow-lg border border-white/30" 
-                : "text-white/60 hover:text-white/80 border-0"
-            }`}
-          >
-            <List className="h-5 w-5" />
-          </Button>
+
           <Button
             variant="ghost"
             size="sm"

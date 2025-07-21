@@ -649,13 +649,10 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
             .filter(event => {
               if (!event.date) return false;
               const eventDate = new Date(event.date);
-              const today = new Date();
-              today.setHours(0, 0, 0, 0);
               
-              // Filter to current month/year and exclude past events
+              // Filter to current month/year - INCLUDE past events too
               return eventDate.getMonth() === currentDate.getMonth() && 
-                     eventDate.getFullYear() === currentDate.getFullYear() &&
-                     eventDate >= today; // Only show future events
+                     eventDate.getFullYear() === currentDate.getFullYear();
             })
             .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())
             .map((event) => (
@@ -663,7 +660,6 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                 key={`monthly-event-${event.notionId}`}
                 event={event}
                 onClick={() => onEventClick?.(event)}
-
               />
             ))}
         </div>

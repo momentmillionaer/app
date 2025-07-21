@@ -1,0 +1,210 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import SearchFilters from "@/components/search-filters";
+import { EventCard } from "@/components/event-card";
+import { Header } from "@/components/header";
+import { EventModal } from "@/components/event-modal";
+import { CalendarView } from "@/components/calendar-view";
+import { FavoritesView } from "@/components/favorites-view";
+import { Footer } from "@/components/footer";
+import { InstagramPreview } from "@/components/instagram-preview";
+import { LatestEventPopup } from "@/components/latest-event-popup";
+import { type Event } from "@shared/schema";
+
+export default function Events() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedAudience, setSelectedAudience] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [showFreeOnly, setShowFreeOnly] = useState(false);
+  const [view, setView] = useState<"calendar" | "grid" | "favorites">("calendar");
+
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleEventClick = (event: Event) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedEvent(null);
+  };
+
+  // Fetch events from API
+  const { 
+    data: events = [], 
+    isLoading, 
+    error
+  } = useQuery<Event[]>({
+    queryKey: ["/api/events"],
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
+  // Filter events
+  const filteredEvents = events.filter(event => {
+    // Text search
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      const matchesText = 
+        event.title?.toLowerCase().includes(searchLower) ||
+        event.description?.toLowerCase().includes(searchLower) ||
+        event.location?.toLowerCase().includes(searchLower) ||
+        event.organizer?.toLowerCase().includes(searchLower);
+      if (!matchesText) return false;
+    }
+
+    // Category filter
+    if (selectedCategory && selectedCategory !== "all") {
+      if (!event.categories?.includes(selectedCategory)) return false;
+    }
+
+    // Audience filter
+    if (selectedAudience && selectedAudience !== "all") {
+      if (!event.attendees?.includes(selectedAudience)) return false;
+    }
+
+    // Date filters
+    if (dateFrom || dateTo) {
+      const eventDate = new Date(event.date || '');
+      if (dateFrom) {
+        const fromDate = new Date(dateFrom);
+        if (eventDate < fromDate) return false;
+      }
+      if (dateTo) {
+        const toDate = new Date(dateTo);
+        if (eventDate > toDate) return false;
+      }
+    }
+
+    // Free events filter
+    if (showFreeOnly) {
+      const price = parseFloat(event.price || "0");
+      if (price > 0) return false;
+    }
+
+    return true;
+  });
+
+  const favoriteEvents = events.filter(event => event.isFavorite);
+  const eventsToShow = view === "favorites" ? favoriteEvents : filteredEvents;
+
+  // Clear all filters
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("");
+    setSelectedAudience("");
+    setDateFrom("");
+    setDateTo("");
+    setShowFreeOnly(false);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <Header eventCount={0} lastUpdated={new Date().toISOString()} />
+          <div className="flex justify-center items-center h-64">
+            <div className="text-lg text-white">Loading events...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <Header eventCount={0} lastUpdated={new Date().toISOString()} />
+          <div className="flex justify-center items-center h-64">
+            <div className="text-lg text-red-600">Error loading events</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className="min-h-screen bg-cover bg-center bg-fixed relative"
+      style={{
+        backgroundImage: `url('/classical-painting.jpg')`,
+        backgroundBlendMode: 'overlay'
+      }}
+    >
+      <div className="absolute inset-0 bg-black/40"></div>
+      
+      <div className="relative z-10 p-6">
+        <div className="max-w-7xl mx-auto">
+          <Header eventCount={eventsToShow.length} lastUpdated={new Date().toISOString()} />
+          
+          <SearchFilters
+            searchQuery={searchTerm}
+            onSearchChange={setSearchTerm}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            selectedAudience={selectedAudience}
+            onAudienceChange={setSelectedAudience}
+            dateFrom={dateFrom}
+            onDateFromChange={setDateFrom}
+            dateTo={dateTo}
+            onDateToChange={setDateTo}
+            showFreeEventsOnly={showFreeOnly}
+            onFreeEventsChange={setShowFreeOnly}
+            onClearFilters={handleClearFilters}
+            eventCount={eventsToShow.length}
+            view={view}
+            onViewChange={setView}
+          />
+
+          {view === "calendar" && (
+            <CalendarView 
+              events={events} 
+              onEventClick={handleEventClick}
+            />
+          )}
+
+          {view === "favorites" && (
+            <FavoritesView 
+              events={favoriteEvents} 
+              onEventClick={handleEventClick}
+            />
+          )}
+
+          {view === "grid" && (
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {eventsToShow.map((event) => (
+                <EventCard
+                  key={event.notionId}
+                  event={event}
+                  onClick={() => handleEventClick(event)}
+                />
+              ))}
+              {eventsToShow.length === 0 && (
+                <div className="col-span-full text-center py-12 text-white">
+                  <p className="text-lg font-semibold mb-2 drop-shadow-sm">Keine Events gefunden</p>
+                  <p className="text-white/80 drop-shadow-sm">Probiere andere Filter oder erweitere den Zeitraum.</p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          <InstagramPreview />
+          <Footer />
+        </div>
+      </div>
+      
+      <EventModal
+        event={selectedEvent}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+
+      <LatestEventPopup events={events} onEventClick={handleEventClick} />
+    </div>
+  );
+}
