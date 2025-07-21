@@ -387,20 +387,18 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         // Look for various date formats: DD.MM.YYYY, DD-MM-YYYY, DD/MM/YYYY
         let dateMatches = originalDescription.match(/\d{1,2}[-\.\/]\d{1,2}[-\.\/]\d{4}/g) || []
         
-        // Fallback: If no matches found but hasMultipleDates is true, create demo dates for testing
+        // Fallback: If no matches found but hasMultipleDates is true, create more demo dates for testing
         if (dateMatches.length === 0 && event.title === 'Open Air Kino') {
-          // Create some demo future dates for testing the badge functionality
+          // Create more demo future dates for testing the badge functionality (up to 10)
           const today = new Date()
-          const demoDate1 = new Date(today.getTime() + (2 * 24 * 60 * 60 * 1000)) // +2 days
-          const demoDate2 = new Date(today.getTime() + (5 * 24 * 60 * 60 * 1000)) // +5 days  
-          const demoDate3 = new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000)) // +7 days
+          const demoDates = []
+          for (let i = 2; i <= 12; i++) { // Create 10 demo dates
+            const demoDate = new Date(today.getTime() + (i * 24 * 60 * 60 * 1000))
+            demoDates.push(`${demoDate.getDate().toString().padStart(2, '0')}.${(demoDate.getMonth() + 1).toString().padStart(2, '0')}.${demoDate.getFullYear()}`)
+          }
           
-          dateMatches = [
-            `${demoDate1.getDate().toString().padStart(2, '0')}.${(demoDate1.getMonth() + 1).toString().padStart(2, '0')}.${demoDate1.getFullYear()}`,
-            `${demoDate2.getDate().toString().padStart(2, '0')}.${(demoDate2.getMonth() + 1).toString().padStart(2, '0')}.${demoDate2.getFullYear()}`,
-            `${demoDate3.getDate().toString().padStart(2, '0')}.${(demoDate3.getMonth() + 1).toString().padStart(2, '0')}.${demoDate3.getFullYear()}`
-          ]
-          console.log('🎭 Created demo dates for testing badge functionality:', dateMatches)
+          dateMatches = demoDates
+          console.log('🎭 Created 10 demo dates for testing badge functionality:', dateMatches)
         }
         
         console.log('🗓️ Found date matches for share image badges:', dateMatches)
@@ -420,17 +418,23 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             }
           })
           .filter(({ date }) => !isNaN(date.getTime()) && date >= today) // Check for valid dates
-          .slice(0, 3)
+          .slice(0, 10) // Show up to 10 future dates
           
         console.log('🗓️ Filtered future dates for badges:', futureDates.map(f => f.original))
         
         if (futureDates.length > 0) {
-          // Add space for badges
+          // Add "Weitere Termine" header text
           leftY += 20
+          ctx.font = 'bold 28px Helvetica, Arial, sans-serif'
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+          ctx.fillText('Weitere Termine', leftColumnX, leftY)
+          leftY += 40 // Space after header
           
-          // Create horizontal layout for badges (no text label above) 
+          // Create horizontal layout for badges with wrapping
           let badgeX = leftColumnX
-          const badgeY = leftY
+          let badgeY = leftY
+          const maxBadgeWidth = cardWidth - 96 // Available width for badges
+          let currentRowWidth = 0
           
           futureDates.forEach(({ date }, index) => {
             const formattedDate = format(date, 'dd. MMM', { locale: de })
@@ -441,6 +445,13 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             const textWidth = ctx.measureText(badgeText).width
             const badgeWidth = textWidth + 24
             const badgeHeight = 36
+            
+            // Check if badge fits in current row, otherwise wrap to next row
+            if (currentRowWidth + badgeWidth > maxBadgeWidth && currentRowWidth > 0) {
+              badgeX = leftColumnX
+              badgeY += badgeHeight + 12 // Move to next row
+              currentRowWidth = 0
+            }
             
             // Badge background
             ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'
@@ -462,9 +473,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             ctx.textAlign = 'left'
             
             badgeX += badgeWidth + 12 // Space between badges
+            currentRowWidth += badgeWidth + 12
           })
           
-          leftY += 60 // Move down after badges
+          leftY = badgeY + 60 // Move down after badges (considering potential wrapped rows)
           
           // Check if we have more future dates to show
           const totalFutureDates = dateMatches
@@ -476,7 +488,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           
           console.log('🗓️ Total future dates found for badges:', totalFutureDates.length, 'showing:', futureDates.length)
           
-          if (totalFutureDates.length > 3) {
+          if (totalFutureDates.length > 10) {
             // "+ weitere Termine" badge
             ctx.font = 'bold 22px Helvetica, Arial, sans-serif'
             const moreText = '+ weitere Termine'
