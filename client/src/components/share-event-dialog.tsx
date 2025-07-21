@@ -79,12 +79,11 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         backgroundImg.onerror = () => {
           console.log('App background failed to load, trying alternative paths...')
           
-          // Try multiple paths in sequence
+          // Try multiple paths for classical painting background
           const paths = [
-            '/client/src/assets/Unbenannt-1-05_1752751777817.png',
-            'client/src/assets/Unbenannt-1-05_1752751777817.png',
-            '/attached_assets/Unbenannt-1-05_1752751777817.png',
-            'attached_assets/Unbenannt-1-05_1752751777817.png'
+            '/attached_assets/Unbenannt-1-02_1752488253396.png',
+            'attached_assets/Unbenannt-1-02_1752488253396.png',
+            '/Unbenannt-1-02_1752488253396.png'
           ]
           
           let pathIndex = 0
@@ -123,8 +122,8 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           
           tryNextPath()
         }
-        // Try multiple paths for the app background image
-        backgroundImg.src = '/Unbenannt-1-05_1752751777817.png'
+        // Use the correct app background (classical painting)
+        backgroundImg.src = '/Unbenannt-1-02_1752488253396.png'
       })
 
       // Event image will only be used in the EventCard header, not as background overlay
@@ -338,8 +337,13 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           .slice(0, 3)
         
         if (futureDates.length > 0) {
-          // Create horizontal layout for badges (no text label above)
+          // Add space for badges
+          leftY += 20
+          
+          // Create horizontal layout for badges (no text label above) 
           let badgeX = leftColumnX
+          const badgeY = leftY
+          
           futureDates.forEach(({ date }, index) => {
             const formattedDate = format(date, 'dd. MMM', { locale: de })
             
@@ -351,21 +355,28 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             const badgeHeight = 36
             
             // Badge background
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'
             ctx.beginPath()
-            ctx.roundRect(badgeX, leftY - 28, badgeWidth, badgeHeight, 18)
+            ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 18)
             ctx.fill()
+            
+            // Badge border for visibility
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'
+            ctx.lineWidth = 1
+            ctx.beginPath()
+            ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 18)
+            ctx.stroke()
             
             // Badge text
             ctx.fillStyle = 'white'
             ctx.textAlign = 'center'
-            ctx.fillText(badgeText, badgeX + badgeWidth / 2, leftY - 8)
+            ctx.fillText(badgeText, badgeX + badgeWidth / 2, badgeY + 24)
             ctx.textAlign = 'left'
             
             badgeX += badgeWidth + 12 // Space between badges
           })
           
-          leftY += 50
+          leftY += 60 // Move down after badges
           
           // Check if we have more future dates to show
           const totalFutureDates = dateMatches
@@ -377,20 +388,27 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           
           if (totalFutureDates.length > 3) {
             // "+ weitere Termine" badge
-            ctx.font = 'bold 24px Helvetica, Arial, sans-serif'
+            ctx.font = 'bold 22px Helvetica, Arial, sans-serif'
             const moreText = '+ weitere Termine'
             const textWidth = ctx.measureText(moreText).width
             const badgeWidth = textWidth + 24
             const badgeHeight = 36
             
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
             ctx.beginPath()
-            ctx.roundRect(leftColumnX, leftY - 28, badgeWidth, badgeHeight, 18)
+            ctx.roundRect(leftColumnX, leftY, badgeWidth, badgeHeight, 18)
             ctx.fill()
             
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
+            // Border for "+ weitere Termine" badge
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'
+            ctx.lineWidth = 1
+            ctx.beginPath()
+            ctx.roundRect(leftColumnX, leftY, badgeWidth, badgeHeight, 18)
+            ctx.stroke()
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
             ctx.textAlign = 'center'
-            ctx.fillText(moreText, leftColumnX + badgeWidth / 2, leftY - 8)
+            ctx.fillText(moreText, leftColumnX + badgeWidth / 2, leftY + 24)
             ctx.textAlign = 'left'
             
             leftY += 50
