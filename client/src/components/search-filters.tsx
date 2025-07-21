@@ -125,14 +125,19 @@ export function SearchFilters({
         </div>
       </div>
 
-      {/* Filter Controls - Horizontal Layout with uniform buttons */}
-      <div className="flex items-center gap-3">
+      {/* Filter Controls - Uniform button layout aligned with search field */}
+      <div className="flex items-center justify-between gap-3">
         {/* Category Filter */}
         <div className="flex-1">
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm px-4">
-              <span className="mr-2">🎭</span>
-              <SelectValue placeholder="Kategorien" className="text-white" />
+            <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm font-medium px-4 justify-start">
+              <span className="mr-2 text-base">🎭</span>
+              <span className="text-white">
+                {selectedCategory && selectedCategory !== "all" 
+                  ? categories.find(c => c === selectedCategory)?.replace(/^[^\s]+\s/, '') || "Kategorien"
+                  : "Kategorien"
+                }
+              </span>
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
@@ -148,9 +153,14 @@ export function SearchFilters({
         {/* Audience Filter */}
         <div className="flex-1">
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
-            <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm px-4">
-              <span className="mr-2">🎯</span>
-              <SelectValue placeholder="Zielgruppe" className="text-white" />
+            <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm font-medium px-4 justify-start">
+              <span className="mr-2 text-base">🎯</span>
+              <span className="text-white">
+                {selectedAudience && selectedAudience !== "all" 
+                  ? audienceOptions.find(opt => opt.value === selectedAudience)?.label.replace(/^[^\s]+\s/, '') || "Zielgruppe"
+                  : "Zielgruppe"
+                }
+              </span>
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               {audienceOptions.map((option) => (
@@ -164,48 +174,62 @@ export function SearchFilters({
 
         {/* Date Range Filter */}
         <div className="flex-1">
-          <DateRangePicker
-            dateFrom={dateFrom}
-            dateTo={dateTo}
-            onDateFromChange={onDateFromChange}
-            onDateToChange={onDateToChange}
-          />
+          <Button
+            variant="outline"
+            className={`h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm font-medium px-4 w-full justify-start transition-all duration-300 ${
+              dateFrom || dateTo 
+                ? 'bg-gradient-to-r from-lime-500 to-lime-600 text-black hover:from-lime-600 hover:to-lime-700'
+                : 'hover:bg-white/30'
+            }`}
+          >
+            <span className="mr-2 text-base">📅</span>
+            <span className="text-current">
+              {(dateFrom || dateTo) 
+                ? (dateFrom && dateTo 
+                  ? `${new Date(dateFrom).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit'})} - ${new Date(dateTo).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit'})}`
+                  : dateFrom 
+                  ? new Date(dateFrom).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: '2-digit'})
+                  : new Date(dateTo!).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: '2-digit'}))
+                : "Datum"
+              }
+            </span>
+          </Button>
         </div>
 
         {/* Free Events Filter */}
         <div className="flex-1">
           <Button
-            variant={showFreeEventsOnly ? "default" : "outline"}
+            variant="outline"
             onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
-            className={`h-10 rounded-full liquid-glass-button text-sm font-medium transition-all duration-300 border border-white/25 w-full px-4 ${
+            className={`h-10 rounded-full border-0 liquid-glass text-sm font-medium px-4 w-full justify-start transition-all duration-300 ${
               showFreeEventsOnly 
                 ? 'bg-gradient-to-r from-purple-500 to-orange-500 text-white hover:from-purple-600 hover:to-orange-600' 
                 : 'bg-white/20 text-white hover:bg-white/30'
             }`}
           >
-            <span className="mr-2">🆓</span>
-            Kostenlos
+            <span className="mr-2 text-base">🆓</span>
+            <span className="text-current">Kostenlos</span>
           </Button>
         </div>
 
         {/* Add Event Button */}
         <Button
           onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-          className="h-10 w-10 p-0 rounded-full liquid-glass-button text-white transition-all duration-300 border border-white/25 bg-white/20 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600"
+          className="h-10 w-10 p-0 rounded-full liquid-glass bg-white/20 text-white transition-all duration-300 border-0 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 flex-shrink-0"
           title="Event hinzufügen"
         >
-          <span className="text-sm">➕</span>
+          <span className="text-base">➕</span>
         </Button>
 
-        {/* Clear Filters Button - Simple Trash Icon */}
+        {/* Clear Filters Button */}
         {hasActiveFilters && (
           <Button
             variant="outline"
             onClick={onClearFilters}
-            className="h-10 w-10 p-0 rounded-full border-white/25 bg-white/20 text-white hover:bg-white/30 transition-all duration-200"
+            className="h-10 w-10 p-0 rounded-full border-0 liquid-glass bg-white/20 text-white hover:bg-white/30 transition-all duration-200 flex-shrink-0"
             title="Filter löschen"
           >
-            <span className="text-sm">🗑️</span>
+            <span className="text-base">🗑️</span>
           </Button>
         )}
       </div>
