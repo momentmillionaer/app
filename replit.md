@@ -169,6 +169,17 @@ Preferred communication style: Simple, everyday language.
 - ✓ Badge styling consistent across all views with proper liquid glass transparency
 - ✓ Past events automatically hidden from list and grid views, grayed in calendar view
 
+**July 21, 2025 - Critical Bug Fixes & API Stabilization**
+- ✓ Fixed event image loading issues with comprehensive CORS fallback strategies
+- ✓ Restored missing view toggle buttons (Calendar, Liste, Raster, ⭐) in SearchFilters component
+- ✓ Resolved SearchFilters props interface to match events.tsx implementation
+- ✓ Enhanced image loading with crossOrigin="anonymous" and multi-stage retry logic
+- ✓ Fixed Header component props requirements across all page states
+- ✓ Implemented direct fetch queryFn to bypass potential QueryClient issues
+- ✓ All 200 events now loading successfully from Notion API
+- ✓ ShareEventDialog completely functional without duplicate buttons
+- ✓ Event modal and card images now have robust error handling
+
 **July 20, 2025 - Timezone Implementation & Notion Sync Enhancement**
 - ✓ Comprehensive timezone update to GMT+2 (Europe/Vienna) for Weiz, Austria
 - ✓ All date/time displays now use Austrian locale (de-AT) and Vienna timezone

@@ -24,6 +24,8 @@ interface SearchFiltersProps {
   onFreeEventsChange: (showFree: boolean) => void;
   onClearFilters: () => void;
   eventCount?: number;
+  view: "calendar" | "list" | "grid" | "favorites";
+  onViewChange: (view: "calendar" | "list" | "grid" | "favorites") => void;
 }
 
 export function SearchFilters({
@@ -41,6 +43,8 @@ export function SearchFilters({
   onFreeEventsChange,
   onClearFilters,
   eventCount,
+  view,
+  onViewChange,
 }: SearchFiltersProps) {
   const isMobile = useIsMobile();
   
@@ -292,6 +296,69 @@ export function SearchFilters({
               </button>
             </Badge>
           )}
+        </div>
+      )}
+
+      {/* View Toggle Buttons */}
+      <div className="mt-6 flex justify-center">
+        <div className="flex items-center gap-2 liquid-glass-strong rounded-full p-2">
+          <Button
+            variant={view === "calendar" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => onViewChange("calendar")}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
+              view === "calendar" 
+                ? "bg-white/20 text-white shadow-lg" 
+                : "text-white/80 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            📅 Kalender
+          </Button>
+          <Button
+            variant={view === "list" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => onViewChange("list")}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
+              view === "list" 
+                ? "bg-white/20 text-white shadow-lg" 
+                : "text-white/80 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            📋 Liste
+          </Button>
+          <Button
+            variant={view === "grid" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => onViewChange("grid")}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
+              view === "grid" 
+                ? "bg-white/20 text-white shadow-lg" 
+                : "text-white/80 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            🗂️ Raster
+          </Button>
+          <Button
+            variant={view === "favorites" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => onViewChange("favorites")}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
+              view === "favorites" 
+                ? "bg-white/20 text-white shadow-lg" 
+                : "text-white/80 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            ⭐
+          </Button>
+        </div>
+      </div>
+
+      {/* Event Count Display */}
+      {eventCount !== undefined && (
+        <div className="mt-4 text-center">
+          <p className="text-white/80 text-sm drop-shadow-sm font-medium">
+            {eventCount} {eventCount === 1 ? 'Event gefunden' : 'Events gefunden'}
+          </p>
         </div>
       )}
     </div>

@@ -72,8 +72,32 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
             alt={event.title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
-            referrerPolicy="no-referrer"
-            onError={() => setImageError(true)}
+            crossOrigin="anonymous"
+            onError={(e) => {
+              console.error('Image loading failed:', event.imageUrl);
+              const img = e.target as HTMLImageElement;
+              
+              // Try without crossOrigin
+              if (img.crossOrigin === "anonymous") {
+                console.log('Retrying without crossOrigin...');
+                img.crossOrigin = '';
+                img.src = '';
+                img.src = event.imageUrl;
+                return;
+              }
+              
+              // Try with different referrer policy
+              if (!img.referrerPolicy || img.referrerPolicy === '') {
+                console.log('Retrying with no-referrer policy...');
+                img.referrerPolicy = "no-referrer";
+                img.src = '';
+                img.src = event.imageUrl;
+                return;
+              }
+              
+              console.log('All retry strategies failed, hiding image');
+              setImageError(true);
+            }}
           />
         </div>
       )}

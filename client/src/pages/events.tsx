@@ -43,6 +43,14 @@ export default function Events() {
   } = useQuery<Event[]>({
     queryKey: ["/api/events"],
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    queryFn: async () => {
+      const response = await fetch('/api/events');
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
+      }
+      return response.json();
+    }
   });
 
   // Debug logging
@@ -261,7 +269,7 @@ export default function Events() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
         <div className="max-w-7xl mx-auto">
-          <Header />
+          <Header eventCount={0} lastUpdated={new Date().toISOString()} />
           <div className="flex justify-center items-center h-64">
             <div className="text-lg">Loading events...</div>
           </div>
@@ -274,7 +282,7 @@ export default function Events() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
         <div className="max-w-7xl mx-auto">
-          <Header />
+          <Header eventCount={0} lastUpdated={new Date().toISOString()} />
           <Card className="p-6 bg-red-50 border-red-200">
             <p className="text-red-800">Error loading events. Please try again later.</p>
             <button 
@@ -304,26 +312,25 @@ export default function Events() {
         
         <div className="relative z-10 p-6">
           <div className="max-w-7xl mx-auto">
-            <Header />
+            <Header eventCount={eventsToShow.length} lastUpdated={new Date().toISOString()} />
             
             <SearchFilters
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
+              searchQuery={searchTerm}
+              onSearchChange={setSearchTerm}
               selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
+              onCategoryChange={setSelectedCategory}
               selectedAudience={selectedAudience}
-              setSelectedAudience={setSelectedAudience}
-              dateFrom={dateFrom}
-              setDateFrom={setDateFrom}
-              dateTo={dateTo}
-              setDateTo={setDateTo}
-              showFreeOnly={showFreeOnly}
-              setShowFreeOnly={setShowFreeOnly}
+              onAudienceChange={setSelectedAudience}
+              dateFrom={dateFrom ? dateFrom.toISOString().split('T')[0] : ''}
+              onDateFromChange={(date) => setDateFrom(date ? new Date(date) : null)}
+              dateTo={dateTo ? dateTo.toISOString().split('T')[0] : ''}
+              onDateToChange={(date) => setDateTo(date ? new Date(date) : null)}
+              showFreeEventsOnly={showFreeOnly}
+              onFreeEventsChange={setShowFreeOnly}
               onClearFilters={handleClearFilters}
-              hasActiveFilters={hasActiveFilters}
               eventCount={eventsToShow.length}
               view={view}
-              setView={setView}
+              onViewChange={setView}
             />
 
             {view === "calendar" && (
