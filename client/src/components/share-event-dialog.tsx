@@ -77,18 +77,33 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           resolve(true)
         }
         backgroundImg.onerror = () => {
-          console.log('App background failed to load, using gradient fallback')
-          // Fallback to gradient
-          const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-          gradient.addColorStop(0, '#6366f1')
-          gradient.addColorStop(1, '#f59e0b')
-          ctx.fillStyle = gradient
-          ctx.fillRect(0, 0, canvas.width, canvas.height)
-          console.log('Gradient background applied as fallback')
-          resolve(false)
+          console.log('App background failed to load, trying alternative path...')
+          // Try alternative path
+          const altImg = new Image()
+          altImg.crossOrigin = 'anonymous'
+          altImg.onload = () => {
+            console.log('Alternative app background loaded successfully')
+            ctx.drawImage(altImg, 0, 0, canvas.width, canvas.height)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            console.log('App background with overlay applied (alternative path)')
+            resolve(true)
+          }
+          altImg.onerror = () => {
+            console.log('All background paths failed, using gradient fallback')
+            // Fallback to gradient
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
+            gradient.addColorStop(0, '#6366f1')
+            gradient.addColorStop(1, '#f59e0b')
+            ctx.fillStyle = gradient
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            console.log('Gradient background applied as fallback')
+            resolve(false)
+          }
+          altImg.src = './attached_assets/Unbenannt-1-05_1752751777817.png'
         }
-        // Use the same background image as the app
-        backgroundImg.src = '/attached_assets/Unbenannt-1-05_1752751777817.png'
+        // Use the same background image as the app (try multiple paths)
+        backgroundImg.src = 'attached_assets/Unbenannt-1-05_1752751777817.png'
       })
 
       // Event image will only be used in the EventCard header, not as background overlay
@@ -125,8 +140,8 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.roundRect(cardX + 2, cardY + 2, cardWidth - 4, cardHeight - 4, cardRadius - 2)
       ctx.stroke()
 
-      // Event image area at top like favorites cards
-      const imageHeight = event.imageUrl ? 320 : 0
+      // Event image area at top - TALLER header image as requested
+      const imageHeight = event.imageUrl ? 420 : 0  // Increased from 320 to 420
       let contentStartY = cardY + 48
 
       if (event.imageUrl && imageHeight > 0) {
@@ -160,7 +175,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         }
         
         ctx.restore()
-        contentStartY = cardY + imageHeight + 72
+        contentStartY = cardY + imageHeight + 48  // Reduced spacing after image
       }
 
       // Content area with padding like favorites cards
@@ -189,47 +204,76 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         currentY += 60
       }
 
-      // Event title - larger and bold like favorites cards
+      // Event title - optimized for better space usage
       ctx.fillStyle = 'white'
-      ctx.font = 'bold 56px Helvetica, Arial, sans-serif'
+      ctx.font = 'bold 52px Helvetica, Arial, sans-serif'
       const titleLines = wrapText(ctx, event.title, cardWidth - 96)
       titleLines.forEach(line => {
         ctx.fillText(line, cardX + 48, currentY)
-        currentY += 70
+        currentY += 60  // Reduced line height
       })
 
-      currentY += 20
+      currentY += 15  // Reduced spacing
 
       // Subtitle in italic
       if (event.subtitle) {
-        ctx.font = 'italic 36px Helvetica, Arial, sans-serif'
+        ctx.font = 'italic 32px Helvetica, Arial, sans-serif'
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
         const subtitleLines = wrapText(ctx, event.subtitle, cardWidth - 96)
         subtitleLines.forEach(line => {
           ctx.fillText(line, cardX + 48, currentY)
-          currentY += 45
+          currentY += 38
+        })
+        currentY += 15
+      }
+
+      // DESCRIPTION TEXT - NEW addition as requested
+      if (event.description && event.description !== 'Details') {
+        ctx.font = '30px Helvetica, Arial, sans-serif'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'
+        const descLines = wrapText(ctx, event.description, cardWidth - 96)
+        // Limit to 3 lines to maintain layout
+        const limitedDescLines = descLines.slice(0, 3)
+        limitedDescLines.forEach((line, index) => {
+          const displayLine = index === 2 && descLines.length > 3 ? line + '...' : line
+          ctx.fillText(displayLine, cardX + 48, currentY)
+          currentY += 36
         })
         currentY += 20
       }
 
-      // Event details with icons - spaced like favorites cards
-      ctx.font = 'bold 34px Helvetica, Arial, sans-serif'
+      // Event details with icons - BETTER distribution in two columns
+      ctx.font = 'bold 32px Helvetica, Arial, sans-serif'
       ctx.fillStyle = 'white'
 
-      // Date with calendar icon
-      const eventDate = format(new Date(event.date + 'T12:00:00+02:00'), 'dd. MMMM yyyy', { locale: de })
-      ctx.fillText(`📅  ${eventDate}`, cardX + 48, currentY)
-      currentY += 55
+      // Create two columns for better space usage
+      const leftColumnX = cardX + 48
+      const rightColumnX = cardX + (cardWidth / 2) + 24
+      let leftY = currentY
+      let rightY = currentY
 
-      // Time with clock icon
+      // Date with calendar icon (left column)
+      const eventDate = format(new Date(event.date + 'T12:00:00+02:00'), 'dd. MMMM yyyy', { locale: de })
+      ctx.fillText(`📅  ${eventDate}`, leftColumnX, leftY)
+      leftY += 50
+
+      // Time with clock icon (left column)
       if (event.time) {
-        ctx.fillText(`🕐  ${event.time} Uhr`, cardX + 48, currentY)
-        currentY += 55
+        ctx.fillText(`🕐  ${event.time} Uhr`, leftColumnX, leftY)
+        leftY += 50
       }
 
-      // Location with map pin
-      ctx.fillText(`📍  ${event.location}`, cardX + 48, currentY)
-      currentY += 55
+      // Location with map pin (right column)
+      ctx.fillText(`📍  ${event.location}`, rightColumnX, rightY)
+      rightY += 50
+
+      // Organizer (right column if there's space)
+      if (event.organizer) {
+        ctx.font = 'bold 28px Helvetica, Arial, sans-serif'
+        ctx.fillText(`👥  ${event.organizer}`, rightColumnX, rightY)
+        ctx.font = 'bold 32px Helvetica, Arial, sans-serif'  // Reset font
+        rightY += 50
+      }
 
       // Price in bottom right like favorites cards
       if (event.price) {
