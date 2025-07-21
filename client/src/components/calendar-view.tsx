@@ -75,7 +75,8 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
       if (termineMatch) {
         const dates = termineMatch[1].split(',').map(d => d.trim());
         dates.forEach(dateStr => {
-          if (dateStr && dateStr !== event.date) { // Avoid duplicating the main date
+          const eventDateStr = typeof event.date === 'string' ? event.date : event.date?.toISOString();
+          if (dateStr && dateStr !== eventDateStr) { // Avoid duplicating the main date
             const eventDate = new Date(dateStr);
             const dateKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}-${eventDate.getDate()}`;
             if (!eventsByDate[dateKey]) {
@@ -662,7 +663,7 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
                 key={`monthly-event-${event.notionId}`}
                 event={event}
                 onClick={() => onEventClick?.(event)}
-                viewMode="grid"
+
               />
             ))}
         </div>

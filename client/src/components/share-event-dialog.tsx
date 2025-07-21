@@ -115,8 +115,8 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           // Draw the background image
           ctx.drawImage(backgroundImg, offsetX, offsetY, scaledWidth, scaledHeight);
           
-          // Add a subtle dark overlay to ensure text readability
-          ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+          // Add a stronger dark overlay for better text readability
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
           ctx.fillRect(0, 0, canvas.width, canvas.height);
           
           resolve(true);
@@ -191,8 +191,8 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const cardHeight = canvas.height - cardY - 160; // More space for copyright
       const cardRadius = 32;
 
-      // Liquid glass background
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+      // Liquid glass background - darker and more blurry effect
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
       ctx.beginPath();
       ctx.roundRect(cardX, cardY, cardWidth, cardHeight, cardRadius);
       ctx.fill();
