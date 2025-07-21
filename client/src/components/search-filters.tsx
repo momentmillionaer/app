@@ -125,19 +125,112 @@ export function SearchFilters({
         </div>
       </div>
 
-      {/* Filter Controls - Uniform button layout aligned with search field */}
-      <div className="flex items-center justify-between gap-3">
-        {/* Category Filter */}
-        <div className="flex-1">
+      {/* Filter Controls - Desktop: full buttons, Mobile: emoji-only circles */}
+      {!isMobile ? (
+        <div className="flex items-center justify-between gap-3">
+          {/* Category Filter */}
+          <div className="flex-1">
+            <Select value={selectedCategory} onValueChange={onCategoryChange}>
+              <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm font-medium px-4 justify-start">
+                <span className="mr-2 text-base">🎭</span>
+                <span className="text-white">
+                  {selectedCategory && selectedCategory !== "all" 
+                    ? categories.find(c => c === selectedCategory)?.replace(/^[^\s]+\s/, '') || "Kategorien"
+                    : "Kategorien"
+                  }
+                </span>
+              </SelectTrigger>
+              <SelectContent className="rounded-3xl border-0 ios-glass-popup">
+                <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Audience Filter */}
+          <div className="flex-1">
+            <Select value={selectedAudience} onValueChange={onAudienceChange}>
+              <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm font-medium px-4 justify-start">
+                <span className="mr-2 text-base">🎯</span>
+                <span className="text-white">
+                  {selectedAudience && selectedAudience !== "all" 
+                    ? audienceOptions.find(opt => opt.value === selectedAudience)?.label.replace(/^[^\s]+\s/, '') || "Zielgruppe"
+                    : "Zielgruppe"
+                  }
+                </span>
+              </SelectTrigger>
+              <SelectContent className="rounded-3xl border-0 ios-glass-popup">
+                {audienceOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Date Range Filter */}
+          <div className="flex-1">
+            <DateRangePicker
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+              onDateFromChange={onDateFromChange}
+              onDateToChange={onDateToChange}
+            />
+          </div>
+
+          {/* Free Events Filter */}
+          <div className="flex-1">
+            <Button
+              variant="outline"
+              onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
+              className={`h-10 rounded-full border-0 liquid-glass text-sm font-medium px-4 w-full justify-start transition-all duration-300 ${
+                showFreeEventsOnly 
+                  ? 'bg-gradient-to-r from-purple-500 to-orange-500 text-white hover:from-purple-600 hover:to-orange-600' 
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+            >
+              <span className="mr-2 text-base">🆓</span>
+              <span className="text-current">Kostenlos</span>
+            </Button>
+          </div>
+
+          {/* Add Event Button */}
+          <Button
+            onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
+            className="h-10 w-10 p-0 rounded-full liquid-glass bg-white/20 text-white transition-all duration-300 border-0 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 flex-shrink-0"
+            title="Event hinzufügen"
+          >
+            <span className="text-base">➕</span>
+          </Button>
+
+          {/* Clear Filters Button */}
+          {hasActiveFilters && (
+            <Button
+              variant="outline"
+              onClick={onClearFilters}
+              className="h-10 w-10 p-0 rounded-full border-0 liquid-glass bg-white/20 text-white hover:bg-white/30 transition-all duration-200 flex-shrink-0"
+              title="Filter löschen"
+            >
+              <span className="text-base">🗑️</span>
+            </Button>
+          )}
+        </div>
+      ) : (
+        /* Mobile: Emoji-only circular buttons with equal spacing */
+        <div className="flex items-center justify-center gap-4 px-2">
+          {/* Category Filter Mobile */}
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm font-medium px-4 justify-start">
-              <span className="mr-2 text-base">🎭</span>
-              <span className="text-white">
-                {selectedCategory && selectedCategory !== "all" 
-                  ? categories.find(c => c === selectedCategory)?.replace(/^[^\s]+\s/, '') || "Kategorien"
-                  : "Kategorien"
-                }
-              </span>
+            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-lg transition-all duration-300 ${
+              selectedCategory && selectedCategory !== "all" 
+                ? 'bg-gradient-to-r from-orange-500 to-purple-600 text-white' 
+                : 'bg-white/20 text-white hover:bg-white/30'
+            }`}>
+              <span>🎭</span>
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
@@ -148,19 +241,15 @@ export function SearchFilters({
               ))}
             </SelectContent>
           </Select>
-        </div>
 
-        {/* Audience Filter */}
-        <div className="flex-1">
+          {/* Audience Filter Mobile */}
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
-            <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm font-medium px-4 justify-start">
-              <span className="mr-2 text-base">🎯</span>
-              <span className="text-white">
-                {selectedAudience && selectedAudience !== "all" 
-                  ? audienceOptions.find(opt => opt.value === selectedAudience)?.label.replace(/^[^\s]+\s/, '') || "Zielgruppe"
-                  : "Zielgruppe"
-                }
-              </span>
+            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-lg transition-all duration-300 ${
+              selectedAudience && selectedAudience !== "all" 
+                ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white' 
+                : 'bg-white/20 text-white hover:bg-white/30'
+            }`}>
+              <span>🎯</span>
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               {audienceOptions.map((option) => (
@@ -170,55 +259,52 @@ export function SearchFilters({
               ))}
             </SelectContent>
           </Select>
-        </div>
 
-        {/* Date Range Filter */}
-        <div className="flex-1">
+          {/* Date Range Filter Mobile */}
           <DateRangePicker
             dateFrom={dateFrom}
             dateTo={dateTo}
             onDateFromChange={onDateFromChange}
             onDateToChange={onDateToChange}
+            mobile={true}
           />
-        </div>
 
-        {/* Free Events Filter */}
-        <div className="flex-1">
+          {/* Free Events Filter Mobile */}
           <Button
             variant="outline"
             onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
-            className={`h-10 rounded-full border-0 liquid-glass text-sm font-medium px-4 w-full justify-start transition-all duration-300 ${
+            className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-lg transition-all duration-300 ${
               showFreeEventsOnly 
-                ? 'bg-gradient-to-r from-purple-500 to-orange-500 text-white hover:from-purple-600 hover:to-orange-600' 
+                ? 'bg-gradient-to-r from-purple-500 to-orange-500 text-white' 
                 : 'bg-white/20 text-white hover:bg-white/30'
             }`}
+            title="Kostenlose Events"
           >
-            <span className="mr-2 text-base">🆓</span>
-            <span className="text-current">Kostenlos</span>
+            <span>🆓</span>
           </Button>
-        </div>
 
-        {/* Add Event Button */}
-        <Button
-          onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-          className="h-10 w-10 p-0 rounded-full liquid-glass bg-white/20 text-white transition-all duration-300 border-0 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 flex-shrink-0"
-          title="Event hinzufügen"
-        >
-          <span className="text-base">➕</span>
-        </Button>
-
-        {/* Clear Filters Button */}
-        {hasActiveFilters && (
+          {/* Add Event Button Mobile */}
           <Button
-            variant="outline"
-            onClick={onClearFilters}
-            className="h-10 w-10 p-0 rounded-full border-0 liquid-glass bg-white/20 text-white hover:bg-white/30 transition-all duration-200 flex-shrink-0"
-            title="Filter löschen"
+            onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
+            className="h-12 w-12 p-0 rounded-full liquid-glass bg-white/20 text-white transition-all duration-300 border-0 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 text-lg"
+            title="Event hinzufügen"
           >
-            <span className="text-base">🗑️</span>
+            <span>➕</span>
           </Button>
-        )}
-      </div>
+
+          {/* Clear Filters Button Mobile */}
+          {hasActiveFilters && (
+            <Button
+              variant="outline"
+              onClick={onClearFilters}
+              className="h-12 w-12 p-0 rounded-full border-0 liquid-glass bg-white/20 text-white hover:bg-white/30 transition-all duration-200 text-lg"
+              title="Filter löschen"
+            >
+              <span>🗑️</span>
+            </Button>
+          )}
+        </div>
+      )}
 
       {/* Active Filters Display */}
       {hasActiveFilters && (

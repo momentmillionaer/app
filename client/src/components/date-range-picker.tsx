@@ -12,9 +12,10 @@ interface DateRangePickerProps {
   dateTo?: string;
   onDateFromChange: (date: string) => void;
   onDateToChange: (date: string) => void;
+  mobile?: boolean;
 }
 
-export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToChange }: DateRangePickerProps) {
+export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToChange, mobile = false }: DateRangePickerProps) {
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<'single' | 'range'>('single');
@@ -113,15 +114,15 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
         <Button
           variant="outline"
           className={`
-            rounded-full border-0 liquid-glass text-white bg-white/20 hover:bg-white/30
-            ${isMobile 
-              ? 'w-10 h-10 p-0 justify-center' 
-              : 'py-2 px-3 min-w-[140px] justify-between'
+            rounded-full border-0 liquid-glass text-white hover:bg-white/30 transition-all duration-300
+            ${mobile || isMobile 
+              ? `h-12 w-12 p-0 text-lg ${(dateFrom || dateTo) ? 'bg-gradient-to-r from-lime-500 to-green-500' : 'bg-white/20'}` 
+              : `py-2 px-3 min-w-[140px] justify-between bg-white/20 ${(dateFrom || dateTo) ? 'bg-gradient-to-r from-lime-500 to-green-500' : 'bg-white/20'}`
             }
           `}
         >
-          {isMobile ? (
-            <span className="text-sm">📅</span>
+          {mobile || isMobile ? (
+            <span>📅</span>
           ) : (
             <>
               <span className="text-sm mr-2">📅</span>
