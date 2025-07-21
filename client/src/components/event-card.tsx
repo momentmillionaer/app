@@ -74,10 +74,11 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
       {event.imageUrl && !imageError && (
         <div className="mb-4 overflow-hidden rounded-2xl" style={{ aspectRatio: '16/9' }}>
           <img
-            src={event.imageUrl}
-            alt={event.title}
+            src={event.imageUrl || ''}
+            alt={event.title || 'Event'}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
+            loading="eager"
+            decoding="async"
             crossOrigin="anonymous"
             onError={(e) => {
               console.error('Image loading failed:', event.imageUrl);
@@ -88,7 +89,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
                 console.log('Retrying without crossOrigin...');
                 img.crossOrigin = '';
                 img.src = '';
-                img.src = event.imageUrl;
+                img.src = event.imageUrl || '';
                 return;
               }
               
@@ -97,7 +98,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
                 console.log('Retrying with no-referrer policy...');
                 img.referrerPolicy = "no-referrer";
                 img.src = '';
-                img.src = event.imageUrl;
+                img.src = event.imageUrl || '';
                 return;
               }
               

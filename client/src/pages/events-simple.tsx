@@ -104,8 +104,27 @@ export default function Events() {
     return true;
   });
 
-  const favoriteEvents = events.filter(event => event.isFavorite);
-  const eventsToShow = view === "favorites" ? favoriteEvents : filteredEvents;
+  // Filter past events for grid and favorites view
+  const filterPastEvents = (eventsArray: Event[]) => {
+    if (view === "grid" || view === "favorites") {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0); // Start of today in Vienna timezone
+      
+      return eventsArray.filter(event => {
+        const eventDate = new Date(event.date || '');
+        eventDate.setHours(0, 0, 0, 0);
+        return eventDate >= now; // Only future and today's events
+      });
+    }
+    return eventsArray;
+  };
+
+  const favoriteEvents = filterPastEvents(events.filter(event => event.isFavorite));
+  const gridFilteredEvents = filterPastEvents(filteredEvents);
+  
+  const eventsToShow = view === "favorites" ? favoriteEvents : 
+                     view === "grid" ? gridFilteredEvents : 
+                     filteredEvents;
 
   // Check if any filter is active
   const hasActiveFilters = searchTerm || selectedCategory || selectedAudience || dateFrom || dateTo || showFreeOnly;
