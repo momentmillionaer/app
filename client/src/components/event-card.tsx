@@ -52,7 +52,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
   return (
     <div
       onClick={onClick}
-      className="group cursor-pointer liquid-glass-card rounded-[2rem] p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/20"
+      className="group cursor-pointer liquid-glass-card rounded-[2rem] p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/20 relative"
       style={{
         background: 'rgba(255, 255, 255, 0.06)',
         backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
@@ -64,6 +64,12 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
         })
       }}
     >
+      {/* Free Event Emoji - small, bottom right */}
+      {event.price === "0" && (
+        <div className="absolute bottom-4 right-4 text-2xl">
+          🆓
+        </div>
+      )}
       {/* Event Image */}
       {event.imageUrl && !imageError && (
         <div className="mb-4 overflow-hidden rounded-2xl" style={{ aspectRatio: '16/9' }}>
@@ -171,12 +177,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
 
         {/* Badges */}
         <div className="flex flex-wrap gap-2">
-          {/* Free Event Badge - only show if price is explicitly "0" */}
-          {event.price === "0" && (
-            <Badge className="bg-brand-lime/20 text-brand-lime border-brand-lime/40 font-bold text-xs px-3 py-1">
-              🆓 GRATIS
-            </Badge>
-          )}
+
           
           {/* Favorite Badge */}
           {event.isFavorite && (
