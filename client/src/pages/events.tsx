@@ -1,32 +1,26 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Header } from "@/components/header";
-import { SearchFilters } from "@/components/search-filters";
-import { CalendarView } from "@/components/calendar-view";
-import { GridView } from "@/components/grid-view";
-import { FavoritesView } from "@/components/favorites-view";
+import SearchFilters from "@/components/search-filters";
 import { EventCard } from "@/components/event-card";
+import { Header } from "@/components/header";
 import { EventModal } from "@/components/event-modal";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CalendarX, List, Calendar, Grid3X3, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { InstagramPreview } from "@/components/instagram-preview";
+import { CalendarView } from "@/components/calendar-view";
+import { FavoritesView } from "@/components/favorites-view";
 import { Footer } from "@/components/footer";
+import { InstagramPreview } from "@/components/instagram-preview";
 import { LatestEventPopup } from "@/components/latest-event-popup";
-import type { Event } from "@shared/schema";
+import { Card } from "@/components/ui/card";
+import { type Event } from "@shared/schema";
 
-export default function EventsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedAudience, setSelectedAudience] = useState("all");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
-  const [showFreeEventsOnly, setShowFreeEventsOnly] = useState(false);
-  const [sortOption, setSortOption] = useState("date-asc");
-  const [viewMode, setViewMode] = useState<"calendar" | "list" | "grid" | "favorites">("calendar");
-  const [userChangedView, setUserChangedView] = useState(false);
+export default function Events() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedAudience, setSelectedAudience] = useState("");
+  const [dateFrom, setDateFrom] = useState<Date | null>(null);
+  const [dateTo, setDateTo] = useState<Date | null>(null);
+  const [showFreeOnly, setShowFreeOnly] = useState(false);
+  const [view, setView] = useState<"calendar" | "list" | "grid" | "favorites">("calendar");
+
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -56,9 +50,9 @@ export default function EventsPage() {
   console.log('Is loading:', isLoading);
   console.log('Error:', error);
 
-  // Merge events with identical titles and process dates
+  // FIXED: Enhanced merge logic with proper subtitle handling
   const mergedEvents = useMemo(() => {
-    const eventMap = new Map<string, Event>();
+    const eventMap = new Map<string, Event & { allDatesWithSubtitles?: Array<{date: string, subtitle: string}> }>();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
@@ -66,8 +60,19 @@ export default function EventsPage() {
       const title = event.title;
       if (eventMap.has(title)) {
         const existing = eventMap.get(title)!;
+        console.log(`🔄 Merging event "${title}": existing date=${existing.date}, new date=${event.date}`);
+        console.log(`🏷️ Existing subtitle: "${existing.subtitle}", new subtitle: "${event.subtitle}"`);
+        
+        // Initialize date-subtitle mapping if not exists
+        if (!existing.allDatesWithSubtitles) {
+          existing.allDatesWithSubtitles = [{date: existing.date, subtitle: existing.subtitle}];
+        }
+        
         // Merge logic: keep first event but combine dates if different
         if (existing.date !== event.date && event.date) {
+          // Add new date-subtitle mapping
+          existing.allDatesWithSubtitles.push({date: event.date, subtitle: event.subtitle});
+          
           // If dates are different, create a multi-date description
           if (!existing.description.includes('Termine:')) {
             existing.description = `Termine: ${existing.date}${event.date ? `, ${event.date}` : ''}${existing.description ? `\n\n${existing.description}` : ''}`;
@@ -91,7 +96,7 @@ export default function EventsPage() {
           existing.attendees = existing.attendees ? `${existing.attendees}, ${event.attendees}` : event.attendees;
         }
       } else {
-        eventMap.set(title, { ...event });
+        eventMap.set(title, { ...event, allDatesWithSubtitles: [{date: event.date, subtitle: event.subtitle}] });
       }
     });
 
@@ -115,7 +120,19 @@ export default function EventsPage() {
           if (futureDates.length > 0) {
             // Sort future dates and use the earliest as main date
             futureDates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-            event.date = futureDates[0];
+            const earliestFutureDate = futureDates[0];
+            event.date = earliestFutureDate;
+            
+            // FIXED: Find and use the subtitle for the earliest future date
+            if (event.allDatesWithSubtitles) {
+              const matchingDateSubtitle = event.allDatesWithSubtitles.find(
+                item => item.date === earliestFutureDate
+              );
+              if (matchingDateSubtitle && matchingDateSubtitle.subtitle) {
+                event.subtitle = matchingDateSubtitle.subtitle;
+                console.log(`✅ Using subtitle "${matchingDateSubtitle.subtitle}" for date ${earliestFutureDate}`);
+              }
+            }
             
             // Update description to only show future dates
             if (futureDates.length > 1) {
@@ -127,511 +144,238 @@ export default function EventsPage() {
               event.description = originalDescription;
             }
           } else {
-            // No future dates, keep original logic but mark as past
-            // This will be filtered out later
+            // No future dates, filter out this event
+            return null;
+          }
+        }
+      } else {
+        // Single date event - check if it's in the future
+        if (event.date) {
+          const eventDate = new Date(event.date);
+          if (eventDate < today) {
+            return null; // Filter out past events
           }
         }
       }
       
+      // Clean up temporary field
+      delete event.allDatesWithSubtitles;
       return event;
-    });
+    }).filter((event): event is Event => event !== null);
 
     return processedEvents;
   }, [events]);
 
-  // Helper function to check if an event is in the past
-  const isEventInPast = (event: Event): boolean => {
-    if (!event.date) return false;
-    const eventDate = new Date(event.date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to start of day for comparison
-    return eventDate < today;
-  };
-
-  // Helper function to check if an event has any future dates
-  const hasEventFutureDates = (event: Event): boolean => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // Since we now process events to set the main date to the next future date,
-    // we just need to check if the main date is in the future
-    if (event.date) {
-      const mainDate = new Date(event.date);
-      return mainDate >= today;
-    }
-    
-    return false;
-  };
-
-  // Filtered and sorted events (includes all events, past events will be grayed out in components)
+  // Filter events based on search criteria
   const filteredEvents = useMemo(() => {
-    let filtered = mergedEvents;
+    return mergedEvents.filter(event => {
+      // Text search
+      if (searchTerm && !event.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
+          !event.description.toLowerCase().includes(searchTerm.toLowerCase()) &&
+          !event.location.toLowerCase().includes(searchTerm.toLowerCase()) &&
+          !event.organizer.toLowerCase().includes(searchTerm.toLowerCase())) {
+        return false;
+      }
 
-    // Apply filters
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(event =>
-        event.title.toLowerCase().includes(query) ||
-        (event.description && event.description.toLowerCase().includes(query)) ||
-        (event.location && event.location.toLowerCase().includes(query))
-      );
-    }
+      // Category filter
+      if (selectedCategory && !event.categories.includes(selectedCategory)) {
+        return false;
+      }
 
-    if (selectedCategory && selectedCategory !== "all") {
-      filtered = filtered.filter(event => event.category === selectedCategory);
-    }
+      // Audience filter (looking for specific audience emoji or indicator)
+      if (selectedAudience && !event.attendees?.includes(selectedAudience)) {
+        return false;
+      }
 
-    // Filter by audience
-    if (selectedAudience && selectedAudience !== "all") {
-      filtered = filtered.filter(event => {
-        if (!event.attendees) return false;
-        // Split attendees by comma and check if any matches the selected audience
-        const eventAudiences = event.attendees.split(',').map(a => a.trim());
-        return eventAudiences.includes(selectedAudience);
-      });
-    }
-
-    // Filter by free events only
-    if (showFreeEventsOnly) {
-      filtered = filtered.filter(event => {
-        if (!event.price) return false; // No price field does NOT mean free
-        const eventPrice = parseFloat(event.price);
-        return !isNaN(eventPrice) && eventPrice === 0;
-      });
-    }
-
-    // Date filtering - exact match for single date, range for date range
-    if (dateFrom && !dateTo) {
-      // Single date selected - show only events on this exact date
-      filtered = filtered.filter(event => {
-        if (!event.date) return false;
+      // Date filters
+      if (dateFrom || dateTo) {
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0);
         
-        // Check main date
-        const eventDateStr = typeof event.date === 'string' ? event.date : event.date.toISOString().split('T')[0];
-        if (eventDateStr === dateFrom) return true;
-        
-        // Check if event has multiple dates in description
-        if (event.description && event.description.includes('Termine:')) {
-          const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
-          if (termineMatch) {
-            const dates = termineMatch[1].split(',').map(d => d.trim());
-            return dates.includes(dateFrom);
-          }
-        }
-        
-        // Check endDate for multi-day events
-        if (event.endDate) {
-          const startDate = new Date(typeof event.date === 'string' ? event.date : event.date);
-          const endDate = new Date(event.endDate);
-          const selectedDate = new Date(dateFrom);
-          return selectedDate >= startDate && selectedDate <= endDate;
-        }
-        
-        return false;
-      });
-    } else if (dateFrom && dateTo) {
-      // Date range filtering
-      filtered = filtered.filter(event => {
-        if (!event.date) return false;
-        const eventDateStr = typeof event.date === 'string' ? event.date : event.date.toISOString().split('T')[0];
-        return eventDateStr >= dateFrom && eventDateStr <= dateTo;
-      });
-    }
-
-    // Apply sorting
-    switch (sortOption) {
-      case "date-desc":
-        filtered.sort((a, b) => {
-          if (!a.date) return 1;
-          if (!b.date) return -1;
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
-        });
-        break;
-      case "title":
-        filtered.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case "category":
-        filtered.sort((a, b) => a.category.localeCompare(b.category));
-        break;
-      default: // date-asc
-        filtered.sort((a, b) => {
-          if (!a.date) return 1;
-          if (!b.date) return -1;
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
-        });
-    }
-
-    return filtered;
-  }, [mergedEvents, searchQuery, selectedCategory, selectedAudience, dateFrom, dateTo, showFreeEventsOnly, sortOption]);
-
-  // Events for list and grid views - hide completely past events, but show events with future dates
-  const eventsForListAndGrid = useMemo(() => {
-    return filteredEvents.filter(event => {
-      // Show events that have any future dates (main date or additional dates)
-      return hasEventFutureDates(event);
-    });
-  }, [filteredEvents, hasEventFutureDates]);
-
-  // Events for favorites view - only show favorite events
-  const favoriteEvents = useMemo(() => {
-    return eventsForListAndGrid.filter(event => event.isFavorite);
-  }, [eventsForListAndGrid]);
-
-  // Events for calendar view - show all events with original dates (past events will be grayed out in calendar component)
-  const eventsForCalendar = useMemo(() => {
-    // For calendar view, we want to show ALL dates (including past ones)
-    // So we need to re-process the original events without filtering past dates
-    const eventMap = new Map<string, Event>();
-    
-    events.forEach(event => {
-      const title = event.title;
-      if (eventMap.has(title)) {
-        const existing = eventMap.get(title)!;
-        // Merge logic: keep first event but combine dates if different
-        if (existing.date !== event.date && event.date) {
-          // If dates are different, create a multi-date description
-          if (!existing.description.includes('Termine:')) {
-            existing.description = `Termine: ${existing.date}${event.date ? `, ${event.date}` : ''}${existing.description ? `\n\n${existing.description}` : ''}`;
-          } else {
-            // Add to existing dates list
-            const termineMatch = existing.description.match(/^Termine: ([^\n]+)/);
-            if (termineMatch) {
-              existing.description = existing.description.replace(
-                /^Termine: ([^\n]+)/, 
-                `Termine: ${termineMatch[1]}, ${event.date}`
-              );
-            }
-          }
-        }
-        // Use image from first event with valid image
-        if (!existing.imageUrl && event.imageUrl) {
-          existing.imageUrl = event.imageUrl;
-        }
-        // Combine attendees if different
-        if (event.attendees && !existing.attendees.includes(event.attendees)) {
-          existing.attendees = existing.attendees ? `${existing.attendees}, ${event.attendees}` : event.attendees;
-        }
-      } else {
-        eventMap.set(title, { ...event });
-      }
-    });
-
-    return Array.from(eventMap.values()).filter(event => {
-      // Apply same filtering logic as filteredEvents but keep all dates
-      if (searchQuery && !event.title.toLowerCase().includes(searchQuery.toLowerCase()) && 
-          !event.description.toLowerCase().includes(searchQuery.toLowerCase())) {
-        return false;
-      }
-      if (selectedCategory && selectedCategory !== "all" && event.category !== selectedCategory) {
-        return false;
-      }
-      if (selectedAudience && selectedAudience !== "all" && !event.attendees.includes(selectedAudience)) {
-        return false;
-      }
-      if (showFreeEventsOnly && event.price && event.price !== "0") {
-        return false;
-      }
-      // Apply same date filtering logic for calendar
-      if (dateFrom && !dateTo) {
-        // Single date selected
-        if (event.date !== dateFrom) {
-          // Check if event has multiple dates in description
-          if (event.description.includes('Termine:')) {
-            const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
-            if (termineMatch) {
-              const dates = termineMatch[1].split(',').map(d => d.trim());
-              if (!dates.includes(dateFrom)) return false;
-            } else {
-              return false;
-            }
-          } else {
+        // Handle single date selection (when dateFrom is set but not dateTo)
+        if (dateFrom && !dateTo) {
+          const fromDate = new Date(dateFrom);
+          fromDate.setHours(0, 0, 0, 0);
+          
+          // For single date, show exact match OR events that span this date
+          const matchesExactDate = eventDate.getTime() === fromDate.getTime();
+          const isMultiDayEvent = event.description.startsWith('Termine:') && event.description.includes(fromDate.toISOString().split('T')[0]);
+          
+          if (!matchesExactDate && !isMultiDayEvent) {
             return false;
           }
         }
-      } else if (dateFrom && dateTo) {
-        // Date range filtering
-        if (event.date && (event.date < dateFrom || event.date > dateTo)) {
-          return false;
+        
+        // Handle date range selection
+        if (dateFrom && dateTo) {
+          const fromDate = new Date(dateFrom);
+          const toDate = new Date(dateTo);
+          fromDate.setHours(0, 0, 0, 0);
+          toDate.setHours(23, 59, 59, 999);
+          
+          if (eventDate < fromDate || eventDate > toDate) {
+            return false;
+          }
         }
-      } else if (dateFrom) {
-        // Only dateFrom specified (fallback)
-        if (event.date && event.date < dateFrom) {
+      }
+
+      // Free events filter
+      if (showFreeOnly) {
+        const price = parseFloat(event.price || "0");
+        if (price > 0) {
           return false;
         }
       }
+
       return true;
     });
-  }, [events, searchQuery, selectedCategory, selectedAudience, dateFrom, dateTo, showFreeEventsOnly]);
+  }, [mergedEvents, searchTerm, selectedCategory, selectedAudience, dateFrom, dateTo, showFreeOnly]);
 
-  const clearFilters = () => {
-    setSearchQuery("");
-    setSelectedCategory("all");
-    setSelectedAudience("all");
-    setDateFrom("");
-    setDateTo("");
-    setShowFreeEventsOnly(false);
+  // Sort by date
+  const sortedEvents = useMemo(() => {
+    return [...filteredEvents].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateA.getTime() - dateB.getTime();
+    });
+  }, [filteredEvents]);
+
+  const favoriteEvents = useMemo(() => {
+    return mergedEvents.filter(event => event.isFavorite);
+  }, [mergedEvents]);
+
+  // Clear all filters
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("");
+    setSelectedAudience("");
+    setDateFrom(null);
+    setDateTo(null);
+    setShowFreeOnly(false);
   };
 
   // Check if any filters are active
-  const hasActiveFilters = searchQuery || 
-    (selectedCategory && selectedCategory !== "all") || 
-    (selectedAudience && selectedAudience !== "all") || 
-    dateFrom || 
-    dateTo || 
-    showFreeEventsOnly;
+  const hasActiveFilters = searchTerm || selectedCategory || selectedAudience || dateFrom || dateTo || showFreeOnly;
 
-  // Auto-switch to grid view when filters are applied (unless user manually changed view)
-  useEffect(() => {
-    if (hasActiveFilters && !userChangedView) {
-      setViewMode("grid");
-    } else if (!hasActiveFilters && !userChangedView) {
-      setViewMode("calendar");
-    }
-  }, [hasActiveFilters, userChangedView]);
-
-  // Reset user changed view when filters are cleared
-  useEffect(() => {
-    if (!hasActiveFilters) {
-      setUserChangedView(false);
-    }
-  }, [hasActiveFilters]);
-
-  const getLastUpdated = () => {
-    const now = new Date();
-    return `vor ${Math.floor((now.getTime() - (now.getTime() % (2 * 60 * 1000))) / (60 * 1000))} Min.`;
-  };
-
-  const getFilterSummary = () => {
-    const parts = [];
-    if (selectedCategory && selectedCategory !== "all") {
-      parts.push(selectedCategory);
-    }
-    if (selectedAudience && selectedAudience !== "all") {
-      parts.push(selectedAudience);
-    }
-    if (dateFrom && dateTo) {
-      parts.push(`${dateFrom} bis ${dateTo}`);
-    } else if (dateFrom) {
-      parts.push(`ab ${dateFrom}`);
-    } else if (dateTo) {
-      parts.push(`bis ${dateTo}`);
-    }
-    return parts.length > 0 ? ` • ${parts.join(" • ")}` : "";
-  };
-
-  if (error) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen">
-        <Header eventCount={0} lastUpdated="Fehler" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <Alert variant="destructive">
-            <AlertDescription>
-              Fehler beim Laden der Events: {error instanceof Error ? error.message : "Unbekannter Fehler"}
-              <br />
-              <br />
-              Stellen Sie sicher, dass:
-              <br />
-              • NOTION_INTEGRATION_SECRET korrekt gesetzt ist
-              <br />
-              • NOTION_PAGE_URL auf eine gültige Notion-Seite verweist
-              <br />
-              • Die Events-Datenbank existiert (führen Sie setup-notion.ts aus)
-              <br />
-              • Die Notion-Integration Zugriff auf die Seite hat
-            </AlertDescription>
-          </Alert>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <Header />
+          <div className="flex justify-center items-center h-64">
+            <div className="text-lg">Loading events...</div>
+          </div>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen">
-
-      
-      <Header eventCount={events.length} lastUpdated={getLastUpdated()} />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-        <div className="mt-0">
-          <SearchFilters
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            dateFrom={dateFrom}
-            onDateFromChange={setDateFrom}
-            dateTo={dateTo}
-            onDateToChange={setDateTo}
-            selectedAudience={selectedAudience}
-            onAudienceChange={setSelectedAudience}
-            showFreeEventsOnly={showFreeEventsOnly}
-            onFreeEventsChange={setShowFreeEventsOnly}
-            onClearFilters={clearFilters}
-            eventCount={viewMode === "calendar" ? eventsForCalendar.length : 
-                       viewMode === "favorites" ? favoriteEvents.length : 
-                       eventsForListAndGrid.length}
-          />
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <Header />
+          <Card className="p-6 bg-red-50 border-red-200">
+            <p className="text-red-800">Error loading events. Please try again later.</p>
+            <button 
+              onClick={() => refetch()}
+              className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            >
+              Retry
+            </button>
+          </Card>
         </div>
-
-
-
-        {/* View Mode Toggle */}
-        <div className="flex flex-col items-center mb-6 space-y-4">
-          
-          {/* Conni's Favoriten Title - Only for Favorites View */}
-
-
-          {/* View Mode Toggle - Always Centered */}
-          <div className="flex flex-col items-center space-y-4">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  setViewMode("calendar");
-                  setUserChangedView(true);
-                }}
-                className={`w-12 h-12 rounded-full transition-all duration-300 ${
-                  viewMode === "calendar"
-                    ? 'liquid-glass-button border border-white/25 text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600'
-                    : 'text-white/60 hover:text-white/80'
-                }`}
-              >
-                <Calendar className="h-5 w-5 mx-auto" />
-              </button>
-              <button
-                onClick={() => {
-                  setViewMode("list");
-                  setUserChangedView(true);
-                }}
-                className={`w-12 h-12 rounded-full transition-all duration-300 ${
-                  viewMode === "list"
-                    ? 'liquid-glass-button border border-white/25 text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600'
-                    : 'text-white/60 hover:text-white/80'
-                }`}
-              >
-                <List className="h-5 w-5 mx-auto" />
-              </button>
-              <button
-                onClick={() => {
-                  setViewMode("grid");
-                  setUserChangedView(true);
-                }}
-                className={`w-12 h-12 rounded-full transition-all duration-300 ${
-                  viewMode === "grid"
-                    ? 'liquid-glass-button border border-white/25 text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600'
-                    : 'text-white/60 hover:text-white/80'
-                }`}
-              >
-                <Grid3X3 className="h-5 w-5 mx-auto" />
-              </button>
-              <button
-                onClick={() => {
-                  setViewMode("favorites");
-                  setUserChangedView(true);
-                }}
-                className={`w-12 h-12 rounded-full transition-all duration-300 ${
-                  viewMode === "favorites"
-                    ? 'liquid-glass-button border border-white/25 text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600'
-                    : 'text-white/60 hover:text-white/80'
-                }`}
-              >
-                <Star className="h-5 w-5 mx-auto" />
-              </button>
-            </div>
-            
-            {(viewMode === "grid" || viewMode === "favorites") && (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-white/80 drop-shadow-sm">Sortierung:</span>
-                <Select value={sortOption} onValueChange={setSortOption}>
-                  <SelectTrigger className="w-40 rounded-full border-0 liquid-glass bg-white/20 text-white">
-                    <SelectValue className="text-white" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-3xl border-0 ios-glass-popup">
-                    <SelectItem value="date-asc" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Datum (aufsteigend)</SelectItem>
-                    <SelectItem value="date-desc" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Datum (absteigend)</SelectItem>
-                    <SelectItem value="title" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Titel (A-Z)</SelectItem>
-                    <SelectItem value="category" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Kategorie</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Content Area */}
-        {isLoading ? (
-          <div className="space-y-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="liquid-glass rounded-[2rem] p-8">
-                <div className="flex space-x-4">
-                  <Skeleton className="w-20 h-20 rounded-lg" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-3 w-1/2" />
-                    <Skeleton className="h-3 w-5/6" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (viewMode === "calendar" ? eventsForCalendar.length : 
-              viewMode === "favorites" ? favoriteEvents.length : 
-              eventsForListAndGrid.length) === 0 ? (
-          <div className="text-center py-12">
-            <CalendarX className="mx-auto h-12 w-12 text-white/50 mb-4" />
-            <h3 className="text-lg font-medium text-white drop-shadow-sm mb-2">
-              {viewMode === "favorites" ? "Keine Favoriten gefunden" : "Keine Events gefunden"}
-            </h3>
-            <p className="text-white/80 drop-shadow-sm mb-6">
-              {viewMode === "favorites" 
-                ? "Markiere Events als Favoriten, um sie hier zu sehen."
-                : events.length === 0 
-                  ? "Es sind noch keine Events in der Datenbank verfügbar."
-                  : "Versuchen Sie, Ihre Suchkriterien oder Filter anzupassen."
-              }
-            </p>
-            {(searchQuery || selectedCategory || dateFrom || dateTo) && (
-              <Button
-                className="bg-brand-blue hover:bg-brand-lime text-white rounded-full transition-colors"
-                onClick={clearFilters}
-              >
-                Filter zurücksetzen
-              </Button>
-            )}
-          </div>
-        ) : viewMode === "calendar" ? (
-          <CalendarView events={eventsForCalendar} onEventClick={handleEventClick} />
-        ) : viewMode === "favorites" ? (
-          <FavoritesView events={favoriteEvents} onEventClick={handleEventClick} />
-        ) : viewMode === "list" ? (
-          <div className="space-y-6">
-            {eventsForListAndGrid.map((event, index) => (
-              <EventCard 
-                key={`${event.notionId}-${index}`} 
-                event={event} 
-                onClick={() => handleEventClick(event)}
-              />
-            ))}
-          </div>
-        ) : (
-          <GridView events={eventsForListAndGrid} onEventClick={handleEventClick} />
-        )}
-
-        {/* Event Modal */}
-        <EventModal 
-          event={selectedEvent}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-        />
-
-        {/* Instagram Preview */}
-        <InstagramPreview />
-
-        {/* Footer */}
-        <Footer />
-
-        {/* Latest Event Popup */}
-        <LatestEventPopup events={events} onEventClick={handleEventClick} />
       </div>
+    );
+  }
+
+  const eventsToShow = view === "favorites" ? favoriteEvents : sortedEvents;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <div 
+        className="min-h-screen bg-cover bg-center bg-fixed relative"
+        style={{
+          backgroundImage: `url('/classical-painting.jpg')`,
+          backgroundBlendMode: 'overlay'
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40"></div>
+        
+        <div className="relative z-10 p-6">
+          <div className="max-w-7xl mx-auto">
+            <Header />
+            
+            <SearchFilters
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              selectedAudience={selectedAudience}
+              setSelectedAudience={setSelectedAudience}
+              dateFrom={dateFrom}
+              setDateFrom={setDateFrom}
+              dateTo={dateTo}
+              setDateTo={setDateTo}
+              showFreeOnly={showFreeOnly}
+              setShowFreeOnly={setShowFreeOnly}
+              onClearFilters={handleClearFilters}
+              hasActiveFilters={hasActiveFilters}
+              eventCount={eventsToShow.length}
+              view={view}
+              setView={setView}
+            />
+
+            {view === "calendar" && (
+              <CalendarView 
+                events={mergedEvents} 
+                onEventClick={handleEventClick}
+              />
+            )}
+
+            {view === "favorites" && (
+              <FavoritesView 
+                events={favoriteEvents} 
+                onEventClick={handleEventClick}
+              />
+            )}
+
+            {(view === "list" || view === "grid") && (
+              <div className={`grid gap-6 ${
+                view === "grid" 
+                  ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                  : "grid-cols-1"
+              }`}>
+                {eventsToShow.map((event) => (
+                  <EventCard
+                    key={event.notionId}
+                    event={event}
+                    onClick={() => handleEventClick(event)}
+                    view={view}
+                  />
+                ))}
+                {eventsToShow.length === 0 && (
+                  <div className="text-center py-12 text-gray-600">
+                    <p className="text-lg font-semibold mb-2">Keine Events gefunden</p>
+                    <p>Probiere andere Filter oder erweitere den Zeitraum.</p>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <InstagramPreview />
+            <Footer />
+          </div>
+        </div>
+      </div>
+
+      <EventModal
+        event={selectedEvent}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+
+      <LatestEventPopup events={mergedEvents} onEventClick={handleEventClick} />
     </div>
   );
 }

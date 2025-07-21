@@ -297,3 +297,5 @@ export function SearchFilters({
     </div>
   );
 }
+
+export default SearchFilters;

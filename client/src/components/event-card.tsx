@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 import { de } from "date-fns/locale";
-import { MapPin, Clock } from "lucide-react";
+import { MapPin, Clock, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import type { Event } from "@shared/schema";
@@ -9,9 +9,10 @@ import { getCategoryEmojis } from "@/lib/category-utils";
 interface EventCardProps {
   event: Event;
   onClick?: () => void;
+  view?: string;
 }
 
-export function EventCard({ event, onClick }: EventCardProps) {
+export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
   const [imageError, setImageError] = useState(false);
   
   const eventDate = (() => {
@@ -23,237 +24,181 @@ export function EventCard({ event, onClick }: EventCardProps) {
     }
   })();
 
-  // Check if event is in the past (using Vienna timezone)
-  const isEventPast = (() => {
-    if (!event.date) return false;
+  // Function to generate emoji based on event content
+  const getEventEmoji = (event: Event): string => {
+    const title = event.title.toLowerCase();
+    const category = event.category?.toLowerCase() || '';
     
-    // Parse dates as local dates to avoid timezone issues
-    const eventDateParts = String(event.date).split('-');
-    const eventYear = parseInt(eventDateParts[0]);
-    const eventMonth = parseInt(eventDateParts[1]) - 1; // Month is 0-indexed
-    const eventDay = parseInt(eventDateParts[2]);
+    // Check for specific keywords and categories
+    if (category.includes('dating') || category.includes('❤️')) return '❤️';
+    if (category.includes('festivals') || category.includes('🃏')) return '🎉';
+    if (category.includes('musik') || title.includes('konzert') || title.includes('musik')) return '🎵';
+    if (category.includes('sport') || title.includes('sport')) return '⚽';
+    if (category.includes('kunst') || title.includes('kunst') || title.includes('galerie')) return '🎨';
+    if (category.includes('theater') || title.includes('theater')) return '🎭';
+    if (category.includes('kino') || title.includes('film')) return '🎬';
+    if (category.includes('essen') || title.includes('restaurant') || title.includes('food')) return '🍽️';
+    if (category.includes('nacht') || title.includes('party') || title.includes('club')) return '🌙';
+    if (category.includes('markt') || title.includes('markt')) return '🛍️';
+    if (category.includes('workshop') || title.includes('workshop')) return '🛠️';
+    if (category.includes('konferenz') || title.includes('meeting')) return '👥';
+    if (title.includes('weihnacht') || title.includes('christmas')) return '🎄';
+    if (title.includes('silvester') || title.includes('new year')) return '🎆';
+    if (title.includes('outdoor') || title.includes('wandern')) return '🏞️';
     
-    // Get current date in Vienna timezone
-    const todayDate = new Date();
-    const viennaDate = new Date(todayDate.toLocaleString("en-US", { timeZone: "Europe/Vienna" }));
-    viennaDate.setHours(0, 0, 0, 0);
-    
-    const eventLocalDate = new Date(eventYear, eventMonth, eventDay);
-    
-    return eventLocalDate < viennaDate;
-  })();
+    return '📅'; // Default calendar emoji
+  };
 
-  // Simple card layout
   return (
-    <div 
-      className={`rounded-[2rem] transition-all duration-500 cursor-pointer shadow-xl overflow-hidden relative ${
-        isEventPast ? 'opacity-60' : ''
-      }`}
-      style={{
-        background: isEventPast ? 'rgba(128, 128, 128, 0.15)' : 'rgba(255, 255, 255, 0.15)',
-        backdropFilter: 'blur(30px) saturate(140%) brightness(1.1)',
-        border: isEventPast ? '1px solid rgba(128, 128, 128, 0.25)' : '1px solid rgba(255, 255, 255, 0.25)',
-        boxShadow: '0 8px 25px rgba(0, 0, 0, 0.25), 0 3px 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
-        minHeight: '320px'
-      } as React.CSSProperties}
-      onMouseEnter={(e) => {
-        if (!isEventPast) {
-          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
-          e.currentTarget.style.backdropFilter = 'blur(35px) saturate(160%) brightness(1.15)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isEventPast) {
-          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-          e.currentTarget.style.backdropFilter = 'blur(30px) saturate(140%) brightness(1.1)';
-        }
-      }}
+    <div
       onClick={onClick}
+      className="group cursor-pointer liquid-glass-card rounded-[2rem] p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/20"
+      style={{
+        background: 'rgba(255, 255, 255, 0.06)',
+        backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
+        WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        ...(event.isFavorite && {
+          border: '2px solid rgba(147, 51, 234, 0.3)',
+          background: 'rgba(147, 51, 234, 0.05)',
+        })
+      }}
     >
-      {/* Website Link Button */}
-      {event.website && (
-        <div 
-          className="absolute bottom-4 right-4 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-200 hover:scale-110 z-10"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (event.website) {
-              window.open(event.website, '_blank');
-            }
-          }}
-          title="Website öffnen"
-        >
-          <span className="text-lg">🔗</span>
+      {/* Event Image */}
+      {event.imageUrl && !imageError && (
+        <div className="mb-4 overflow-hidden rounded-2xl" style={{ aspectRatio: '16/9' }}>
+          <img
+            src={event.imageUrl}
+            alt={event.title}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            onError={() => setImageError(true)}
+          />
         </div>
       )}
-      
-      <div className="p-4 flex flex-col h-full">
-        {/* Image at top */}
-        <div className="relative mb-4">
-          <div className="aspect-[16/9] w-full">
-            {event.imageUrl && !imageError ? (
-              <div className="w-full h-full overflow-hidden rounded-xl bg-white/10">
-                <img 
-                  src={event.imageUrl || ''} 
-                  alt={event.title}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                  crossOrigin="anonymous"
-                  referrerPolicy="no-referrer"
-                  onError={() => setImageError(true)}
-                  onLoad={() => console.log('Image loaded successfully:', event.imageUrl)}
-                />
-              </div>
-            ) : (
-              <div className="w-full h-full bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                <span className="text-4xl">🎉</span>
-              </div>
-            )}
-          </div>
-          
-          {/* Date badge overlay */}
+
+      <div className="space-y-4">
+        {/* Header with emoji and date */}
+        <div className="flex items-start justify-between">
+          <span className="text-3xl flex-shrink-0">
+            {getEventEmoji(event)}
+          </span>
           {eventDate && (
-            <div className="absolute top-3 left-3 bg-white/15 text-white rounded-2xl p-2 text-center min-w-[50px] backdrop-blur-xl backdrop-saturate-150 backdrop-brightness-110 border border-white/25 shadow-2xl drop-shadow-lg">
-              <div className="text-xs font-medium uppercase leading-tight drop-shadow-sm">
-                {format(eventDate, "EE", { locale: de }).toUpperCase()}
-              </div>
-              <div className="text-sm font-bold leading-tight drop-shadow-sm">
-                {format(eventDate, "dd")}
-              </div>
+            <div className="text-right">
+              <p className="text-white font-semibold text-sm">
+                {format(eventDate, "EEE", { locale: de })}
+              </p>
+              <p className="text-white font-bold text-lg leading-none">
+                {format(eventDate, "dd. MMM", { locale: de })}
+              </p>
             </div>
           )}
         </div>
 
-        {/* Content area */}
-        <div className="flex-1 flex flex-col">
-          {/* Header with title and badges */}
-          <div className="flex justify-between items-start mb-3">
-            <div className="flex-1 pr-2">
-              {/* Event title */}
-              <h3 className="text-white font-semibold text-lg leading-tight drop-shadow-sm mb-1 line-clamp-2">
-                {event.title}
-              </h3>
-              
-              {/* Subtitle */}
-              {event.subtitle && (
-                <p className="text-white/80 text-sm italic drop-shadow-sm mb-2 line-clamp-1">
-                  {event.subtitle}
-                </p>
-              )}
-              
-              {/* Organizer */}
-              {event.organizer && (
-                <p className="text-white/70 text-sm drop-shadow-sm mb-2 line-clamp-1">
-                  {event.organizer}
-                </p>
-              )}
-              
-              {/* Description text */}
-              {event.description && event.description !== "Details" && !event.description.startsWith('Termine:') && (
-                <p className="text-white/70 text-xs line-clamp-2 drop-shadow-sm mb-2">
-                  {event.description}
-                </p>
-              )}
+        {/* Event Title */}
+        <div>
+          <h3 className="text-xl font-bold text-white leading-tight line-clamp-2 group-hover:text-brand-lime transition-colors duration-200">
+            {event.title}
+          </h3>
+          {event.subtitle && (
+            <p className="text-white/80 italic text-sm mt-1 line-clamp-1">
+              {event.subtitle}
+            </p>
+          )}
+          {event.organizer && (
+            <p className="text-white/70 text-sm mt-1">
+              von {event.organizer}
+            </p>
+          )}
+        </div>
+
+        {/* Event Details */}
+        <div className="space-y-2 text-sm text-white/80">
+          {event.location && (
+            <div className="flex items-center space-x-2">
+              <MapPin className="h-4 w-4 flex-shrink-0" />
+              <span className="truncate">{event.location}</span>
             </div>
+          )}
+          {event.time && (
+            <div className="flex items-center space-x-2">
+              <Clock className="h-4 w-4 flex-shrink-0" />
+              <span>{event.time}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Badges */}
+        <div className="flex flex-wrap gap-2">
+          {/* Free Event Badge */}
+          {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
+            <Badge className="bg-brand-lime/20 text-brand-lime border-brand-lime/40 font-bold text-xs px-3 py-1">
+              🆓 GRATIS
+            </Badge>
+          )}
+          
+          {/* Category Badge */}
+          {event.categories && event.categories.length > 0 && (
+            <Badge className="bg-white/15 text-white border-white/25 text-xs px-3 py-1">
+              {event.categories[0]}
+            </Badge>
+          )}
+        </div>
+
+        {/* Additional Dates (if multi-date event) */}
+        {event.description && event.description.startsWith('Termine:') && (() => {
+          const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
+          if (termineMatch) {
+            const dateMatches = termineMatch[1].split(',').map(d => d.trim());
             
-            {/* Badges - right side */}
-            <div className="flex gap-2 flex-shrink-0 items-center">
-              {/* Favorite event emoji */}
-              {event.isFavorite && (
-                <span className="text-xl">💫</span>
-              )}
-              {/* Free event emoji */}
-              {event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0 && (
-                <span className="text-xl">🆓</span>
-              )}
-              {/* Category emojis */}
-              <div className="flex gap-1">
-                {getCategoryEmojis(event.categories || []).map((emoji, index) => (
-                  <span key={index} className="text-xl">{emoji}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Location, time and price */}
-          <div className="flex items-center gap-4 text-sm text-white/80 mb-4">
-            {event.location && (
-              <div className="flex items-center">
-                <MapPin className="mr-1 h-4 w-4 text-white/60" />
-                <span className="line-clamp-1">{event.location}</span>
-              </div>
-            )}
-            {event.time && (
-              <div className="flex items-center">
-                <Clock className="mr-1 h-4 w-4 text-white/60" />
-                <span>{event.time}</span>
-              </div>
-            )}
-            {event.price && event.price !== "0" && event.price !== "" && parseFloat(event.price) > 0 && (
-              <div className="flex items-center">
-                <span className="mr-1 text-white/60">€</span>
-                <span>{event.price}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Further dates section - ONLY FUTURE DATES */}
-          {event.description && event.description.includes('Termine:') && (
-            <div className="mt-auto">
-              <div className="text-white/80 text-xs mb-2 drop-shadow-sm font-medium">
-                📅 Weitere Termine:
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {(() => {
-                  // Extract dates from description using regex
-                  const dateMatches = event.description?.match(/\d{1,2}\.\d{1,2}\.\d{4}/g) || []
-                  const today = new Date()
-                  today.setHours(0, 0, 0, 0)
-                  
-                  // Filter only future dates and limit to next 3
-                  const futureDates = dateMatches
-                    .map(dateStr => {
-                      const [day, month, year] = dateStr.split('.')
-                      return {
-                        date: new Date(parseInt(year), parseInt(month) - 1, parseInt(day)),
-                        original: dateStr
-                      }
-                    })
-                    .filter(({ date }) => date >= today)
-                    .slice(0, 3)
-                  
-                  const badges = futureDates.map(({ date }, index) => (
-                    <Badge 
-                      key={index} 
-                      className="bg-white/15 text-white border-white/25 text-xs px-2 py-1"
-                    >
-                      {format(date, "dd. MMM", { locale: de })}
-                    </Badge>
-                  ))
-                  
-                  // Add "weitere Termine" badge if there are more future dates
-                  const totalFutureDates = dateMatches
-                    .map(dateStr => {
-                      const [day, month, year] = dateStr.split('.')
-                      return new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-                    })
-                    .filter(date => date >= today)
-                  
-                  if (totalFutureDates.length > 3) {
-                    badges.push(
-                      <Badge 
-                        key="more" 
-                        className="bg-white/10 text-white/70 border-white/20 text-xs px-2 py-1"
-                      >
-                        + weitere Termine
-                      </Badge>
-                    )
-                  }
-                  
-                  return badges.length > 0 ? badges : null
-                })()}
-              </div>
-            </div>
-          )}
-        </div>
+            // Filter to future dates only
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const futureDates = dateMatches.filter(dateStr => {
+              if (dateStr) {
+                const eventDate = new Date(dateStr);
+                return eventDate >= today;
+              }
+              return false;
+            });
+            
+            if (futureDates.length > 1) {
+              const displayDates = view === "grid" ? futureDates.slice(1, 4) : futureDates.slice(1, 6);
+              const badges = displayDates.map((dateStr, index) => {
+                const date = new Date(dateStr);
+                return (
+                  <Badge 
+                    key={index} 
+                    className="bg-white/15 text-white border-white/25 text-xs px-2 py-1"
+                  >
+                    {format(date, "dd. MMM", { locale: de })}
+                  </Badge>
+                );
+              });
+              
+              // Add "weitere Termine" badge if there are more dates
+              if (futureDates.length > (view === "grid" ? 4 : 6)) {
+                badges.push(
+                  <Badge 
+                    key="more" 
+                    className="bg-white/10 text-white/70 border-white/20 text-xs px-2 py-1"
+                  >
+                    + weitere Termine
+                  </Badge>
+                );
+              }
+              
+              return (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {badges}
+                </div>
+              );
+            }
+          }
+          return null;
+        })()}
       </div>
     </div>
   );
