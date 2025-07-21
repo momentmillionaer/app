@@ -70,12 +70,17 @@ export default function Events() {
     // Date filters
     if (dateFrom || dateTo) {
       const eventDate = new Date(event.date || '');
+      // Reset time to start of day for accurate date comparison
+      eventDate.setHours(0, 0, 0, 0);
+      
       if (dateFrom) {
         const fromDate = new Date(dateFrom);
+        fromDate.setHours(0, 0, 0, 0);
         if (eventDate < fromDate) return false;
       }
       if (dateTo) {
         const toDate = new Date(dateTo);
+        toDate.setHours(23, 59, 59, 999);
         if (eventDate > toDate) return false;
       }
     }
