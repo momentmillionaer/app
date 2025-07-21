@@ -103,8 +103,16 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
       )}
 
       <div className="space-y-4">
-        {/* Header with date */}
-        <div className="flex items-start justify-end">
+        {/* Header with category and date */}
+        <div className="flex items-start justify-between">
+          {/* Category Badge */}
+          {event.categories && event.categories.length > 0 && (
+            <Badge className="bg-white/15 text-white border-white/25 text-xs px-3 py-1 w-fit">
+              {event.categories[0]}
+            </Badge>
+          )}
+          
+          {/* Date */}
           {eventDate && (
             <div className="text-right">
               <p className="text-white font-semibold text-sm">
@@ -116,13 +124,6 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
             </div>
           )}
         </div>
-
-        {/* Category Badge (above title) */}
-        {event.categories && event.categories.length > 0 && (
-          <Badge className="bg-white/15 text-white border-white/25 text-xs px-3 py-1 mb-2 w-fit">
-            {event.categories[0]}
-          </Badge>
-        )}
 
         {/* Event Title */}
         <div>
@@ -155,10 +156,10 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
               <span>{event.time}</span>
             </div>
           )}
-          {/* Price Display */}
-          {event.price && (
+          {/* Price Display - always show if price exists */}
+          {event.price !== undefined && event.price !== null && event.price !== "" && (
             <div className="flex items-center space-x-2">
-              <span className="h-4 w-4 flex-shrink-0 text-center">
+              <span className="h-4 w-4 flex-shrink-0 text-center text-lg">
                 {event.price === "0" ? "🆓" : "💰"}
               </span>
               <span className="font-semibold">
