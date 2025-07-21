@@ -95,8 +95,14 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const backgroundLoaded = await new Promise<boolean>((resolve) => {
         backgroundImg.onload = () => {
           console.log(`🖼️ Classical painting loaded successfully: ${randomPainting}`)
-          // Draw the background image to fill the entire canvas
-          ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height)
+          // Draw the background image with proper scaling (cover behavior) to avoid distortion
+          const scale = Math.max(canvas.width / backgroundImg.naturalWidth, canvas.height / backgroundImg.naturalHeight)
+          const scaledWidth = backgroundImg.naturalWidth * scale
+          const scaledHeight = backgroundImg.naturalHeight * scale
+          const offsetX = (canvas.width - scaledWidth) / 2
+          const offsetY = (canvas.height - scaledHeight) / 2
+          
+          ctx.drawImage(backgroundImg, offsetX, offsetY, scaledWidth, scaledHeight)
           
           // Add stronger overlay for better text readability and blur effect
           ctx.fillStyle = 'rgba(0, 0, 0, 0.6)' // Increased from 0.4 to 0.6 for stronger blur effect
@@ -134,7 +140,14 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             altImg.crossOrigin = 'anonymous'
             altImg.onload = () => {
               console.log(`Alternative app background loaded successfully from path: ${paths[pathIndex]}`)
-              ctx.drawImage(altImg, 0, 0, canvas.width, canvas.height)
+              // Draw with proper scaling to avoid distortion
+              const scale = Math.max(canvas.width / altImg.naturalWidth, canvas.height / altImg.naturalHeight)
+              const scaledWidth = altImg.naturalWidth * scale
+              const scaledHeight = altImg.naturalHeight * scale
+              const offsetX = (canvas.width - scaledWidth) / 2
+              const offsetY = (canvas.height - scaledHeight) / 2
+              
+              ctx.drawImage(altImg, offsetX, offsetY, scaledWidth, scaledHeight)
               ctx.fillStyle = 'rgba(0, 0, 0, 0.6)' // Stronger overlay for better blur effect
               ctx.fillRect(0, 0, canvas.width, canvas.height)
               console.log('App background with stronger overlay applied (alternative path)')
@@ -518,17 +531,15 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         }
       }
 
-      // momentmillionär branding (positioned for 4:5 ratio)
+      // momentmillionär branding - vertically centered between container and bottom
+      const containerBottom = cardY + cardHeight
+      const imageBottom = canvas.height
+      const verticalCenter = containerBottom + ((imageBottom - containerBottom) / 2)
+      
       ctx.font = 'bold 28px Connihof, serif'
       ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
       ctx.textAlign = 'center'
-      ctx.fillText('© momentmillionär', canvas.width / 2, cardY + cardHeight + 80)
-
-      // momentmillionär branding (positioned for 4:5 ratio)
-      ctx.font = 'bold 28px Connihof, serif'
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
-      ctx.textAlign = 'center'
-      ctx.fillText('© momentmillionär', canvas.width / 2, cardY + cardHeight + 80)
+      ctx.fillText('© momentmillionär', canvas.width / 2, verticalCenter)
       console.log('✅ NEW Favorites EventCard styling applied successfully!')
 
       // Convert to blob and create URL with forced cache break
