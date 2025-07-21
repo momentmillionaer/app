@@ -174,26 +174,12 @@ export function SearchFilters({
 
         {/* Date Range Filter */}
         <div className="flex-1">
-          <Button
-            variant="outline"
-            className={`h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm font-medium px-4 w-full justify-start transition-all duration-300 ${
-              dateFrom || dateTo 
-                ? 'bg-gradient-to-r from-lime-500 to-lime-600 text-black hover:from-lime-600 hover:to-lime-700'
-                : 'hover:bg-white/30'
-            }`}
-          >
-            <span className="mr-2 text-base">📅</span>
-            <span className="text-current">
-              {(dateFrom || dateTo) 
-                ? (dateFrom && dateTo 
-                  ? `${new Date(dateFrom).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit'})} - ${new Date(dateTo).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit'})}`
-                  : dateFrom 
-                  ? new Date(dateFrom).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: '2-digit'})
-                  : new Date(dateTo!).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: '2-digit'}))
-                : "Datum"
-              }
-            </span>
-          </Button>
+          <DateRangePicker
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+            onDateFromChange={onDateFromChange}
+            onDateToChange={onDateToChange}
+          />
         </div>
 
         {/* Free Events Filter */}

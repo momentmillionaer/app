@@ -162,9 +162,8 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
 
         {/* Badges */}
         <div className="flex flex-wrap gap-2">
-          {/* Free Event Badge */}
-          {(event.price === "0" || event.price === 0 || 
-            (event.price && !isNaN(parseFloat(String(event.price))) && parseFloat(String(event.price)) === 0)) && (
+          {/* Free Event Badge - only show if price is explicitly "0" */}
+          {event.price === "0" && (
             <Badge className="bg-brand-lime/20 text-brand-lime border-brand-lime/40 font-bold text-xs px-3 py-1">
               🆓 GRATIS
             </Badge>

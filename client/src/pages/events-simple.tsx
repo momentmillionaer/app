@@ -80,10 +80,11 @@ export default function Events() {
       }
     }
 
-    // Free events filter
+    // Free events filter - only show as free if price is explicitly "0"
     if (showFreeOnly) {
-      const price = parseFloat(event.price || "0");
-      if (price > 0) return false;
+      if (!event.price || event.price === "" || event.price !== "0") {
+        return false;
+      }
     }
 
     return true;

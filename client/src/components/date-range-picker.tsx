@@ -171,14 +171,25 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
           </div>
 
           {/* Calendar */}
-          <Calendar
-            mode={mode === 'single' ? 'single' : 'range'}
-            selected={mode === 'single' ? tempFromDate : { from: tempFromDate, to: tempToDate }}
-            onSelect={mode === 'single' ? handleSingleDateSelect : handleRangeSelect}
-            numberOfMonths={1}
-            locale={de}
-            className={`rounded-2xl date-range-calendar ${mode === 'single' ? 'single-mode' : 'range-mode'}`}
-          />
+          {mode === 'single' ? (
+            <Calendar
+              mode="single"
+              selected={tempFromDate}
+              onSelect={handleSingleDateSelect}
+              numberOfMonths={1}
+              locale={de}
+              className="rounded-2xl date-range-calendar single-mode"
+            />
+          ) : (
+            <Calendar
+              mode="range"
+              selected={{ from: tempFromDate, to: tempToDate }}
+              onSelect={handleRangeSelect}
+              numberOfMonths={1}
+              locale={de}
+              className="rounded-2xl date-range-calendar range-mode"
+            />
+          )}
 
           {/* Action Buttons */}
           <div className="flex justify-between gap-2 pt-2">
