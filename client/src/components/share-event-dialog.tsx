@@ -56,21 +56,27 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       canvas.width = 1080;
       canvas.height = 1350;
       
-      // Random classical paintings
+      // Classical paintings from attached assets
       const paintings = [
-        'Unbenannt-1-02_1752488253396.png',
-        'Design ohne Titel-5_1752691367029.png'
+        '/attached_assets/Unbenannt-1-02_1752488253396.png',
+        '/attached_assets/Design ohne Titel-5_1752691367029.png',
+        '/attached_assets/208195fgsdl_1753089340156.jpg',
+        '/attached_assets/222401fgsdl_1753089340158.jpg',
+        '/attached_assets/226718fgsdl_1753089340158.jpg',
+        '/attached_assets/228439fgsdl_1753089340159.jpg',
+        '/attached_assets/244783fgsdl_1753089340159.jpg',
+        '/attached_assets/245018fgsdl_1753089340159.jpg'
       ];
       const randomPainting = paintings[Math.floor(Math.random() * paintings.length)];
       
-      // Random glow colors
+      // Glow colors from brand palette
       const glowColors = [
         { name: 'Purple', color: '#9333ea', rgba: '147, 51, 234' },
         { name: 'Orange', color: '#f59e0b', rgba: '245, 158, 11' },
         { name: 'Blue', color: '#3b82f6', rgba: '59, 130, 246' },
-        { name: 'Lime', color: '#84cc16', rgba: '132, 204, 22' },
-        { name: 'Pink', color: '#ec4899', rgba: '236, 72, 153' },
-        { name: 'Teal', color: '#14b8a6', rgba: '20, 184, 166' }
+        { name: 'Lime', color: '#d0fe1d', rgba: '208, 254, 29' },
+        { name: 'Pink', color: '#f3dcfa', rgba: '243, 220, 250' },
+        { name: 'Cream', color: '#fee4c3', rgba: '254, 228, 195' }
       ];
       const randomGlow = glowColors[Math.floor(Math.random() * glowColors.length)];
       
@@ -103,7 +109,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           resolve(false);
         };
         
-        backgroundImg.src = `/attached_assets/${randomPainting}`;
+        backgroundImg.src = randomPainting;
       });
 
       // Card layout
@@ -256,6 +262,142 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         ctx.fillText(`📍 ${event.location}`, leftColumnX, currentY);
         currentY += 44;
       }
+
+      // Price (if free)
+      if (event.price && !isNaN(parseFloat(event.price)) && parseFloat(event.price) === 0) {
+        ctx.fillStyle = 'rgba(208, 254, 29, 1)';
+        ctx.font = 'bold 36px Helvetica, Arial, sans-serif';
+        ctx.fillText(`🆓 KOSTENLOS`, leftColumnX, currentY);
+        ctx.font = '32px Helvetica, Arial, sans-serif';
+        currentY += 50;
+      }
+
+      currentY += 20;
+
+      // Description
+      if (event.description && event.description.trim() && !event.description.startsWith('Termine:')) {
+        ctx.font = '28px Helvetica, Arial, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        const descLines = wrapText(ctx, event.description, cardWidth - 96);
+        descLines.slice(0, 3).forEach(line => { // Limit to 3 lines
+          ctx.fillText(line, leftColumnX, currentY);
+          currentY += 34;
+        });
+        currentY += 20;
+      }
+
+      // Future dates from multi-date events
+      const futureDates: string[] = [];
+      
+      // Parse Termine: format for additional dates
+      if (event.description && event.description.startsWith('Termine:')) {
+        const dateMatches = event.description.match(/(\d{2}\.\d{2}\.\d{4})/g);
+        if (dateMatches) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          dateMatches.forEach(dateStr => {
+            const [day, month, year] = dateStr.split('.');
+            const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            if (date > today) {
+              futureDates.push(format(date, "dd.MM", { locale: de }));
+            }
+          });
+        }
+      }
+
+      // Additional dates as badges
+      if (futureDates.length > 0) {
+        currentY += 10;
+        const badgeStartY = currentY;
+        let badgeX = leftColumnX;
+        let badgeY = badgeStartY;
+        const maxBadgesPerRow = 4;
+        let badgeCount = 0;
+        const maxBadges = 6;
+        
+        futureDates.slice(0, maxBadges).forEach((dateStr, index) => {
+          if (index >= maxBadges) return;
+          
+          if (badgeCount >= maxBadgesPerRow) {
+            badgeX = leftColumnX;
+            badgeY += 55;
+            badgeCount = 0;
+          }
+          
+          const badgeText = dateStr;
+          ctx.font = 'bold 24px Helvetica, Arial, sans-serif';
+          const textWidth = ctx.measureText(badgeText).width;
+          const badgeWidth = textWidth + 24;
+          const badgeHeight = 36;
+          
+          // Badge background
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+          ctx.beginPath();
+          ctx.roundRect(badgeX, badgeY - 26, badgeWidth, badgeHeight, 18);
+          ctx.fill();
+          
+          // Badge border
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.roundRect(badgeX, badgeY - 26, badgeWidth, badgeHeight, 18);
+          ctx.stroke();
+          
+          // Badge text
+          ctx.fillStyle = 'white';
+          ctx.textAlign = 'center';
+          ctx.fillText(badgeText, badgeX + badgeWidth / 2, badgeY - 2);
+          ctx.textAlign = 'left';
+          
+          badgeX += badgeWidth + 12;
+          badgeCount++;
+        });
+        
+        // "weitere Termine" badge if more dates exist
+        if (futureDates.length > maxBadges) {
+          if (badgeCount >= maxBadgesPerRow) {
+            badgeX = leftColumnX;
+            badgeY += 55;
+          }
+          
+          const moreText = `+${futureDates.length - maxBadges}`;
+          ctx.font = 'bold 24px Helvetica, Arial, sans-serif';
+          const textWidth = ctx.measureText(moreText).width;
+          const badgeWidth = textWidth + 24;
+          const badgeHeight = 36;
+          
+          ctx.fillStyle = `rgba(${randomGlow.rgba}, 0.3)`;
+          ctx.beginPath();
+          ctx.roundRect(badgeX, badgeY - 26, badgeWidth, badgeHeight, 18);
+          ctx.fill();
+          
+          ctx.strokeStyle = `rgba(${randomGlow.rgba}, 0.6)`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.roundRect(badgeX, badgeY - 26, badgeWidth, badgeHeight, 18);
+          ctx.stroke();
+          
+          ctx.fillStyle = 'white';
+          ctx.textAlign = 'center';
+          ctx.fillText(moreText, badgeX + badgeWidth / 2, badgeY - 2);
+          ctx.textAlign = 'left';
+        }
+        
+        currentY = badgeY + 40;
+      }
+
+      // Copyright at bottom
+      const bottomY = cardY + cardHeight - 60;
+      ctx.font = 'bold 32px Helvetica, Arial, sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.textAlign = 'center';
+      ctx.fillText('momentmillionär', canvas.width / 2, bottomY);
+      
+      ctx.font = '24px Helvetica, Arial, sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.fillText('© Dein Weg zu unvergesslichen Momenten in Graz', canvas.width / 2, bottomY + 35);
+      ctx.textAlign = 'left';
 
       // Generate image URL
       const imageUrl = canvas.toDataURL('image/png', 0.9);
