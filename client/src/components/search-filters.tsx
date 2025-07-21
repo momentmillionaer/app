@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, CalendarDays, List, Grid3X3, Sparkles } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -306,49 +306,49 @@ export function SearchFilters({
             variant="ghost"
             size="sm"
             onClick={() => onViewChange("calendar")}
-            className={`rounded-full w-10 h-10 p-0 text-lg transition-all duration-300 ${
+            className={`rounded-full w-10 h-10 p-0 transition-all duration-300 ${
               view === "calendar" 
                 ? "bg-white/20 text-white shadow-lg border border-white/30" 
                 : "text-white/60 hover:text-white/80 border-0"
             }`}
           >
-            📅
+            <CalendarDays className="h-5 w-5" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onViewChange("list")}
-            className={`rounded-full w-10 h-10 p-0 text-lg transition-all duration-300 ${
+            className={`rounded-full w-10 h-10 p-0 transition-all duration-300 ${
               view === "list" 
                 ? "bg-white/20 text-white shadow-lg border border-white/30" 
                 : "text-white/60 hover:text-white/80 border-0"
             }`}
           >
-            📋
+            <List className="h-5 w-5" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onViewChange("grid")}
-            className={`rounded-full w-10 h-10 p-0 text-lg transition-all duration-300 ${
+            className={`rounded-full w-10 h-10 p-0 transition-all duration-300 ${
               view === "grid" 
                 ? "bg-white/20 text-white shadow-lg border border-white/30" 
                 : "text-white/60 hover:text-white/80 border-0"
             }`}
           >
-            🗂️
+            <Grid3X3 className="h-5 w-5" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onViewChange("favorites")}
-            className={`rounded-full w-10 h-10 p-0 text-lg transition-all duration-300 ${
+            className={`rounded-full w-10 h-10 p-0 transition-all duration-300 ${
               view === "favorites" 
                 ? "bg-white/20 text-white shadow-lg border border-white/30" 
                 : "text-white/60 hover:text-white/80 border-0"
             }`}
           >
-            💫
+            <Sparkles className="h-5 w-5" />
           </Button>
         </div>
       </div>

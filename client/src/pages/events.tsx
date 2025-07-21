@@ -300,17 +300,16 @@ export default function Events() {
   const eventsToShow = view === "favorites" ? favoriteEvents : sortedEvents;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <div 
-        className="min-h-screen bg-cover bg-center bg-fixed relative"
-        style={{
-          backgroundImage: `url('/classical-painting.jpg')`,
-          backgroundBlendMode: 'overlay'
-        }}
-      >
-        <div className="absolute inset-0 bg-black/40"></div>
-        
-        <div className="relative z-10 p-6">
+    <div 
+      className="min-h-screen bg-cover bg-center bg-fixed relative"
+      style={{
+        backgroundImage: `url('/classical-painting.jpg')`,
+        backgroundBlendMode: 'overlay'
+      }}
+    >
+      <div className="absolute inset-0 bg-black/40"></div>
+      
+      <div className="relative z-10 p-6">
           <div className="max-w-7xl mx-auto">
             <Header eventCount={eventsToShow.length} lastUpdated={new Date().toISOString()} />
             
@@ -374,15 +373,14 @@ export default function Events() {
             <Footer />
           </div>
         </div>
+        
+        <EventModal
+          event={selectedEvent}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+
+        <LatestEventPopup events={mergedEvents} onEventClick={handleEventClick} />
       </div>
-
-      <EventModal
-        event={selectedEvent}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
-
-      <LatestEventPopup events={mergedEvents} onEventClick={handleEventClick} />
-    </div>
   );
 }

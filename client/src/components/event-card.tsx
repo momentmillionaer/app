@@ -120,6 +120,13 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
           )}
         </div>
 
+        {/* Category Badge (above title) */}
+        {event.categories && event.categories.length > 0 && (
+          <Badge className="bg-white/15 text-white border-white/25 text-xs px-3 py-1 mb-2 w-fit">
+            {event.categories[0]}
+          </Badge>
+        )}
+
         {/* Event Title */}
         <div>
           <h3 className="text-xl font-bold text-white leading-tight line-clamp-2 group-hover:text-brand-lime transition-colors duration-200">
@@ -170,12 +177,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
             </Badge>
           )}
           
-          {/* Category Badge */}
-          {event.categories && event.categories.length > 0 && (
-            <Badge className="bg-white/15 text-white border-white/25 text-xs px-3 py-1">
-              {event.categories[0]}
-            </Badge>
-          )}
+
         </div>
 
         {/* Additional Dates (if multi-date event) */}
