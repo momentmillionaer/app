@@ -41,8 +41,8 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
     }
 
     setIsGenerating(true)
-    console.log('🚀 CACHE BUST v2.0 - Starting FAVORITES STYLE image generation for:', event.title)
-    console.log('🎨 Using NEW EventCard layout with purple border and liquid glass!')
+    console.log('🚀 CACHE BUST v3.0 - Starting RANDOM PAINTING image generation for:', event.title)
+    console.log('🎨 Using random classical paintings with variable glow colors!')
     
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
@@ -59,21 +59,49 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
     console.log('Container transparency: 4%, Background: no blur, Brightness: 0.5')
 
     try {
-      // Use the app's background image instead of gradient
-      console.log('Loading app background image for share image')
+      // Random painting selection
+      const paintings = [
+        'painting1.jpg', // Woman sewing by the sea
+        'painting2.jpg', // Evening dinner scene with candles  
+        'painting3.jpg', // Arabian market scene
+        'painting4.jpg', // Banquet hall scene
+        'painting5.jpg', // Garden scene with figures
+        'painting6.jpg', // Elegant conversation in park
+        'painting7.jpg', // River valley landscape
+        'painting8.jpg'  // Mountain lake scene
+      ]
+      
+      // Color palette for container glow effects
+      const glowColors = [
+        { color: '#9333EA', name: 'purple', rgba: '147, 51, 234' },    // Purple
+        { color: '#FE5C2B', name: 'orange', rgba: '254, 92, 43' },    // Orange  
+        { color: '#0000FF', name: 'blue', rgba: '0, 0, 255' },        // Blue
+        { color: '#D0FE1D', name: 'lime', rgba: '208, 254, 29' },     // Lime
+        { color: '#F3DCFA', name: 'light-purple', rgba: '243, 220, 250' }, // Light purple
+        { color: '#FEE4C3', name: 'cream', rgba: '254, 228, 195' }    // Cream
+      ]
+      
+      const randomPainting = paintings[Math.floor(Math.random() * paintings.length)]
+      const randomGlow = glowColors[Math.floor(Math.random() * glowColors.length)]
+      
+      console.log(`🎨 Selected painting: ${randomPainting}`)
+      console.log(`✨ Selected glow color: ${randomGlow.name} (${randomGlow.color})`)
+
+      // Use random classical painting as background
+      console.log('Loading random classical painting for share image background')
       const backgroundImg = new Image()
       backgroundImg.crossOrigin = 'anonymous'
       
       const backgroundLoaded = await new Promise<boolean>((resolve) => {
         backgroundImg.onload = () => {
-          console.log('App background image loaded successfully')
+          console.log(`🖼️ Classical painting loaded successfully: ${randomPainting}`)
           // Draw the background image to fill the entire canvas
           ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height)
           
           // Add the overlay with reduced opacity (same as app)
           ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'
           ctx.fillRect(0, 0, canvas.width, canvas.height)
-          console.log('App background with overlay applied')
+          console.log('🎨 Classical painting background with overlay applied')
           resolve(true)
         }
         backgroundImg.onerror = () => {
@@ -122,8 +150,8 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           
           tryNextPath()
         }
-        // Use the correct app background (classical painting)
-        backgroundImg.src = '/Unbenannt-1-02_1752488253396.png'
+        // Use random classical painting
+        backgroundImg.src = `/${randomPainting}`
       })
 
       // Event image will only be used in the EventCard header, not as background overlay
@@ -145,13 +173,26 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.fill()
       console.log('✅ Liquid glass background applied')
 
-      // Favorites EventCard border with purple accent
-      ctx.strokeStyle = 'rgba(147, 51, 234, 0.3)' // Purple border like favorites
+      // Variable colored border using random glow color instead of fixed purple
+      ctx.strokeStyle = `rgba(${randomGlow.rgba}, 0.4)` // Dynamic color border
       ctx.lineWidth = 2
       ctx.beginPath()
       ctx.roundRect(cardX, cardY, cardWidth, cardHeight, cardRadius)
       ctx.stroke()
-      console.log('✅ Purple border applied')
+      console.log(`✅ ${randomGlow.name} border applied`)
+      
+      // Add subtle glow effect around the container
+      ctx.shadowColor = randomGlow.color
+      ctx.shadowBlur = 15
+      ctx.shadowOffsetX = 0
+      ctx.shadowOffsetY = 0
+      ctx.strokeStyle = `rgba(${randomGlow.rgba}, 0.6)`
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.roundRect(cardX - 2, cardY - 2, cardWidth + 4, cardHeight + 4, cardRadius + 2)
+      ctx.stroke()
+      ctx.shadowBlur = 0 // Reset shadow
+      console.log(`✨ ${randomGlow.name} glow effect applied`)
 
       // Inner border for enhanced glass effect
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'
