@@ -8,10 +8,11 @@ import { Event } from "@shared/schema";
 
 interface ShareEventDialogProps {
   event: Event;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export function ShareEventDialog({ event }: ShareEventDialogProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -316,23 +317,7 @@ export function ShareEventDialog({ event }: ShareEventDialogProps) {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button
-          onClick={generateShareImage}
-          className="bg-gradient-to-r from-brand-purple to-brand-orange text-white rounded-full px-6 py-3 font-medium transition-all duration-300 hover:scale-105 hover:shadow-xl"
-          style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
-            WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-          }}
-        >
-          <Share2 className="h-5 w-5 mr-2" />
-          Teilen
-        </Button>
-      </DialogTrigger>
-      
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <div className="space-y-6">
           <h3 className="text-xl font-bold text-center">Event teilen</h3>
