@@ -585,7 +585,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
               <div className="flex gap-3">
                 <button
                   onClick={handleDownload}
-                  className="flex-1 flex items-center justify-center gap-2 p-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all border border-white/20"
+                  className="flex-1 flex items-center justify-center gap-2 h-12 px-4 liquid-glass-button rounded-full text-white font-medium transition-all duration-300 hover:scale-105"
                 >
                   <Download className="h-4 w-4" />
                   Herunterladen
@@ -593,7 +593,11 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
                 
                 <button
                   onClick={handleShare}
-                  className="flex-1 flex items-center justify-center gap-2 p-3 bg-gradient-to-r from-purple-500 to-orange-500 hover:from-purple-600 hover:to-orange-600 text-white rounded-xl font-medium transition-all"
+                  className="flex-1 flex items-center justify-center gap-2 h-12 px-4 bg-gradient-to-r from-purple-500/80 to-orange-500/80 hover:from-purple-600/90 hover:to-orange-600/90 rounded-full text-white font-medium transition-all duration-300 hover:scale-105 border border-white/20"
+                  style={{
+                    backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
+                    WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
+                  }}
                 >
                   <Share2 className="h-4 w-4" />
                   Teilen
@@ -601,7 +605,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
                 
                 <button
                   onClick={handleCopyLink}
-                  className="flex items-center justify-center p-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all border border-white/20 w-12"
+                  className="flex items-center justify-center h-12 w-12 liquid-glass-button rounded-full text-white transition-all duration-300 hover:scale-105"
                 >
                   <Link className="h-4 w-4" />
                 </button>

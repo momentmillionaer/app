@@ -162,15 +162,11 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
               <span>{event.time}</span>
             </div>
           )}
-          {/* Price Display - always show if price exists */}
-          {event.price !== undefined && event.price !== null && event.price !== "" && (
+          {/* Price Display - only show for paid events (not free) */}
+          {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
             <div className="flex items-center space-x-2">
-              <span className="h-4 w-4 flex-shrink-0 text-center text-lg">
-                {event.price === "0" ? "🆓" : "💰"}
-              </span>
-              <span className="font-semibold">
-                {event.price === "0" ? "Kostenlos" : `${event.price}€`}
-              </span>
+              <FileText className="h-4 w-4 flex-shrink-0" />
+              <span className="font-semibold">{event.price}€</span>
             </div>
           )}
         </div>
