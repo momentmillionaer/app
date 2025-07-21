@@ -368,11 +368,14 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       leftY += 20 // Space before future dates
 
       // WEITERE TERMINE - show only future dates as badges (no text label)
-      const hasMultipleDates = event.description && event.description.includes('Termine:')
+      // Check the original description for Termine:, not the filtered one
+      const originalDescription = event.description || ''
+      const hasMultipleDates = originalDescription.includes('Termine:')
       if (hasMultipleDates) {
 
-        // Extract and show only next 3 future dates as badges
-        const dateMatches = event.description.match(/\d{1,2}\.\d{1,2}\.\d{4}/g) || []
+        // Extract and show only next 3 future dates as badges from original description
+        const dateMatches = originalDescription.match(/\d{1,2}\.\d{1,2}\.\d{4}/g) || []
+        console.log('🗓️ Found date matches for share image badges:', dateMatches)
         const today = new Date()
         today.setHours(0, 0, 0, 0)
         
@@ -436,6 +439,8 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
               return new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
             })
             .filter(date => date >= today)
+          
+          console.log('🗓️ Total future dates found for badges:', totalFutureDates.length, 'showing:', futureDates.length)
           
           if (totalFutureDates.length > 3) {
             // "+ weitere Termine" badge
