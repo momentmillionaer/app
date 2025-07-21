@@ -649,10 +649,13 @@ export function CalendarView({ events, onEventClick }: CalendarViewProps) {
             .filter(event => {
               if (!event.date) return false;
               const eventDate = new Date(event.date);
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
               
-              // Filter to current month/year - INCLUDE past events too
+              // Filter to current month/year AND only future events (no past events in cards)
               return eventDate.getMonth() === currentDate.getMonth() && 
-                     eventDate.getFullYear() === currentDate.getFullYear();
+                     eventDate.getFullYear() === currentDate.getFullYear() &&
+                     eventDate >= today; // Only show today and future events
             })
             .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())
             .map((event) => (

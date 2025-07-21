@@ -103,11 +103,8 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
       )}
 
       <div className="space-y-4">
-        {/* Header with emoji and date */}
-        <div className="flex items-start justify-between">
-          <span className="text-3xl flex-shrink-0">
-            {getEventEmoji(event)}
-          </span>
+        {/* Header with date */}
+        <div className="flex items-start justify-end">
           {eventDate && (
             <div className="text-right">
               <p className="text-white font-semibold text-sm">
@@ -161,7 +158,9 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
           {/* Price Display */}
           {event.price && (
             <div className="flex items-center space-x-2">
-              <span className="h-4 w-4 flex-shrink-0 text-center">💰</span>
+              <span className="h-4 w-4 flex-shrink-0 text-center">
+                {event.price === "0" ? "🆓" : "💰"}
+              </span>
               <span className="font-semibold">
                 {event.price === "0" ? "Kostenlos" : `${event.price}€`}
               </span>
