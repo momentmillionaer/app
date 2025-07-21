@@ -116,7 +116,7 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
           className={`
             rounded-full border-0 liquid-glass text-white hover:bg-white/30 transition-all duration-300
             ${mobile || isMobile 
-              ? `h-12 w-12 p-0 text-lg ${(dateFrom || dateTo) ? 'bg-gradient-to-r from-lime-500 to-green-500' : 'bg-white/20'}` 
+              ? `h-12 w-12 p-0 text-lg flex items-center justify-center ${(dateFrom || dateTo) ? 'bg-gradient-to-r from-lime-500 to-green-500' : 'bg-white/20'}` 
               : `py-2 px-3 min-w-[140px] justify-between bg-white/20 ${(dateFrom || dateTo) ? 'bg-gradient-to-r from-lime-500 to-green-500' : 'bg-white/20'}`
             }
           `}

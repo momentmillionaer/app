@@ -225,11 +225,11 @@ export function SearchFilters({
         <div className="flex items-center justify-center gap-4 px-2">
           {/* Category Filter Mobile */}
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-lg transition-all duration-300 ${
+            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-lg transition-all duration-300 flex items-center justify-center ${
               selectedCategory && selectedCategory !== "all" 
                 ? 'bg-gradient-to-r from-orange-500 to-purple-600 text-white' 
                 : 'bg-white/20 text-white hover:bg-white/30'
-            }`}>
+            } [&>svg]:hidden`}>
               <span>🎭</span>
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
@@ -244,11 +244,11 @@ export function SearchFilters({
 
           {/* Audience Filter Mobile */}
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
-            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-lg transition-all duration-300 ${
+            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-lg transition-all duration-300 flex items-center justify-center ${
               selectedAudience && selectedAudience !== "all" 
                 ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white' 
                 : 'bg-white/20 text-white hover:bg-white/30'
-            }`}>
+            } [&>svg]:hidden`}>
               <span>🎯</span>
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
