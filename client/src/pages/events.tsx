@@ -172,8 +172,8 @@ export default function EventsPage() {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(event =>
         event.title.toLowerCase().includes(query) ||
-        event.description.toLowerCase().includes(query) ||
-        event.location.toLowerCase().includes(query)
+        (event.description && event.description.toLowerCase().includes(query)) ||
+        (event.location && event.location.toLowerCase().includes(query))
       );
     }
 
@@ -207,10 +207,11 @@ export default function EventsPage() {
         if (!event.date) return false;
         
         // Check main date
-        if (event.date === dateFrom) return true;
+        const eventDateStr = typeof event.date === 'string' ? event.date : event.date.toISOString().split('T')[0];
+        if (eventDateStr === dateFrom) return true;
         
         // Check if event has multiple dates in description
-        if (event.description.includes('Termine:')) {
+        if (event.description && event.description.includes('Termine:')) {
           const termineMatch = event.description.match(/^Termine: ([^\n]+)/);
           if (termineMatch) {
             const dates = termineMatch[1].split(',').map(d => d.trim());
@@ -220,7 +221,7 @@ export default function EventsPage() {
         
         // Check endDate for multi-day events
         if (event.endDate) {
-          const startDate = new Date(event.date);
+          const startDate = new Date(typeof event.date === 'string' ? event.date : event.date);
           const endDate = new Date(event.endDate);
           const selectedDate = new Date(dateFrom);
           return selectedDate >= startDate && selectedDate <= endDate;
@@ -230,9 +231,11 @@ export default function EventsPage() {
       });
     } else if (dateFrom && dateTo) {
       // Date range filtering
-      filtered = filtered.filter(event => 
-        event.date && event.date >= dateFrom && event.date <= dateTo
-      );
+      filtered = filtered.filter(event => {
+        if (!event.date) return false;
+        const eventDateStr = typeof event.date === 'string' ? event.date : event.date.toISOString().split('T')[0];
+        return eventDateStr >= dateFrom && eventDateStr <= dateTo;
+      });
     }
 
     // Apply sorting
@@ -606,7 +609,6 @@ export default function EventsPage() {
                 key={`${event.notionId}-${index}`} 
                 event={event} 
                 onClick={() => handleEventClick(event)}
-                variant="list"
               />
             ))}
           </div>
