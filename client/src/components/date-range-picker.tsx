@@ -172,23 +172,27 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
 
           {/* Calendar */}
           {mode === 'single' ? (
-            <Calendar
-              mode="single"
-              selected={tempFromDate}
-              onSelect={handleSingleDateSelect}
-              numberOfMonths={1}
-              locale={de}
-              className="rounded-2xl date-range-calendar single-mode"
-            />
+            <div className="border border-white/20 rounded-xl p-2 bg-white/5">
+              <Calendar
+                mode="single"
+                selected={tempFromDate}
+                onSelect={handleSingleDateSelect}
+                numberOfMonths={1}
+                locale={de}
+                className="rounded-2xl date-range-calendar single-mode"
+              />
+            </div>
           ) : (
-            <Calendar
-              mode="range"
-              selected={{ from: tempFromDate, to: tempToDate }}
-              onSelect={handleRangeSelect}
-              numberOfMonths={1}
-              locale={de}
-              className="rounded-2xl date-range-calendar range-mode"
-            />
+            <div className="border border-white/20 rounded-xl p-2 bg-white/5">
+              <Calendar
+                mode="range"
+                selected={{ from: tempFromDate, to: tempToDate }}
+                onSelect={handleRangeSelect}
+                numberOfMonths={1}
+                locale={de}
+                className="rounded-2xl date-range-calendar range-mode"
+              />
+            </div>
           )}
 
           {/* Action Buttons */}
