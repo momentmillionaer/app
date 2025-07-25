@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarDays, X } from "lucide-react";
+import { CalendarDays, X, BarChart3 } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -129,30 +129,45 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
         <div className="p-4 space-y-4">
           {/* Mode Toggle */}
           <div className="flex items-center gap-2 p-2 bg-white/10 rounded-full mb-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleModeChange('single')}
-              className={`h-8 px-3 rounded-full text-sm transition-all duration-200 ${
-                mode === 'single' 
-                  ? 'bg-brand-orange text-white shadow-sm' 
-                  : 'text-white hover:text-white/80 bg-transparent'
-              }`}
-            >
-              📅 Einzeltag
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleModeChange('range')}
-              className={`h-8 px-3 rounded-full text-sm transition-all duration-200 ${
-                mode === 'range' 
-                  ? 'bg-brand-orange text-white shadow-sm' 
-                  : 'text-white hover:text-white/80 bg-transparent'
-              }`}
-            >
-              📊 Zeitraum
-            </Button>
+            {mode === 'single' ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleModeChange('single')}
+                className="h-8 px-3 rounded-full text-sm bg-brand-orange text-white shadow-sm transition-all duration-200"
+              >
+                <CalendarDays className="w-3 h-3 mr-1" />
+                Einzeltag
+              </Button>
+            ) : (
+              <button
+                onClick={() => handleModeChange('single')}
+                className="h-8 px-3 text-sm text-white hover:text-white/80 transition-all duration-200 flex items-center"
+              >
+                <CalendarDays className="w-3 h-3 mr-1" />
+                Einzeltag
+              </button>
+            )}
+            
+            {mode === 'range' ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleModeChange('range')}
+                className="h-8 px-3 rounded-full text-sm bg-brand-orange text-white shadow-sm transition-all duration-200"
+              >
+                <BarChart3 className="w-3 h-3 mr-1" />
+                Zeitraum
+              </Button>
+            ) : (
+              <button
+                onClick={() => handleModeChange('range')}
+                className="h-8 px-3 text-sm text-white hover:text-white/80 transition-all duration-200 flex items-center"
+              >
+                <BarChart3 className="w-3 h-3 mr-1" />
+                Zeitraum
+              </button>
+            )}
           </div>
 
           {/* Calendar */}
