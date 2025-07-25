@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Plus, CalendarDays, List, Grid3X3, Sparkles } from "lucide-react";
+import { Search, Plus, CalendarDays, List, Grid3X3, Sparkles, Theater, Users, DollarSign, Filter } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -128,10 +128,14 @@ export function SearchFilters({
       {/* Filter Controls and View Toggles - All in one line for desktop */}
       {!isMobile ? (
         <div className="flex items-center justify-center gap-4">
-          {/* Category Filter - Emoji only button */}
+          {/* Category Filter - Icon button */}
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className="h-12 w-12 p-0 rounded-full border-0 liquid-glass bg-white/20 text-white justify-center">
-              <span className="text-lg">🎭</span>
+            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-white justify-center transition-all duration-300 ${
+              selectedCategory && selectedCategory !== "all" 
+                ? 'bg-gradient-to-r from-orange-500 to-red-500 shadow-lg' 
+                : 'bg-white/20 hover:bg-white/30'
+            }`}>
+              <Theater className="h-5 w-5" />
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
@@ -143,10 +147,14 @@ export function SearchFilters({
             </SelectContent>
           </Select>
 
-          {/* Audience Filter - Emoji only button */}
+          {/* Audience Filter - Icon button */}
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
-            <SelectTrigger className="h-12 w-12 p-0 rounded-full border-0 liquid-glass bg-white/20 text-white justify-center">
-              <span className="text-lg">🎯</span>
+            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-white justify-center transition-all duration-300 ${
+              selectedAudience && selectedAudience !== "all" 
+                ? 'bg-gradient-to-r from-blue-500 to-indigo-500 shadow-lg' 
+                : 'bg-white/20 hover:bg-white/30'
+            }`}>
+              <Users className="h-5 w-5" />
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               {audienceOptions.map((option) => (
@@ -166,27 +174,27 @@ export function SearchFilters({
             compact={true}
           />
 
-          {/* Free Events Filter - Emoji only button */}
+          {/* Free Events Filter - Icon button */}
           <Button
             variant="outline"
             onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
             className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
               showFreeEventsOnly 
-                ? 'bg-gradient-to-r from-purple-500 to-orange-500 text-white hover:from-purple-600 hover:to-orange-600' 
+                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg' 
                 : 'bg-white/20 text-white hover:bg-white/30'
             }`}
             title="Kostenlose Events"
           >
-            <span className="text-lg">🆓</span>
+            <DollarSign className="h-5 w-5" />
           </Button>
 
           {/* Add Event Button */}
           <Button
             onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-            className="h-12 w-12 p-0 rounded-full liquid-glass bg-white/20 text-white transition-all duration-300 border-0 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600"
+            className="h-12 w-12 p-0 rounded-full liquid-glass bg-gradient-to-r from-orange-500 to-purple-500 text-white transition-all duration-300 border-0 hover:from-orange-600 hover:to-purple-600 shadow-lg"
             title="Event hinzufügen"
           >
-            <span className="text-lg">➕</span>
+            <Plus className="h-5 w-5" />
           </Button>
 
           {/* Clear Filters Button */}
@@ -194,22 +202,22 @@ export function SearchFilters({
             <Button
               variant="outline"
               onClick={onClearFilters}
-              className="h-12 w-12 p-0 rounded-full border-0 liquid-glass bg-white/20 text-white hover:bg-white/30 transition-all duration-200"
+              className="h-12 w-12 p-0 rounded-full border-0 liquid-glass bg-red-500/80 text-white hover:bg-red-600/90 transition-all duration-200 shadow-lg"
               title="Filter löschen"
             >
-              <span className="text-lg">🗑️</span>
+              <Filter className="h-5 w-5" />
             </Button>
           )}
 
-          {/* View Toggle Buttons */}
-          <div className="flex gap-4 ml-4">
+          {/* View Toggle Buttons - iOS Control Center Style */}
+          <div className="flex gap-3 ml-6">
             <Button
               variant="outline"
               onClick={() => onViewChange("calendar")}
               className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
                 view === "calendar" 
-                  ? 'bg-gradient-to-r from-lime-500 to-green-500 text-white' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
+                  ? 'bg-gradient-to-r from-lime-500 to-green-500 text-white shadow-lg' 
+                  : 'bg-white/15 text-white hover:bg-white/25'
               }`}
               title="Kalender"
             >
@@ -221,8 +229,8 @@ export function SearchFilters({
               onClick={() => onViewChange("grid")}
               className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
                 view === "grid" 
-                  ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
+                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg' 
+                  : 'bg-white/15 text-white hover:bg-white/25'
               }`}
               title="Raster"
             >
@@ -234,8 +242,8 @@ export function SearchFilters({
               onClick={() => onViewChange("favorites")}
               className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
                 view === "favorites" 
-                  ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
+                  ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg' 
+                  : 'bg-white/15 text-white hover:bg-white/25'
               }`}
               title="Conni's Favoriten"
             >

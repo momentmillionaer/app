@@ -114,31 +114,14 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={`
-            rounded-full border-0 liquid-glass text-white hover:bg-white/30 transition-all duration-300
-            ${mobile || isMobile 
-              ? `h-12 w-12 p-0 text-lg flex items-center justify-center ${(dateFrom || dateTo) ? 'bg-gradient-to-r from-lime-500 to-green-500' : 'bg-white/20'}` 
-              : `py-2 px-3 min-w-[140px] justify-between bg-white/20 ${(dateFrom || dateTo) ? 'bg-gradient-to-r from-lime-500 to-green-500' : 'bg-white/20'}`
-            }
-          `}
+          className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-white transition-all duration-300 ${
+            (dateFrom || dateTo) 
+              ? 'bg-gradient-to-r from-lime-500 to-green-500 shadow-lg' 
+              : 'bg-white/20 hover:bg-white/30'
+          }`}
+          title="Datum Filter"
         >
-          {mobile || isMobile ? (
-            <span>📅</span>
-          ) : (
-            <>
-              <span className="text-sm mr-2">📅</span>
-              <span className="flex-1 text-left">{getButtonText()}</span>
-              {hasSelection && (
-                <X 
-                  className="h-3 w-3 ml-2 hover:bg-white/20 rounded-full p-0.5" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleClear();
-                  }}
-                />
-              )}
-            </>
-          )}
+          <CalendarDays className="h-5 w-5" />
         </Button>
       </PopoverTrigger>
       
