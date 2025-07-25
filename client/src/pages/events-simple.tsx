@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import SearchFilters from "@/components/search-filters";
 import { EventCard } from "@/components/event-card";
 import { Header } from "@/components/header";
@@ -22,15 +23,24 @@ export default function Events() {
 
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [location, setLocation] = useLocation();
 
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
+    // Update URL with event ID
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('event', event.notionId || '');
+    window.history.pushState({}, '', newUrl.toString());
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedEvent(null);
+    // Remove event from URL
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.delete('event');
+    window.history.pushState({}, '', newUrl.toString());
   };
 
   // Fetch events from API
@@ -43,6 +53,22 @@ export default function Events() {
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
+
+  // Check URL for event parameter and open modal if event exists
+  useEffect(() => {
+    if (events.length > 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const eventId = urlParams.get('event');
+      
+      if (eventId && !isModalOpen) {
+        const event = events.find(e => e.notionId === eventId);
+        if (event) {
+          setSelectedEvent(event);
+          setIsModalOpen(true);
+        }
+      }
+    }
+  }, [events, isModalOpen]);
 
   // Check if any filter is active
   const hasActiveFilters = (
