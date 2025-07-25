@@ -40,78 +40,73 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
           <div
             key={`${event.notionId}-${index}`}
             onClick={() => onEventClick(event)}
-            className="group relative liquid-glass rounded-[2rem] p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:liquid-glass-strong border-2 border-purple-500/30 hover:border-purple-400/50"
+            className="group relative rounded-[2rem] cursor-pointer transform transition-all duration-300 hover:scale-105 border-2 border-purple-500/30 hover:border-purple-400/50 h-80 overflow-hidden"
+            style={{
+              backgroundImage: event.imageUrl ? `url(${event.imageUrl})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
           >
+            {/* Background Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            
             {/* Favorite Star Badge */}
-            <div className="absolute -top-3 -right-3 z-10">
+            <div className="absolute top-4 right-4 z-10">
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-orange-500 rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg">
                 <span className="text-white text-sm">💫</span>
               </div>
             </div>
 
-            {/* Event Image */}
-            {event.imageUrl && (
-              <div className="relative w-full h-40 mb-4 rounded-2xl overflow-hidden">
-                <img
-                  src={event.imageUrl}
-                  alt={event.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                
-                {/* Free Badge */}
-                {event.price === "0" && (
-                  <div className="absolute top-3 left-3">
-                    <Badge className="bg-lime-500 text-black font-bold rounded-full border-0 px-3 py-1">
-                      🆓 GRATIS
-                    </Badge>
-                  </div>
-                )}
+            {/* Free Badge */}
+            {event.price === "0" && (
+              <div className="absolute top-4 left-4 z-10">
+                <Badge className="bg-lime-500 text-black font-bold rounded-full border-0 px-3 py-1 shadow-lg">
+                  🆓 GRATIS
+                </Badge>
               </div>
             )}
 
-            {/* Event Content */}
-            <div className="space-y-3">
+            {/* Event Content - Bottom Overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 space-y-3">
               {/* Category */}
-              <Badge className="bg-white/20 text-white border-0 rounded-full text-xs">
+              <Badge className="bg-white/20 text-white border-0 rounded-full text-xs backdrop-blur-sm">
                 {event.category}
               </Badge>
 
               {/* Title */}
-              <h3 className="font-bold text-white text-lg leading-tight line-clamp-2 group-hover:text-purple-200 transition-colors">
+              <h3 className="font-bold text-white text-xl leading-tight line-clamp-2 group-hover:text-purple-200 transition-colors drop-shadow-lg">
                 {event.title}
               </h3>
 
               {/* Subtitle */}
               {event.subtitle && (
-                <p className="text-white/80 text-sm italic line-clamp-1">
+                <p className="text-white/90 text-sm italic line-clamp-1 drop-shadow-lg">
                   {event.subtitle}
                 </p>
               )}
 
               {/* Event Details */}
-              <div className="space-y-2 text-sm">
+              <div className="flex flex-wrap gap-3 text-sm">
                 {/* Date */}
-                <div className="flex items-center gap-2 text-white/80">
+                <div className="flex items-center gap-1 text-white/90 drop-shadow-lg">
                   <Calendar className="h-4 w-4" />
                   <span>
-                    {event.date ? format(new Date(event.date), "dd. MMM yyyy", { locale: de }) : "Datum folgt"}
+                    {event.date ? format(new Date(event.date), "dd. MMM", { locale: de }) : "Datum folgt"}
                   </span>
                 </div>
 
                 {/* Time */}
                 {event.time && (
-                  <div className="flex items-center gap-2 text-white/80">
+                  <div className="flex items-center gap-1 text-white/90 drop-shadow-lg">
                     <Clock className="h-4 w-4" />
-                    <span>{event.time} Uhr</span>
+                    <span>{event.time}</span>
                   </div>
                 )}
 
                 {/* Location */}
                 {event.location && (
-                  <div className="flex items-center gap-2 text-white/80">
+                  <div className="flex items-center gap-1 text-white/90 drop-shadow-lg">
                     <MapPin className="h-4 w-4" />
                     <span className="line-clamp-1">{event.location}</span>
                   </div>
@@ -121,7 +116,7 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
               {/* Price */}
               {event.price && event.price !== "0" && (
                 <div className="text-right">
-                  <span className="text-white font-semibold">
+                  <span className="text-white font-bold text-lg drop-shadow-lg">
                     €{event.price}
                   </span>
                 </div>
@@ -129,7 +124,7 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
             </div>
 
             {/* Hover Glow Effect */}
-            <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-r from-purple-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-purple-500/20 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
           </div>
         ))}
       </div>
