@@ -159,25 +159,28 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
 
         {/* Event Details */}
         <div className="space-y-2 text-sm text-white/80">
-          {event.location && (
-            <div className="flex items-center space-x-2">
-              <MapPin className="h-4 w-4 flex-shrink-0" />
-              <span className="truncate">{event.location}</span>
-            </div>
-          )}
-          {event.time && (
-            <div className="flex items-center space-x-2">
-              <Clock className="h-4 w-4 flex-shrink-0" />
-              <span>{event.time}</span>
-            </div>
-          )}
-          {/* Price Display - only show for paid events (not free) */}
-          {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
-            <div className="flex items-center space-x-2">
-              <FileText className="h-4 w-4 flex-shrink-0" />
-              <span className="font-semibold">{event.price}€</span>
-            </div>
-          )}
+          {/* Desktop: Vertical layout, Mobile: Horizontal layout */}
+          <div className="flex flex-col sm:space-y-2 space-y-0 sm:flex-col flex-row sm:gap-0 gap-4">
+            {event.location && (
+              <div className="flex items-center space-x-2 flex-1">
+                <MapPin className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{event.location}</span>
+              </div>
+            )}
+            {event.time && (
+              <div className="flex items-center space-x-2 flex-shrink-0">
+                <Clock className="h-4 w-4 flex-shrink-0" />
+                <span>{event.time}</span>
+              </div>
+            )}
+            {/* Price Display - only show for paid events (not free) */}
+            {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
+              <div className="flex items-center space-x-2 flex-shrink-0">
+                <FileText className="h-4 w-4 flex-shrink-0" />
+                <span className="font-semibold">{event.price}€</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Badges */}
