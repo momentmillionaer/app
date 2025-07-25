@@ -190,17 +190,7 @@ export function SearchFilters({
               <DollarSign className="h-5 w-5 text-white" />
             </Button>
 
-            {/* Clear Filters Button */}
-            {hasActiveFilters && (
-              <Button
-                variant="ghost"
-                onClick={onClearFilters}
-                className="h-12 w-12 p-0 rounded-full border-0 liquid-glass bg-red-500/80 text-white hover:bg-red-600/90 transition-all duration-200 shadow-lg"
-                title="Filter löschen"
-              >
-                <Trash2 className="h-5 w-5 text-white" />
-              </Button>
-            )}
+
           </div>
 
           {/* View Toggle Button Group */}
