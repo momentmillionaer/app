@@ -13,9 +13,10 @@ interface DateRangePickerProps {
   onDateFromChange: (date: string) => void;
   onDateToChange: (date: string) => void;
   mobile?: boolean;
+  compact?: boolean;
 }
 
-export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToChange, mobile = false }: DateRangePickerProps) {
+export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToChange, mobile = false, compact = false }: DateRangePickerProps) {
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<'single' | 'range'>('single');

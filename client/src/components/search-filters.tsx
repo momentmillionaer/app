@@ -125,87 +125,68 @@ export function SearchFilters({
         </div>
       </div>
 
-      {/* Filter Controls - Desktop: full buttons, Mobile: emoji-only circles */}
+      {/* Filter Controls and View Toggles - All in one line for desktop */}
       {!isMobile ? (
-        <div className="flex items-center justify-between gap-3">
-          {/* Category Filter */}
-          <div className="flex-1">
-            <Select value={selectedCategory} onValueChange={onCategoryChange}>
-              <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm font-medium px-4 justify-start">
-                <span className="mr-2 text-base">🎭</span>
-                <span className="text-white">
-                  {selectedCategory && selectedCategory !== "all" 
-                    ? categories.find(c => c === selectedCategory)?.replace(/^[^\s]+\s/, '') || "Kategorien"
-                    : "Kategorien"
-                  }
-                </span>
-              </SelectTrigger>
-              <SelectContent className="rounded-3xl border-0 ios-glass-popup">
-                <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="flex items-center justify-center gap-4">
+          {/* Category Filter - Emoji only button */}
+          <Select value={selectedCategory} onValueChange={onCategoryChange}>
+            <SelectTrigger className="h-12 w-12 p-0 rounded-full border-0 liquid-glass bg-white/20 text-white justify-center">
+              <span className="text-lg">🎭</span>
+            </SelectTrigger>
+            <SelectContent className="rounded-3xl border-0 ios-glass-popup">
+              <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-          {/* Audience Filter */}
-          <div className="flex-1">
-            <Select value={selectedAudience} onValueChange={onAudienceChange}>
-              <SelectTrigger className="h-10 rounded-full border-0 liquid-glass bg-white/20 text-white text-sm font-medium px-4 justify-start">
-                <span className="mr-2 text-base">🎯</span>
-                <span className="text-white">
-                  {selectedAudience && selectedAudience !== "all" 
-                    ? audienceOptions.find(opt => opt.value === selectedAudience)?.label.replace(/^[^\s]+\s/, '') || "Zielgruppe"
-                    : "Zielgruppe"
-                  }
-                </span>
-              </SelectTrigger>
-              <SelectContent className="rounded-3xl border-0 ios-glass-popup">
-                {audienceOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Audience Filter - Emoji only button */}
+          <Select value={selectedAudience} onValueChange={onAudienceChange}>
+            <SelectTrigger className="h-12 w-12 p-0 rounded-full border-0 liquid-glass bg-white/20 text-white justify-center">
+              <span className="text-lg">🎯</span>
+            </SelectTrigger>
+            <SelectContent className="rounded-3xl border-0 ios-glass-popup">
+              {audienceOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-          {/* Date Range Filter */}
-          <div className="flex-1">
-            <DateRangePicker
-              dateFrom={dateFrom}
-              dateTo={dateTo}
-              onDateFromChange={onDateFromChange}
-              onDateToChange={onDateToChange}
-            />
-          </div>
+          {/* Date Range Filter - Emoji only button */}
+          <DateRangePicker
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+            onDateFromChange={onDateFromChange}
+            onDateToChange={onDateToChange}
+            compact={true}
+          />
 
-          {/* Free Events Filter */}
-          <div className="flex-1">
-            <Button
-              variant="outline"
-              onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
-              className={`h-10 rounded-full border-0 liquid-glass text-sm font-medium px-4 w-full justify-start transition-all duration-300 ${
-                showFreeEventsOnly 
-                  ? 'bg-gradient-to-r from-purple-500 to-orange-500 text-white hover:from-purple-600 hover:to-orange-600' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              <span className="mr-2 text-base">🆓</span>
-              <span className="text-current">Kostenlos</span>
-            </Button>
-          </div>
+          {/* Free Events Filter - Emoji only button */}
+          <Button
+            variant="outline"
+            onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
+            className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
+              showFreeEventsOnly 
+                ? 'bg-gradient-to-r from-purple-500 to-orange-500 text-white hover:from-purple-600 hover:to-orange-600' 
+                : 'bg-white/20 text-white hover:bg-white/30'
+            }`}
+            title="Kostenlose Events"
+          >
+            <span className="text-lg">🆓</span>
+          </Button>
 
           {/* Add Event Button */}
           <Button
             onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-            className="h-10 w-10 p-0 rounded-full liquid-glass bg-white/20 text-white transition-all duration-300 border-0 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 flex-shrink-0"
+            className="h-12 w-12 p-0 rounded-full liquid-glass bg-white/20 text-white transition-all duration-300 border-0 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600"
             title="Event hinzufügen"
           >
-            <span className="text-base">➕</span>
+            <span className="text-lg">➕</span>
           </Button>
 
           {/* Clear Filters Button */}
@@ -213,12 +194,54 @@ export function SearchFilters({
             <Button
               variant="outline"
               onClick={onClearFilters}
-              className="h-10 w-10 p-0 rounded-full border-0 liquid-glass bg-white/20 text-white hover:bg-white/30 transition-all duration-200 flex-shrink-0"
+              className="h-12 w-12 p-0 rounded-full border-0 liquid-glass bg-white/20 text-white hover:bg-white/30 transition-all duration-200"
               title="Filter löschen"
             >
-              <span className="text-base">🗑️</span>
+              <span className="text-lg">🗑️</span>
             </Button>
           )}
+
+          {/* View Toggle Buttons */}
+          <div className="flex gap-4 ml-4">
+            <Button
+              variant="outline"
+              onClick={() => onViewChange("calendar")}
+              className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
+                view === "calendar" 
+                  ? 'bg-gradient-to-r from-lime-500 to-green-500 text-white' 
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+              title="Kalender"
+            >
+              <CalendarDays className="h-5 w-5" />
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={() => onViewChange("grid")}
+              className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
+                view === "grid" 
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white' 
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+              title="Raster"
+            >
+              <Grid3X3 className="h-5 w-5" />
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={() => onViewChange("favorites")}
+              className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
+                view === "favorites" 
+                  ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white' 
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+              title="Conni's Favoriten"
+            >
+              <Sparkles className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       ) : (
         /* Mobile: Emoji-only circular buttons with equal spacing */
