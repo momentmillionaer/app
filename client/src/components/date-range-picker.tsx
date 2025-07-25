@@ -128,15 +128,15 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
       <PopoverContent className="w-auto p-0 rounded-2xl border-0 ios-glass-popup" align="start">
         <div className="p-4 space-y-4">
           {/* Mode Toggle */}
-          <div className="flex bg-white/10 rounded-full p-1 mb-4">
+          <div className="flex items-center gap-2 p-2 bg-white/10 rounded-full mb-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => handleModeChange('single')}
-              className={`flex-1 text-sm font-medium rounded-full px-4 py-2 transition-all duration-200 ${
+              className={`h-8 px-3 rounded-full text-sm transition-all duration-200 ${
                 mode === 'single' 
-                  ? 'bg-brand-orange text-white shadow-md' 
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                  ? 'bg-brand-orange text-white shadow-sm' 
+                  : 'text-white hover:text-white/80 bg-transparent'
               }`}
             >
               📅 Einzeltag
@@ -145,10 +145,10 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
               variant="ghost"
               size="sm"
               onClick={() => handleModeChange('range')}
-              className={`flex-1 text-sm font-medium rounded-full px-4 py-2 transition-all duration-200 ${
+              className={`h-8 px-3 rounded-full text-sm transition-all duration-200 ${
                 mode === 'range' 
-                  ? 'bg-brand-orange text-white shadow-md' 
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                  ? 'bg-brand-orange text-white shadow-sm' 
+                  : 'text-white hover:text-white/80 bg-transparent'
               }`}
             >
               📊 Zeitraum
