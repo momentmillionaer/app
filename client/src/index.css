@@ -374,21 +374,36 @@
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* Date Range Picker - Mode-specific styling via Tailwind classes in calendar.tsx */
+/* Date Range Picker - Enhanced styling for clear mode indication */
 .date-range-calendar.single-mode [aria-selected="true"] {
   background: transparent !important;
   border: 2px solid var(--brand-orange) !important;
+  border-radius: 12px !important;
 }
 
 .date-range-calendar.range-mode [aria-selected="true"] {
   background: var(--brand-orange) !important;
   border: none !important;
+  border-radius: 12px !important;
 }
 
 .date-range-calendar [data-today="true"] {
   border: 2px solid hsl(var(--brand-lime)) !important;
   background: transparent !important;
-  box-shadow: 0 0 8px rgba(208, 254, 29, 0.4) !important;
+  box-shadow: 0 0 12px rgba(208, 254, 29, 0.5) !important;
+  border-radius: 12px !important;
+}
+
+/* Past days - grayed out appearance */
+.date-range-calendar .rdp-day_button[disabled] {
+  color: rgba(255, 255, 255, 0.3) !important;
+  opacity: 0.4 !important;
+  border-radius: 12px !important;
+}
+
+/* All calendar days get rounded corners */
+.date-range-calendar .rdp-day_button {
+  border-radius: 12px !important;
 }
 
 /* Remove all ios-calendar overrides - using date-range-calendar only */

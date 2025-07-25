@@ -133,10 +133,10 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
               variant={mode === 'single' ? "default" : "outline"}
               size="sm"
               onClick={() => handleModeChange('single')}
-              className={`text-xs rounded-full px-3 py-1 ${
+              className={`text-sm font-semibold rounded-full px-4 py-2 transition-all duration-300 ${
                 mode === 'single' 
-                  ? 'bg-brand-orange text-white hover:bg-brand-orange/80' 
-                  : 'bg-white/20 hover:bg-white/30 text-white border-white/20'
+                  ? 'bg-brand-orange text-white shadow-lg shadow-orange-500/30 scale-105 border-2 border-orange-400' 
+                  : 'bg-white/15 hover:bg-white/25 text-white/70 border border-white/30'
               }`}
             >
               📅 Einzeltag
@@ -145,10 +145,10 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
               variant={mode === 'range' ? "default" : "outline"}
               size="sm"
               onClick={() => handleModeChange('range')}
-              className={`text-xs rounded-full px-3 py-1 ${
+              className={`text-sm font-semibold rounded-full px-4 py-2 transition-all duration-300 ${
                 mode === 'range' 
-                  ? 'bg-brand-orange text-white hover:bg-brand-orange/80' 
-                  : 'bg-white/20 hover:bg-white/30 text-white border-white/20'
+                  ? 'bg-brand-orange text-white shadow-lg shadow-orange-500/30 scale-105 border-2 border-orange-400' 
+                  : 'bg-white/15 hover:bg-white/25 text-white/70 border border-white/30'
               }`}
             >
               📊 Zeitraum
