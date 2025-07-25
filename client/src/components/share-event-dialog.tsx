@@ -569,7 +569,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md liquid-glass-strong border border-white/20">
+      <DialogContent className="max-w-md liquid-glass-strong border border-white/20 max-h-[90vh] overflow-y-auto">
         <DialogTitle className="text-xl font-bold text-white text-center">Event teilen</DialogTitle>
         <DialogDescription className="text-white/70 text-sm text-center mb-4">
           Erstelle ein schönes Bild für Social Media
@@ -607,7 +607,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           </button>
         </div>
         
-        <div className="space-y-6">
+        <div className="space-y-6 max-h-[60vh] overflow-y-auto">
           {/* Loading State */}
           {isGenerating && (
             <div className="text-center py-8">
@@ -625,38 +625,43 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
                 className="w-full rounded-xl shadow-lg border border-white/20"
                 style={{ aspectRatio: format === "post" ? '4/5' : '9/16' }}
               />
-              
-              <div className="flex gap-3">
-                <button
-                  onClick={handleDownload}
-                  className="flex-1 flex items-center justify-center gap-2 h-12 px-4 liquid-glass-button rounded-full text-white font-medium transition-all duration-300 hover:scale-105"
-                >
-                  <Download className="h-4 w-4" />
-                  Herunterladen
-                </button>
-                
-                <button
-                  onClick={handleShare}
-                  className="flex-1 flex items-center justify-center gap-2 h-12 px-4 bg-gradient-to-r from-purple-500/80 to-orange-500/80 hover:from-purple-600/90 hover:to-orange-600/90 rounded-full text-white font-medium transition-all duration-300 hover:scale-105 border border-white/20"
-                  style={{
-                    backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
-                    WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
-                  }}
-                >
-                  <Share2 className="h-4 w-4" />
-                  Teilen
-                </button>
-                
-                <button
-                  onClick={handleCopyLink}
-                  className="flex items-center justify-center h-12 w-12 liquid-glass-button rounded-full text-white transition-all duration-300 hover:scale-105"
-                >
-                  <Link className="h-4 w-4" />
-                </button>
-              </div>
             </div>
           )}
         </div>
+        
+        {/* Fixed Action Buttons at Bottom */}
+        {shareImageUrl && (
+          <div className="sticky bottom-0 bg-transparent pt-4 mt-4 border-t border-white/10">
+            <div className="flex gap-3">
+              <button
+                onClick={handleDownload}
+                className="flex-1 flex items-center justify-center gap-2 h-12 px-4 liquid-glass-button rounded-full text-white font-medium transition-all duration-300 hover:scale-105"
+              >
+                <Download className="h-4 w-4" />
+                Herunterladen
+              </button>
+              
+              <button
+                onClick={handleShare}
+                className="flex-1 flex items-center justify-center gap-2 h-12 px-4 bg-gradient-to-r from-purple-500/80 to-orange-500/80 hover:from-purple-600/90 hover:to-orange-600/90 rounded-full text-white font-medium transition-all duration-300 hover:scale-105 border border-white/20"
+                style={{
+                  backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
+                }}
+              >
+                <Share2 className="h-4 w-4" />
+                Teilen
+              </button>
+              
+              <button
+                onClick={handleCopyLink}
+                className="flex items-center justify-center h-12 w-12 liquid-glass-button rounded-full text-white transition-all duration-300 hover:scale-105"
+              >
+                <Link className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
         
         <canvas ref={canvasRef} className="hidden" />
       </DialogContent>
