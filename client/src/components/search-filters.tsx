@@ -195,44 +195,62 @@ export function SearchFilters({
 
           {/* View Toggle Button Group */}
           <div className="flex items-center gap-3 liquid-glass-strong rounded-full p-2">
-            <Button
-              variant="ghost"
-              onClick={() => onViewChange("calendar")}
-              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 !border-0 ${
-                view === "calendar" 
-                  ? 'bg-gradient-to-r from-lime-500 to-green-500 text-white shadow-lg border border-lime-400/50 liquid-glass !border-lime-400/50' 
-                  : 'text-white hover:bg-white/15 !bg-transparent'
-              }`}
-              title="Kalender"
-            >
-              <CalendarDays className="h-5 w-5 text-white" />
-            </Button>
+            {view === "calendar" ? (
+              <Button
+                variant="outline"
+                onClick={() => onViewChange("calendar")}
+                className="h-12 w-12 p-0 rounded-full bg-gradient-to-r from-lime-500 to-green-500 text-white shadow-lg border border-lime-400/50 liquid-glass transition-all duration-300"
+                title="Kalender"
+              >
+                <CalendarDays className="h-5 w-5 text-white" />
+              </Button>
+            ) : (
+              <button
+                onClick={() => onViewChange("calendar")}
+                className="h-12 w-12 p-0 rounded-full transition-all duration-300 text-white hover:bg-white/10 bg-transparent border-0 flex items-center justify-center"
+                title="Kalender"
+              >
+                <CalendarDays className="h-5 w-5 text-white" />
+              </button>
+            )}
             
-            <Button
-              variant="ghost"
-              onClick={() => onViewChange("grid")}
-              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 !border-0 ${
-                view === "grid" 
-                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border border-blue-400/50 liquid-glass !border-blue-400/50' 
-                  : 'text-white hover:bg-white/15 !bg-transparent'
-              }`}
-              title="Raster"
-            >
-              <Grid3X3 className="h-5 w-5 text-white" />
-            </Button>
+            {view === "grid" ? (
+              <Button
+                variant="outline"
+                onClick={() => onViewChange("grid")}
+                className="h-12 w-12 p-0 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border border-blue-400/50 liquid-glass transition-all duration-300"
+                title="Raster"
+              >
+                <Grid3X3 className="h-5 w-5 text-white" />
+              </Button>
+            ) : (
+              <button
+                onClick={() => onViewChange("grid")}
+                className="h-12 w-12 p-0 rounded-full transition-all duration-300 text-white hover:bg-white/10 bg-transparent border-0 flex items-center justify-center"
+                title="Raster"
+              >
+                <Grid3X3 className="h-5 w-5 text-white" />
+              </button>
+            )}
             
-            <Button
-              variant="ghost"
-              onClick={() => onViewChange("favorites")}
-              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 !border-0 ${
-                view === "favorites" 
-                  ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg border border-yellow-400/50 liquid-glass !border-yellow-400/50' 
-                  : 'text-white hover:bg-white/15 !bg-transparent'
-              }`}
-              title="Conni's Favoriten"
-            >
-              <Sparkles className="h-5 w-5 text-white" />
-            </Button>
+            {view === "favorites" ? (
+              <Button
+                variant="outline"
+                onClick={() => onViewChange("favorites")}
+                className="h-12 w-12 p-0 rounded-full bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg border border-yellow-400/50 liquid-glass transition-all duration-300"
+                title="Conni's Favoriten"
+              >
+                <Sparkles className="h-5 w-5 text-white" />
+              </Button>
+            ) : (
+              <button
+                onClick={() => onViewChange("favorites")}
+                className="h-12 w-12 p-0 rounded-full transition-all duration-300 text-white hover:bg-white/10 bg-transparent border-0 flex items-center justify-center"
+                title="Conni's Favoriten"
+              >
+                <Sparkles className="h-5 w-5 text-white" />
+              </button>
+            )}
           </div>
 
 
