@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { format } from "date-fns";
+import { format as formatDate } from "date-fns";
 import { de } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -15,19 +15,20 @@ interface ShareEventDialogProps {
 export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
+  const [format, setFormat] = useState<"post" | "story">("post");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Auto-generate image when dialog opens and reset on close
+  // Auto-generate image when dialog opens, format changes, or reset on close
   React.useEffect(() => {
     if (isOpen) {
-      // Reset state and generate new image every time dialog opens
+      // Reset state and generate new image every time dialog opens or format changes
       setShareImageUrl(null);
       setIsGenerating(false);
       setTimeout(() => {
         generateShareImage();
       }, 100); // Small delay to ensure state is reset
     }
-  }, [isOpen]);
+  }, [isOpen, format]);
 
   // Helper function to wrap text
   const wrapText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] => {
@@ -64,9 +65,16 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
       
-      // Set canvas size for Instagram format (4:5 ratio - 1080x1350)
-      canvas.width = 1080;
-      canvas.height = 1350;
+      // Set canvas size based on selected format
+      if (format === "post") {
+        // Instagram Post format (4:5 ratio - 1080x1350)
+        canvas.width = 1080;
+        canvas.height = 1350;
+      } else {
+        // Instagram Story format (9:16 ratio - 1080x1920)
+        canvas.width = 1080;
+        canvas.height = 1920;
+      }
       
       // Classical paintings from attached assets - using correct file names
       const paintings = [
@@ -183,12 +191,12 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         backgroundImg.src = randomPainting;
       });
 
-      // Card layout - make room for copyright at bottom
+      // Card layout - adjust for different formats
       const cardPadding = 48;
       const cardX = cardPadding;
-      const cardY = 100;
+      const cardY = format === "story" ? 150 : 100; // More top margin for story format
       const cardWidth = canvas.width - (cardPadding * 2);
-      const cardHeight = canvas.height - cardY - 160; // More space for copyright
+      const cardHeight = canvas.height - cardY - (format === "story" ? 200 : 160); // More bottom space for story
       const cardRadius = 32;
 
       // Liquid glass background - darker and more blurry effect
@@ -323,7 +331,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       if (event.date) {
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
         const eventDate = new Date(event.date + 'T12:00:00+02:00');
-        const dateText = `📅 ${format(eventDate, "EEEE, dd. MMMM yyyy", { locale: de })}`;
+        const dateText = `📅 ${formatDate(eventDate, "EEEE, dd. MMMM yyyy", { locale: de })}`;
         ctx.fillText(dateText, leftColumnX, currentY);
         currentY += 44;
       }
@@ -379,7 +387,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             const [day, month, year] = dateStr.split('.');
             const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
             if (date > today) {
-              futureDates.push(format(date, "dd.MM", { locale: de }));
+              futureDates.push(formatDate(date, "dd.MM", { locale: de }));
             }
           });
         }
@@ -391,7 +399,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         const startDate = new Date(event.date);
         if (endDate > startDate && endDate > today) {
           hasMultipleDates = true;
-          futureDates.push(format(endDate, "dd.MM", { locale: de }));
+          futureDates.push(formatDate(endDate, "dd.MM", { locale: de }));
         }
       }
 
@@ -530,7 +538,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
     if (!shareImageUrl) return;
     
     const link = document.createElement('a');
-    link.download = `${event.title.toLowerCase().replace(/\s+/g, '-')}-share.png`;
+    link.download = `${event.title.toLowerCase().replace(/\s+/g, '-')}-${format}.png`;
     link.href = shareImageUrl;
     document.body.appendChild(link);
     link.click();
@@ -554,6 +562,39 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         <DialogDescription className="text-white/70 text-sm text-center mb-4">
           Erstelle ein schönes Bild für Social Media
         </DialogDescription>
+        
+        {/* Format Toggle */}
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => setFormat("post")}
+            className={`flex-1 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              format === "post" 
+                ? "bg-purple-500/80 text-white border border-purple-400/40" 
+                : "bg-white/10 text-white/70 border border-white/20 hover:bg-white/20"
+            }`}
+            style={{
+              backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
+              WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
+            }}
+          >
+            📱 Post (4:5)
+          </button>
+          <button
+            onClick={() => setFormat("story")}
+            className={`flex-1 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              format === "story" 
+                ? "bg-orange-500/80 text-white border border-orange-400/40" 
+                : "bg-white/10 text-white/70 border border-white/20 hover:bg-white/20"
+            }`}
+            style={{
+              backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
+              WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
+            }}
+          >
+            📲 Story (9:16)
+          </button>
+        </div>
+        
         <div className="space-y-6">
           {/* Loading State */}
           {isGenerating && (
@@ -570,7 +611,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
                 src={shareImageUrl} 
                 alt="Share preview" 
                 className="w-full rounded-xl shadow-lg border border-white/20"
-                style={{ aspectRatio: '4/5' }}
+                style={{ aspectRatio: format === "post" ? '4/5' : '9/16' }}
               />
               
               <div className="flex gap-3">
