@@ -191,12 +191,24 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         backgroundImg.src = randomPainting;
       });
 
-      // Card layout - adjust for different formats
+      // Card layout - same size for both formats, centered for story
       const cardPadding = 48;
-      const cardX = cardPadding;
-      const cardY = format === "story" ? 150 : 100; // More top margin for story format
       const cardWidth = canvas.width - (cardPadding * 2);
-      const cardHeight = canvas.height - cardY - (format === "story" ? 200 : 160); // More bottom space for story
+      
+      // Use same card height for both formats (post format dimensions)
+      const postFormatHeight = 1350;
+      const baseCardHeight = postFormatHeight - 100 - 160; // Same as post format
+      
+      let cardX = cardPadding;
+      let cardY = 100;
+      let cardHeight = baseCardHeight;
+      
+      // For story format, center the card vertically
+      if (format === "story") {
+        cardHeight = baseCardHeight; // Keep same height as post
+        cardY = (canvas.height - cardHeight) / 2; // Center vertically
+      }
+      
       const cardRadius = 32;
 
       // Liquid glass background - darker and more blurry effect
