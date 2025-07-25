@@ -193,6 +193,19 @@ Preferred communication style: Simple, everyday language.
 - ✓ Stronger background overlay (from-black/90 via-black/50 to-black/20) for text contrast
 - ✓ Removed p-element from favorites header for cleaner layout
 
+**July 25, 2025 - Advanced Date Picker & Past Events Filtering**
+- ✓ Implemented intelligent past events filtering that only activates when filters are applied
+- ✓ Past events remain visible when no filters are active (preserves complete event view)
+- ✓ Filter detection includes search term, category, audience, date range, and free events
+- ✓ Today's events correctly included in "future" events (not filtered out)
+- ✓ Redesigned Date Picker with clean default appearance (no background circles)
+- ✓ Tage werden standardmäßig ohne Hintergrund-Kreise angezeigt
+- ✓ Orange border für Einzeltag-Auswahl, orange Hintergrund für Zeitraum-Auswahl
+- ✓ Aktivitäts-Toggle zwischen "📅 Einzeltag" und "📊 Zeitraum" Modi
+- ✓ Heute's Datum behält lime grünen Rahmen mit Glow-Effekt
+- ✓ Hover-Effekte für bessere Benutzererfahrung implementiert
+- ✓ JavaScript hasActiveFilters Initialisierungsfehler behoben
+
 **July 20, 2025 - Timezone Implementation & Notion Sync Enhancement**
 - ✓ Comprehensive timezone update to GMT+2 (Europe/Vienna) for Weiz, Austria
 - ✓ All date/time displays now use Austrian locale (de-AT) and Vienna timezone

@@ -425,54 +425,99 @@
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* iOS Calendar Styling */
-.ios-calendar {
+/* Date Range Picker Calendar Styling - Clean Default State */
+.date-range-calendar {
   background: transparent;
 }
 
-.ios-calendar * {
+.date-range-calendar * {
   background-color: transparent !important;
 }
 
-.ios-calendar .rdp-table {
+.date-range-calendar .rdp-table {
   background: transparent !important;
 }
 
-.ios-calendar .rdp-head,
-.ios-calendar .rdp-tbody,
-.ios-calendar .rdp-row {
+.date-range-calendar .rdp-head,
+.date-range-calendar .rdp-tbody,
+.date-range-calendar .rdp-row {
   background: transparent !important;
 }
 
-.ios-calendar .rdp-day_button {
+/* Default day styling - no background circle, clean appearance */
+.date-range-calendar .rdp-day_button {
   border-radius: 12px;
   transition: all 0.2s ease;
-  background: transparent;
+  background: transparent !important;
   color: white;
   font-weight: 500;
+  border: none !important;
+  width: 36px;
+  height: 36px;
 }
 
-.ios-calendar .rdp-day_button:hover {
-  background: rgba(255, 255, 255, 0.1);
+.date-range-calendar .rdp-day_button:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
   transform: scale(1.05);
 }
 
-/* Single date mode - only border, no background */
-.ios-calendar-single .rdp-day_button[aria-selected="true"] {
-  color: white !important;
-  font-weight: 600;
+/* Today's date - lime border outline only */
+.date-range-calendar .rdp-day_today {
+  border: 2px solid hsl(var(--brand-lime)) !important;
   background: transparent !important;
-  border: 2px solid rgba(0, 0, 255, 0.8) !important;
+  color: white !important;
+  font-weight: bold !important;
+  box-shadow: 0 0 8px rgba(208, 254, 29, 0.4) !important;
+}
+
+/* Single mode - only selected days get orange border */
+.date-range-calendar.single-mode .rdp-day_selected {
+  border: 2px solid var(--brand-orange) !important;
+  background: transparent !important;
+  color: white !important;
+  font-weight: bold !important;
+}
+
+/* Range mode - selected days get orange background */
+.date-range-calendar.range-mode .rdp-day_selected {
+  background: var(--brand-orange) !important;
+  color: white !important;
+  border: none !important;
+  font-weight: bold !important;
+}
+
+/* Range start and end days */
+.date-range-calendar .rdp-day_range_start {
+  background: var(--brand-orange) !important;
+  color: white !important;
+  border: none !important;
   border-radius: 12px !important;
 }
 
-/* Range mode - use background colors for clear range indication */
-.ios-calendar-range .rdp-day_button[aria-selected="true"] {
-  background: rgba(0, 0, 255, 0.8) !important;
+.date-range-calendar .rdp-day_range_end {
+  background: var(--brand-orange) !important;
   color: white !important;
-  font-weight: 600;
   border: none !important;
   border-radius: 12px !important;
+}
+
+/* Range middle days - subtle orange background */
+.date-range-calendar .rdp-day_range_middle {
+  background: rgba(254, 92, 43, 0.3) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 12px !important;
+}
+
+/* Disabled days */
+.date-range-calendar .rdp-day_disabled {
+  color: rgba(255, 255, 255, 0.3) !important;
+  background: transparent !important;
+}
+
+.date-range-calendar .rdp-day_disabled:hover {
+  background: transparent !important;
+  transform: none !important;
 }
 
 .ios-calendar .rdp-day_range_start,
