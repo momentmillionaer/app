@@ -125,27 +125,19 @@ export function SearchFilters({
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Filter Controls and View Toggles - All in one line for desktop */}
       {!isMobile ? (
-        /* Desktop: Full width filters with dropdowns and text */
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 flex-1">
-            {/* Category Filter */}
+        <div className="flex items-center justify-center gap-6">
+          {/* Filter Button Group */}
+          <div className="flex items-center gap-3 liquid-glass-strong rounded-full p-2">
+            {/* Category Filter - Icon button */}
             <Select value={selectedCategory} onValueChange={onCategoryChange}>
-              <SelectTrigger className={`h-12 px-4 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
+              <SelectTrigger className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass text-white justify-center transition-all duration-300 ${
                 selectedCategory && selectedCategory !== "all" 
-                  ? 'bg-gradient-to-r from-orange-500 to-purple-600 text-white shadow-lg border-orange-400/50' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
+                  ? 'bg-gradient-to-r from-orange-500 to-red-500 shadow-lg border-orange-400/50' 
+                  : 'bg-white/20 hover:bg-white/30'
               }`}>
-                <div className="flex items-center gap-2">
-                  <Theater className="h-4 w-4" />
-                  <span className="text-sm font-medium">
-                    {selectedCategory && selectedCategory !== "all" 
-                      ? categories.find(cat => cat === selectedCategory) || "Kategorie"
-                      : "Kategorie"
-                    }
-                  </span>
-                </div>
+                <Theater className="h-5 w-5 text-white" />
               </SelectTrigger>
               <SelectContent className="rounded-3xl border-0 ios-glass-popup">
                 <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
@@ -157,22 +149,14 @@ export function SearchFilters({
               </SelectContent>
             </Select>
 
-            {/* Audience Filter */}
+            {/* Audience Filter - Icon button */}
             <Select value={selectedAudience} onValueChange={onAudienceChange}>
-              <SelectTrigger className={`h-12 px-4 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
+              <SelectTrigger className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass text-white justify-center transition-all duration-300 ${
                 selectedAudience && selectedAudience !== "all" 
-                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border-blue-400/50' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-500 shadow-lg border-blue-400/50' 
+                  : 'bg-white/20 hover:bg-white/30'
               }`}>
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span className="text-sm font-medium">
-                    {selectedAudience && selectedAudience !== "all" 
-                      ? getAudienceLabel(selectedAudience).replace(/^🎯\s/, "").replace(/^❤️\s/, "").replace(/^👯‍♀️\s/, "").replace(/^🦸🏼‍♀️\s/, "").replace(/^🧑‍🧒‍🧒\s/, "")
-                      : "Zielgruppe"
-                    }
-                  </span>
-                </div>
+                <Users className="h-5 w-5 text-white" />
               </SelectTrigger>
               <SelectContent className="rounded-3xl border-0 ios-glass-popup">
                 {audienceOptions.map((option) => (
@@ -183,7 +167,7 @@ export function SearchFilters({
               </SelectContent>
             </Select>
 
-            {/* Date Range Filter */}
+            {/* Date Range Filter - Icon button */}
             <DateRangePicker
               dateFrom={dateFrom}
               dateTo={dateTo}
@@ -205,6 +189,8 @@ export function SearchFilters({
             >
               <Gift className="h-5 w-5 text-white" />
             </Button>
+
+
           </div>
 
           {/* View Toggle Button Group */}
@@ -266,143 +252,143 @@ export function SearchFilters({
               </button>
             )}
           </div>
+
+
         </div>
       ) : (
-        <div>
-          {/* Mobile: Icon-only circular buttons with equal spacing */}
-          <div className="flex items-center justify-center gap-4 px-2">
-            {/* Category Filter Mobile */}
-            <Select value={selectedCategory} onValueChange={onCategoryChange}>
-              <SelectTrigger className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass text-lg transition-all duration-300 flex items-center justify-center ${
-                selectedCategory && selectedCategory !== "all" 
-                  ? 'bg-gradient-to-r from-orange-500 to-purple-600 text-white shadow-lg border-orange-400/50' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              } [&>svg]:hidden`}>
-                <Theater className="h-5 w-5 text-white" />
-              </SelectTrigger>
-              <SelectContent className="rounded-3xl border-0 ios-glass-popup">
-                <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        /* Mobile: Emoji-only circular buttons with equal spacing */
+        <div className="flex items-center justify-center gap-4 px-2">
+          {/* Category Filter Mobile */}
+          <Select value={selectedCategory} onValueChange={onCategoryChange}>
+            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass text-lg transition-all duration-300 flex items-center justify-center ${
+              selectedCategory && selectedCategory !== "all" 
+                ? 'bg-gradient-to-r from-orange-500 to-purple-600 text-white shadow-lg border-orange-400/50' 
+                : 'bg-white/20 text-white hover:bg-white/30'
+            } [&>svg]:hidden`}>
+              <Theater className="h-5 w-5 text-white" />
+            </SelectTrigger>
+            <SelectContent className="rounded-3xl border-0 ios-glass-popup">
+              <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-            {/* Audience Filter Mobile */}
-            <Select value={selectedAudience} onValueChange={onAudienceChange}>
-              <SelectTrigger className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass text-lg transition-all duration-300 flex items-center justify-center ${
-                selectedAudience && selectedAudience !== "all" 
-                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border-blue-400/50' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              } [&>svg]:hidden`}>
-                <Users className="h-5 w-5 text-white" />
-              </SelectTrigger>
-              <SelectContent className="rounded-3xl border-0 ios-glass-popup">
-                {audienceOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          {/* Audience Filter Mobile */}
+          <Select value={selectedAudience} onValueChange={onAudienceChange}>
+            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass text-lg transition-all duration-300 flex items-center justify-center ${
+              selectedAudience && selectedAudience !== "all" 
+                ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border-blue-400/50' 
+                : 'bg-white/20 text-white hover:bg-white/30'
+            } [&>svg]:hidden`}>
+              <Users className="h-5 w-5 text-white" />
+            </SelectTrigger>
+            <SelectContent className="rounded-3xl border-0 ios-glass-popup">
+              {audienceOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-            {/* Date Range Filter Mobile */}
-            <DateRangePicker
-              dateFrom={dateFrom}
-              dateTo={dateTo}
-              onDateFromChange={onDateFromChange}
-              onDateToChange={onDateToChange}
-              mobile={true}
-            />
+          {/* Date Range Filter Mobile */}
+          <DateRangePicker
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+            onDateFromChange={onDateFromChange}
+            onDateToChange={onDateToChange}
+            mobile={true}
+          />
 
-            {/* Free Events Filter Mobile */}
+          {/* Free Events Filter Mobile */}
+          <Button
+            variant="outline"
+            onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
+            className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
+              showFreeEventsOnly 
+                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg border-green-400/50' 
+                : 'bg-white/20 text-white hover:bg-white/30'
+            }`}
+            title="Kostenlose Events"
+          >
+            <Gift className="h-5 w-5 text-white" />
+          </Button>
+
+          {/* Clear Filters Button Mobile */}
+          {hasActiveFilters && (
             <Button
               variant="outline"
-              onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
-              className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
-                showFreeEventsOnly 
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg border-green-400/50' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-              title="Kostenlose Events"
+              onClick={onClearFilters}
+              className="h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass bg-white/20 text-white hover:bg-white/30 transition-all duration-200"
+              title="Filter löschen"
             >
-              <Gift className="h-5 w-5 text-white" />
+              <Trash2 className="h-5 w-5 text-white" />
             </Button>
+          )}
+        </div>
 
-            {/* Clear Filters Button Mobile */}
-            {hasActiveFilters && (
-              <Button
-                variant="outline"
-                onClick={onClearFilters}
-                className="h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass bg-white/20 text-white hover:bg-white/30 transition-all duration-200"
-                title="Filter löschen"
-              >
-                <Trash2 className="h-5 w-5 text-white" />
-              </Button>
-            )}
-          </div>
-
-          {/* View Toggle Buttons for Mobile */}
-          <div className="flex items-center justify-center gap-3 mt-6 liquid-glass-strong rounded-full p-2 w-fit mx-auto">
-            {view === "calendar" ? (
-              <Button
-                variant="outline"
-                onClick={() => onViewChange("calendar")}
-                className="h-12 w-12 p-0 rounded-full bg-gradient-to-r from-lime-500 to-green-500 text-white shadow-lg border border-lime-400/50 liquid-glass transition-all duration-300"
-                title="Kalender"
-              >
-                <CalendarDays className="h-5 w-5 text-white" />
-              </Button>
-            ) : (
-              <button
-                onClick={() => onViewChange("calendar")}
-                className="h-12 w-12 p-0 rounded-full transition-all duration-300 text-white hover:bg-white/10 bg-transparent border-0 flex items-center justify-center"
-                title="Kalender"
-              >
-                <CalendarDays className="h-5 w-5 text-white" />
-              </button>
-            )}
-            
-            {view === "grid" ? (
-              <Button
-                variant="outline"
-                onClick={() => onViewChange("grid")}
-                className="h-12 w-12 p-0 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border border-blue-400/50 liquid-glass transition-all duration-300"
-                title="Raster"
-              >
-                <Grid3X3 className="h-5 w-5 text-white" />
-              </Button>
-            ) : (
-              <button
-                onClick={() => onViewChange("grid")}
-                className="h-12 w-12 p-0 rounded-full transition-all duration-300 text-white hover:bg-white/10 bg-transparent border-0 flex items-center justify-center"
-                title="Raster"
-              >
-                <Grid3X3 className="h-5 w-5 text-white" />
-              </button>
-            )}
-            
-            {view === "favorites" ? (
-              <Button
-                variant="outline"
-                onClick={() => onViewChange("favorites")}
-                className="h-12 w-12 p-0 rounded-full bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg border border-yellow-400/50 liquid-glass transition-all duration-300"
-                title="Conni's Favoriten"
-              >
-                <Sparkles className="h-5 w-5 text-white" />
-              </Button>
-            ) : (
-              <button
-                onClick={() => onViewChange("favorites")}
-                className="h-12 w-12 p-0 rounded-full transition-all duration-300 text-white hover:bg-white/10 bg-transparent border-0 flex items-center justify-center"
-                title="Conni's Favoriten"
-              >
-                <Sparkles className="h-5 w-5 text-white" />
-              </button>
-            )}
-          </div>
+        {/* View Toggle Buttons for Mobile */}
+        <div className="flex items-center justify-center gap-3 mt-6 liquid-glass-strong rounded-full p-2 w-fit mx-auto">
+          {view === "calendar" ? (
+            <Button
+              variant="outline"
+              onClick={() => onViewChange("calendar")}
+              className="h-12 w-12 p-0 rounded-full bg-gradient-to-r from-lime-500 to-green-500 text-white shadow-lg border border-lime-400/50 liquid-glass transition-all duration-300"
+              title="Kalender"
+            >
+              <CalendarDays className="h-5 w-5 text-white" />
+            </Button>
+          ) : (
+            <button
+              onClick={() => onViewChange("calendar")}
+              className="h-12 w-12 p-0 rounded-full transition-all duration-300 text-white hover:bg-white/10 bg-transparent border-0 flex items-center justify-center"
+              title="Kalender"
+            >
+              <CalendarDays className="h-5 w-5 text-white" />
+            </button>
+          )}
+          
+          {view === "grid" ? (
+            <Button
+              variant="outline"
+              onClick={() => onViewChange("grid")}
+              className="h-12 w-12 p-0 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border border-blue-400/50 liquid-glass transition-all duration-300"
+              title="Raster"
+            >
+              <Grid3X3 className="h-5 w-5 text-white" />
+            </Button>
+          ) : (
+            <button
+              onClick={() => onViewChange("grid")}
+              className="h-12 w-12 p-0 rounded-full transition-all duration-300 text-white hover:bg-white/10 bg-transparent border-0 flex items-center justify-center"
+              title="Raster"
+            >
+              <Grid3X3 className="h-5 w-5 text-white" />
+            </button>
+          )}
+          
+          {view === "favorites" ? (
+            <Button
+              variant="outline"
+              onClick={() => onViewChange("favorites")}
+              className="h-12 w-12 p-0 rounded-full bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg border border-yellow-400/50 liquid-glass transition-all duration-300"
+              title="Conni's Favoriten"
+            >
+              <Sparkles className="h-5 w-5 text-white" />
+            </Button>
+          ) : (
+            <button
+              onClick={() => onViewChange("favorites")}
+              className="h-12 w-12 p-0 rounded-full transition-all duration-300 text-white hover:bg-white/10 bg-transparent border-0 flex items-center justify-center"
+              title="Conni's Favoriten"
+            >
+              <Sparkles className="h-5 w-5 text-white" />
+            </button>
+          )}
         </div>
       )}
 
@@ -468,6 +454,8 @@ export function SearchFilters({
           </div>
         </div>
       )}
+
+
     </div>
   );
 }
