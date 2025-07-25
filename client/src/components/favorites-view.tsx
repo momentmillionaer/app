@@ -32,9 +32,6 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
       {/* Header Section */}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-white drop-shadow-sm mb-2" style={{ fontFamily: 'Connihof, serif' }}>conni's favoriten</h2>
-        <p className="text-white/80 drop-shadow-sm">
-          {events.length} {events.length === 1 ? 'besonderes Event' : 'besondere Events'} für unvergessliche Momente
-        </p>
       </div>
 
       {/* Favorites Grid - Creative Layout */}
