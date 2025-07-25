@@ -158,26 +158,26 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
         </div>
 
         {/* Event Details */}
-        <div className="space-y-2 text-sm text-white/80">
-          {/* Desktop: Vertical layout, Mobile: Horizontal layout */}
-          <div className="flex flex-col sm:space-y-2 space-y-0 sm:flex-col flex-row sm:gap-0 gap-4">
+        <div className="text-sm text-white/80">
+          {/* Mobile: Horizontal layout in a single row, Desktop: Vertical layout */}
+          <div className="flex flex-row gap-4 sm:flex-col sm:space-y-2 sm:gap-0">
             {event.location && (
-              <div className="flex items-center space-x-2 flex-1">
+              <div className="flex items-center space-x-2 flex-1 min-w-0">
                 <MapPin className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{event.location}</span>
+                <span className="truncate text-xs sm:text-sm">{event.location}</span>
               </div>
             )}
             {event.time && (
               <div className="flex items-center space-x-2 flex-shrink-0">
                 <Clock className="h-4 w-4 flex-shrink-0" />
-                <span>{event.time}</span>
+                <span className="text-xs sm:text-sm whitespace-nowrap">{event.time}</span>
               </div>
             )}
             {/* Price Display - only show for paid events (not free) */}
             {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
               <div className="flex items-center space-x-2 flex-shrink-0">
                 <FileText className="h-4 w-4 flex-shrink-0" />
-                <span className="font-semibold">{event.price}€</span>
+                <span className="font-semibold text-xs sm:text-sm whitespace-nowrap">{event.price}€</span>
               </div>
             )}
           </div>
