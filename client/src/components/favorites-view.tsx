@@ -40,7 +40,7 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
           <div
             key={`${event.notionId}-${index}`}
             onClick={() => onEventClick(event)}
-            className="group relative rounded-[2rem] cursor-pointer transform transition-all duration-300 hover:scale-105 border-2 border-purple-500/30 hover:border-purple-400/50 h-96 overflow-hidden"
+            className="group relative rounded-[2rem] cursor-pointer transform transition-all duration-300 hover:scale-105 h-96 overflow-hidden shadow-lg hover:shadow-purple-500/30 hover:shadow-2xl"
             style={{
               backgroundImage: event.imageUrl ? `url(${event.imageUrl})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               backgroundSize: 'cover',
@@ -80,10 +80,19 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
 
             {/* Event Content - Bottom Overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-6 space-y-3">
-              {/* Category */}
-              <Badge className="bg-white/20 text-white border-0 rounded-full text-xs backdrop-blur-sm">
-                {event.category}
-              </Badge>
+              {/* Categories */}
+              <div className="flex flex-wrap gap-2">
+                {event.categories && event.categories.length > 0 ? (
+                  event.categories.map((cat, catIndex) => (
+                    <Badge key={catIndex} className="bg-white/20 text-white border-0 rounded-full text-xs backdrop-blur-sm">
+                      {cat}
+                    </Badge>
+                  ))
+                ) : (
+                  <Badge className="bg-white/20 text-white border-0 rounded-full text-xs backdrop-blur-sm">
+                    {event.category}
+                  </Badge>
+                )}</div>
 
               {/* Title */}
               <h3 className="font-bold text-white text-xl leading-tight line-clamp-2 group-hover:text-purple-200 transition-colors" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
@@ -134,8 +143,9 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
               )}
             </div>
 
-            {/* Hover Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-t from-purple-500/20 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            {/* Glow Effects */}
+            <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-r from-purple-500/20 via-orange-500/15 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            <div className="absolute -inset-1 rounded-[2rem] bg-gradient-to-r from-purple-500/30 to-orange-500/30 opacity-0 group-hover:opacity-60 blur-lg transition-all duration-300 pointer-events-none -z-10" />
           </div>
         ))}
       </div>
