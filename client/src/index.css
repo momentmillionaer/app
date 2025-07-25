@@ -374,99 +374,21 @@
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* Date Range Picker Calendar Styling - Clean Default State */
-.date-range-calendar {
-  background: transparent;
-}
-
-.date-range-calendar * {
-  background-color: transparent !important;
-}
-
-.date-range-calendar .rdp-table {
+/* Date Range Picker - Mode-specific styling via Tailwind classes in calendar.tsx */
+.date-range-calendar.single-mode [aria-selected="true"] {
   background: transparent !important;
+  border: 2px solid var(--brand-orange) !important;
 }
 
-.date-range-calendar .rdp-head,
-.date-range-calendar .rdp-tbody,
-.date-range-calendar .rdp-row {
-  background: transparent !important;
-}
-
-/* Default day styling - no background circle, clean appearance */
-.date-range-calendar .rdp-day_button {
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  background: transparent !important;
-  color: white;
-  font-weight: 500;
+.date-range-calendar.range-mode [aria-selected="true"] {
+  background: var(--brand-orange) !important;
   border: none !important;
-  width: 36px;
-  height: 36px;
 }
 
-.date-range-calendar .rdp-day_button:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  transform: scale(1.05);
-}
-
-/* Today's date - lime border outline only */
-.date-range-calendar .rdp-day_today {
+.date-range-calendar [data-today="true"] {
   border: 2px solid hsl(var(--brand-lime)) !important;
   background: transparent !important;
-  color: white !important;
-  font-weight: bold !important;
   box-shadow: 0 0 8px rgba(208, 254, 29, 0.4) !important;
-}
-
-/* Single mode - only selected days get orange border */
-.date-range-calendar.single-mode .rdp-day_selected {
-  border: 2px solid var(--brand-orange) !important;
-  background: transparent !important;
-  color: white !important;
-  font-weight: bold !important;
-}
-
-/* Range mode - selected days get orange background */
-.date-range-calendar.range-mode .rdp-day_selected {
-  background: var(--brand-orange) !important;
-  color: white !important;
-  border: none !important;
-  font-weight: bold !important;
-}
-
-/* Range start and end days */
-.date-range-calendar .rdp-day_range_start {
-  background: var(--brand-orange) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 12px !important;
-}
-
-.date-range-calendar .rdp-day_range_end {
-  background: var(--brand-orange) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 12px !important;
-}
-
-/* Range middle days - subtle orange background */
-.date-range-calendar .rdp-day_range_middle {
-  background: rgba(254, 92, 43, 0.3) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 12px !important;
-}
-
-/* Disabled days */
-.date-range-calendar .rdp-day_disabled {
-  color: rgba(255, 255, 255, 0.3) !important;
-  background: transparent !important;
-}
-
-.date-range-calendar .rdp-day_disabled:hover {
-  background: transparent !important;
-  transform: none !important;
 }
 
 /* Remove all ios-calendar overrides - using date-range-calendar only */
