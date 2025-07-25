@@ -193,7 +193,7 @@ export default function Events() {
             showFreeEventsOnly={showFreeOnly}
             onFreeEventsChange={setShowFreeOnly}
             onClearFilters={handleClearFilters}
-            eventCount={eventsToShow.length}
+
             view={view}
             onViewChange={setView}
           />
@@ -206,47 +206,68 @@ export default function Events() {
           )}
 
           {view === "calendar" && hasActiveFilters && (
-            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-              {eventsToShow.map((event) => (
-                <EventCard
-                  key={event.notionId}
-                  event={event}
-                  onClick={() => handleEventClick(event)}
-                  view="grid"
-                />
-              ))}
-              {eventsToShow.length === 0 && (
-                <div className="col-span-full text-center py-12 text-white">
-                  <p className="text-lg font-semibold mb-2 drop-shadow-sm">Keine Events gefunden</p>
-                  <p className="text-white/80 drop-shadow-sm">Probiere andere Filter oder erweitere den Zeitraum.</p>
-                </div>
-              )}
-            </div>
+            <>
+              <div className="mb-6 text-center">
+                <p className="text-white/80 text-sm drop-shadow-sm font-medium">
+                  {eventsToShow.length} {eventsToShow.length === 1 ? 'Event gefunden' : 'Events gefunden'}
+                </p>
+              </div>
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {eventsToShow.map((event) => (
+                  <EventCard
+                    key={event.notionId}
+                    event={event}
+                    onClick={() => handleEventClick(event)}
+                    view="grid"
+                  />
+                ))}
+                {eventsToShow.length === 0 && (
+                  <div className="col-span-full text-center py-12 text-white">
+                    <p className="text-lg font-semibold mb-2 drop-shadow-sm">Keine Events gefunden</p>
+                    <p className="text-white/80 drop-shadow-sm">Probiere andere Filter oder erweitere den Zeitraum.</p>
+                  </div>
+                )}
+              </div>
+            </>
           )}
 
           {view === "favorites" && (
-            <FavoritesView 
-              events={favoriteEvents} 
-              onEventClick={handleEventClick}
-            />
+            <>
+              <div className="mb-6 text-center">
+                <p className="text-white/80 text-sm drop-shadow-sm font-medium">
+                  {favoriteEvents.length} {favoriteEvents.length === 1 ? 'Event gefunden' : 'Events gefunden'}
+                </p>
+              </div>
+              <FavoritesView 
+                events={favoriteEvents} 
+                onEventClick={handleEventClick}
+              />
+            </>
           )}
 
           {view === "grid" && (
-            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-              {eventsToShow.map((event) => (
-                <EventCard
-                  key={event.notionId}
-                  event={event}
-                  onClick={() => handleEventClick(event)}
-                />
-              ))}
-              {eventsToShow.length === 0 && (
-                <div className="col-span-full text-center py-12 text-white">
-                  <p className="text-lg font-semibold mb-2 drop-shadow-sm">Keine Events gefunden</p>
-                  <p className="text-white/80 drop-shadow-sm">Probiere andere Filter oder erweitere den Zeitraum.</p>
-                </div>
-              )}
-            </div>
+            <>
+              <div className="mb-6 text-center">
+                <p className="text-white/80 text-sm drop-shadow-sm font-medium">
+                  {eventsToShow.length} {eventsToShow.length === 1 ? 'Event gefunden' : 'Events gefunden'}
+                </p>
+              </div>
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {eventsToShow.map((event) => (
+                  <EventCard
+                    key={event.notionId}
+                    event={event}
+                    onClick={() => handleEventClick(event)}
+                  />
+                ))}
+                {eventsToShow.length === 0 && (
+                  <div className="col-span-full text-center py-12 text-white">
+                    <p className="text-lg font-semibold mb-2 drop-shadow-sm">Keine Events gefunden</p>
+                    <p className="text-white/80 drop-shadow-sm">Probiere andere Filter oder erweitere den Zeitraum.</p>
+                  </div>
+                )}
+              </div>
+            </>
           )}
           
           <InstagramPreview />

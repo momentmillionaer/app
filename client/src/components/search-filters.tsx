@@ -407,14 +407,7 @@ export function SearchFilters({
         </div>
       )}
 
-      {/* Event Count Display */}
-      {eventCount !== undefined && (
-        <div className="mt-4 text-center">
-          <p className="text-white/80 text-sm drop-shadow-sm font-medium">
-            {eventCount} {eventCount === 1 ? 'Event gefunden' : 'Events gefunden'}
-          </p>
-        </div>
-      )}
+
     </div>
   );
 }
