@@ -198,10 +198,10 @@ export function SearchFilters({
             <Button
               variant="ghost"
               onClick={() => onViewChange("calendar")}
-              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 ${
+              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 !border-0 ${
                 view === "calendar" 
-                  ? 'bg-gradient-to-r from-lime-500 to-green-500 text-white shadow-lg border border-lime-400/50 liquid-glass' 
-                  : 'text-white hover:bg-white/15 bg-transparent border-0'
+                  ? 'bg-gradient-to-r from-lime-500 to-green-500 text-white shadow-lg border border-lime-400/50 liquid-glass !border-lime-400/50' 
+                  : 'text-white hover:bg-white/15 !bg-transparent'
               }`}
               title="Kalender"
             >
@@ -211,10 +211,10 @@ export function SearchFilters({
             <Button
               variant="ghost"
               onClick={() => onViewChange("grid")}
-              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 ${
+              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 !border-0 ${
                 view === "grid" 
-                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border border-blue-400/50 liquid-glass' 
-                  : 'text-white hover:bg-white/15 bg-transparent border-0'
+                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border border-blue-400/50 liquid-glass !border-blue-400/50' 
+                  : 'text-white hover:bg-white/15 !bg-transparent'
               }`}
               title="Raster"
             >
@@ -224,10 +224,10 @@ export function SearchFilters({
             <Button
               variant="ghost"
               onClick={() => onViewChange("favorites")}
-              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 ${
+              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 !border-0 ${
                 view === "favorites" 
-                  ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg border border-yellow-400/50 liquid-glass' 
-                  : 'text-white hover:bg-white/15 bg-transparent border-0'
+                  ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg border border-yellow-400/50 liquid-glass !border-yellow-400/50' 
+                  : 'text-white hover:bg-white/15 !bg-transparent'
               }`}
               title="Conni's Favoriten"
             >
