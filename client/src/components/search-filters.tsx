@@ -340,72 +340,7 @@ export function SearchFilters({
         </div>
       )}
 
-      {/* Active Filters Display */}
-      {hasActiveFilters && (
-        <div className="mt-6 flex flex-wrap gap-2 items-center">
-          <span className="text-sm text-white/80 drop-shadow-sm mr-2">Aktive Filter:</span>
-          {searchQuery && (
-            <Badge variant="default" className="bg-brand-purple text-black rounded-full shadow-sm">
-              🔍 Suche: {searchQuery}
-              <button
-                className="ml-2 hover:text-gray-600"
-                onClick={() => removeFilter('search')}
-              >
-                ×
-              </button>
-            </Badge>
-          )}
-          {selectedCategory && selectedCategory !== "all" && (
-            <Badge variant="default" className="bg-brand-orange text-white rounded-full shadow-sm">
-              🎭 {selectedCategory}
-              <button
-                className="ml-2 hover:text-gray-200"
-                onClick={() => removeFilter('category')}
-              >
-                ×
-              </button>
-            </Badge>
-          )}
-          {selectedAudience && selectedAudience !== "all" && (
-            <Badge variant="default" className="bg-brand-blue text-white rounded-full shadow-sm">
-              {audienceOptions.find(opt => opt.value === selectedAudience)?.label || selectedAudience}
-              <button
-                className="ml-2 hover:text-gray-200"
-                onClick={() => removeFilter('audience')}
-              >
-                ×
-              </button>
-            </Badge>
-          )}
-          {(dateFrom || dateTo) && (
-            <Badge variant="default" className="bg-brand-lime text-black rounded-full shadow-sm">
-              📅 {dateFrom && dateTo 
-                ? `${new Date(dateFrom).toLocaleDateString('de-DE')} - ${new Date(dateTo).toLocaleDateString('de-DE')}`
-                : dateFrom 
-                ? new Date(dateFrom).toLocaleDateString('de-DE')
-                : new Date(dateTo).toLocaleDateString('de-DE')
-              }
-              <button
-                className="ml-2 hover:text-gray-600"
-                onClick={() => removeFilter('date')}
-              >
-                ×
-              </button>
-            </Badge>
-          )}
-          {showFreeEventsOnly && (
-            <Badge variant="default" className="bg-brand-cream text-black rounded-full shadow-sm">
-              🆓 Nur kostenlose Events
-              <button
-                className="ml-2 hover:text-gray-600"
-                onClick={() => removeFilter('freeEvents')}
-              >
-                ×
-              </button>
-            </Badge>
-          )}
-        </div>
-      )}
+      
 
       {/* View Toggle Buttons */}
       <div className="mt-6 flex justify-center">
