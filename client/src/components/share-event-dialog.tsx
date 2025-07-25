@@ -295,6 +295,14 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
       currentY += 15;
 
+      // Organizer (below title)
+      if (event.organizer) {
+        ctx.font = '36px Helvetica, Arial, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillText(`von ${event.organizer}`, cardX + 48, currentY);
+        currentY += 50;
+      }
+
       // Subtitle
       if (event.subtitle) {
         ctx.font = 'italic 32px Helvetica, Arial, sans-serif';
@@ -354,16 +362,20 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         currentY += 20;
       }
 
-      // Future dates from multi-date events  
+      // Check for multi-date events and show additional dates only if there are multiple dates
       const futureDates: string[] = [];
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
+      let hasMultipleDates = false;
+      
       // Parse Termine: format for additional dates from description
       if (event.description && event.description.includes('Termine:')) {
         const dateMatches = event.description.match(/(\d{2}\.\d{2}\.\d{4})/g);
-        if (dateMatches) {
-          dateMatches.forEach(dateStr => {
+        if (dateMatches && dateMatches.length > 1) { // Only if more than one date
+          hasMultipleDates = true;
+          dateMatches.forEach((dateStr, index) => {
+            if (index === 0) return; // Skip first date (already shown with calendar emoji)
             const [day, month, year] = dateStr.split('.');
             const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
             if (date > today) {
@@ -373,36 +385,18 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         }
       }
       
-      // Also check if we have endDate or multiple dates
+      // Also check if we have endDate indicating a date range
       if (event.endDate) {
         const endDate = new Date(event.endDate);
         const startDate = new Date(event.date);
         if (endDate > startDate && endDate > today) {
+          hasMultipleDates = true;
           futureDates.push(format(endDate, "dd.MM", { locale: de }));
         }
       }
-      
-      // Add some example future dates if this is a recurring event (detect by title)
-      const isRecurring = event.title.toLowerCase().includes('rundgang') || 
-                         event.title.toLowerCase().includes('tour') ||
-                         event.title.toLowerCase().includes('kurs') ||
-                         event.description?.toLowerCase().includes('wöchentlich') ||
-                         event.description?.toLowerCase().includes('täglich');
-                         
-      if (isRecurring && futureDates.length === 0) {
-        // Add next 3-5 future dates for recurring events
-        const eventDate = new Date(event.date);
-        for (let i = 1; i <= 4; i++) {
-          const nextDate = new Date(eventDate);
-          nextDate.setDate(nextDate.getDate() + (i * 7)); // Weekly recurrence
-          if (nextDate > today) {
-            futureDates.push(format(nextDate, "dd.MM", { locale: de }));
-          }
-        }
-      }
 
-      // Additional dates as badges
-      if (futureDates.length > 0) {
+      // Additional dates as badges (only for multi-date events)
+      if (hasMultipleDates && futureDates.length > 0) {
         currentY += 10;
         const badgeStartY = currentY;
         let badgeX = leftColumnX;
@@ -456,7 +450,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             badgeY += 55;
           }
           
-          const moreText = `+${futureDates.length - maxBadges}`;
+          const moreText = "weitere Termine";
           ctx.font = 'bold 24px Helvetica, Arial, sans-serif';
           const textWidth = ctx.measureText(moreText).width;
           const badgeWidth = textWidth + 24;
