@@ -341,58 +341,7 @@
   color: white !important;
 }
 
-/* Special Date Range Calendar Styles */
-.date-range-calendar .rdp-day_range_start {
-  border-radius: 9999px 0 0 9999px !important;
-  background-color: var(--brand-orange) !important;
-  color: white !important;
-}
-
-.date-range-calendar .rdp-day_range_end {
-  border-radius: 0 9999px 9999px 0 !important;
-  background-color: var(--brand-orange) !important;
-  color: white !important;
-}
-
-.date-range-calendar .rdp-day_range_middle {
-  border-radius: 12px !important;
-  background-color: rgba(254, 92, 43, 0.2) !important;
-  color: white !important;
-  /* Only visible when both start and end dates are selected */
-}
-
-/* Selected day styling - different for single vs range mode */
-.date-range-calendar.single-mode .rdp-day_selected {
-  border-radius: 12px !important;
-  background-color: transparent !important;
-  color: white !important;
-  border: 2px solid var(--brand-orange) !important;
-  font-weight: bold !important;
-}
-
-.date-range-calendar.range-mode .rdp-day_selected {
-  border-radius: 12px !important;
-  background-color: var(--brand-orange) !important;
-  color: white !important;
-  border: none !important;
-}
-
-.date-range-calendar .rdp-day_range_start,
-.date-range-calendar .rdp-day_range_end {
-  border-radius: 12px !important;
-  background-color: var(--brand-orange) !important;
-  color: white !important;
-  border: none !important;
-}
-
-.date-range-calendar .rdp-day_today {
-  border-radius: 12px !important;
-  background-color: transparent !important;
-  color: white !important;
-  border: 2px solid hsl(var(--brand-lime)) !important;
-  font-weight: bold !important;
-  box-shadow: 0 0 8px rgba(208, 254, 29, 0.4) !important;
-}
+/* Old duplicate styles removed - using only the clean styles below */
 
 [data-radix-select-value] * {
   color: white !important;
@@ -520,27 +469,7 @@
   transform: none !important;
 }
 
-.ios-calendar .rdp-day_range_start,
-.ios-calendar .rdp-day_range_end {
-  background: rgba(0, 0, 255, 0.8) !important;
-  color: white !important;
-  border: none !important;
-}
-
-.ios-calendar .rdp-day_range_middle {
-  background: rgba(0, 0, 255, 0.3) !important;
-  color: white !important;
-  border: none !important;
-}
-
-/* Override any default calendar styling that might cause green background */
-.ios-calendar .rdp-day_button {
-  background: transparent !important;
-}
-
-.ios-calendar .rdp-day_button:not([aria-selected="true"]):hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-}
+/* Remove all ios-calendar overrides - using date-range-calendar only */
 
 .ios-calendar .rdp-head_cell {
   color: rgba(255, 255, 255, 0.7);
