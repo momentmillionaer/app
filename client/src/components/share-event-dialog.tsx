@@ -299,7 +299,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       if (event.organizer) {
         ctx.font = '36px Helvetica, Arial, sans-serif';
         ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        ctx.fillText(`von ${event.organizer}`, cardX + 48, currentY);
+        ctx.fillText(event.organizer, cardX + 48, currentY);
         currentY += 50;
       }
 
