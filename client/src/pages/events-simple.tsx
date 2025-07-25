@@ -44,7 +44,15 @@ export default function Events() {
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-
+  // Check if any filter is active
+  const hasActiveFilters = (
+    searchTerm || 
+    (selectedCategory && selectedCategory !== "all") || 
+    (selectedAudience && selectedAudience !== "all") || 
+    dateFrom || 
+    dateTo || 
+    showFreeOnly
+  );
 
   // Filter events
   const filteredEvents = events.filter(event => {
@@ -135,16 +143,6 @@ export default function Events() {
   const eventsToShow = view === "favorites" ? favoriteEvents : 
                      view === "grid" ? gridFilteredEvents : 
                      filteredEvents;
-
-  // Check if any filter is active
-  const hasActiveFilters = (
-    searchTerm || 
-    (selectedCategory && selectedCategory !== "all") || 
-    (selectedAudience && selectedAudience !== "all") || 
-    dateFrom || 
-    dateTo || 
-    showFreeOnly
-  );
 
   // Clear all filters
   const handleClearFilters = () => {
