@@ -128,27 +128,27 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
       <PopoverContent className="w-auto p-0 rounded-2xl border-0 ios-glass-popup" align="start">
         <div className="p-4 space-y-4">
           {/* Mode Toggle */}
-          <div className="flex gap-2 mb-4">
+          <div className="flex bg-white/10 rounded-full p-1 mb-4">
             <Button
-              variant={mode === 'single' ? "default" : "outline"}
+              variant="ghost"
               size="sm"
               onClick={() => handleModeChange('single')}
-              className={`text-sm font-semibold rounded-full px-4 py-2 transition-all duration-300 ${
+              className={`flex-1 text-sm font-medium rounded-full px-4 py-2 transition-all duration-200 ${
                 mode === 'single' 
-                  ? 'bg-brand-orange text-white shadow-lg shadow-orange-500/30 scale-105 border-2 border-orange-400' 
-                  : 'bg-white/15 hover:bg-white/25 text-white/70 border border-white/30'
+                  ? 'bg-brand-orange text-white shadow-md' 
+                  : 'text-white/80 hover:text-white hover:bg-white/10'
               }`}
             >
               📅 Einzeltag
             </Button>
             <Button
-              variant={mode === 'range' ? "default" : "outline"}
+              variant="ghost"
               size="sm"
               onClick={() => handleModeChange('range')}
-              className={`text-sm font-semibold rounded-full px-4 py-2 transition-all duration-300 ${
+              className={`flex-1 text-sm font-medium rounded-full px-4 py-2 transition-all duration-200 ${
                 mode === 'range' 
-                  ? 'bg-brand-orange text-white shadow-lg shadow-orange-500/30 scale-105 border-2 border-orange-400' 
-                  : 'bg-white/15 hover:bg-white/25 text-white/70 border border-white/30'
+                  ? 'bg-brand-orange text-white shadow-md' 
+                  : 'text-white/80 hover:text-white hover:bg-white/10'
               }`}
             >
               📊 Zeitraum

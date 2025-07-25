@@ -36,17 +36,17 @@ function Calendar({
         row: "flex w-full mt-2",
         cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
         day: cn(
-          "h-9 w-9 p-0 font-normal aria-selected:opacity-100 bg-transparent border-none text-white hover:bg-white/10 transition-all duration-200 rounded-xl"
+          "h-9 w-9 p-0 font-normal bg-transparent text-white hover:bg-white/10 transition-all duration-200 rounded-lg"
         ),
         day_range_end: "day-range-end",
         day_selected:
-          "border-2 border-orange-500 bg-transparent text-white font-bold hover:bg-orange-500/20 rounded-xl",
-        day_today: "border-2 border-lime-400 bg-transparent text-white font-bold shadow-lime-400/40 shadow-sm rounded-xl",
+          "bg-orange-500 text-white font-semibold hover:bg-orange-600 rounded-lg",
+        day_today: "border-2 border-lime-400 bg-transparent text-white font-semibold rounded-lg shadow-lg shadow-lime-400/30",
         day_outside:
-          "day-outside text-white/30 aria-selected:bg-accent/50 aria-selected:text-muted-foreground rounded-xl",
-        day_disabled: "text-white/30 opacity-50 rounded-xl",
+          "text-white/25 pointer-events-none rounded-lg",
+        day_disabled: "text-white/25 opacity-40 cursor-not-allowed rounded-lg",
         day_range_middle:
-          "bg-orange-500/30 text-white rounded-xl",
+          "bg-orange-500/25 text-white rounded-lg",
         day_hidden: "invisible",
         ...classNames,
       }}
