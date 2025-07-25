@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 import { de } from "date-fns/locale";
-import { MapPin, Clock, FileText } from "lucide-react";
+import { MapPin, Clock, Euro } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import type { Event } from "@shared/schema";
@@ -159,25 +159,25 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
 
         {/* Event Details */}
         <div className="text-sm text-white/80">
-          {/* Mobile: Horizontal layout in a single row, Desktop: Vertical layout */}
-          <div className="flex flex-row gap-4 sm:flex-col sm:space-y-2 sm:gap-0">
+          {/* Mobile: Horizontal layout in one left-aligned row, Desktop: Vertical layout */}
+          <div className="flex flex-row items-start justify-start gap-3 sm:flex-col sm:space-y-2 sm:gap-0 sm:items-stretch">
             {event.location && (
-              <div className="flex items-center space-x-2 flex-1 min-w-0">
-                <MapPin className="h-4 w-4 flex-shrink-0" />
+              <div className="flex items-center space-x-1 flex-1 min-w-0">
+                <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                 <span className="truncate text-xs sm:text-sm">{event.location}</span>
               </div>
             )}
             {event.time && (
-              <div className="flex items-center space-x-2 flex-shrink-0">
-                <Clock className="h-4 w-4 flex-shrink-0" />
+              <div className="flex items-center space-x-1 flex-shrink-0">
+                <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                 <span className="text-xs sm:text-sm whitespace-nowrap">{event.time}</span>
               </div>
             )}
             {/* Price Display - only show for paid events (not free) */}
             {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
-              <div className="flex items-center space-x-2 flex-shrink-0">
-                <FileText className="h-4 w-4 flex-shrink-0" />
-                <span className="font-semibold text-xs sm:text-sm whitespace-nowrap">{event.price}€</span>
+              <div className="flex items-center space-x-1 flex-shrink-0">
+                <Euro className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                <span className="font-semibold text-xs sm:text-sm whitespace-nowrap">{event.price}</span>
               </div>
             )}
           </div>
