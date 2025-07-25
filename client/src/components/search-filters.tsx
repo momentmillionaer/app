@@ -127,8 +127,8 @@ export function SearchFilters({
 
       {/* Filter Controls and View Toggles - All in one line for desktop */}
       {!isMobile ? (
-        <div className="flex items-center justify-between">
-          {/* Filter Button Group - Left */}
+        <div className="flex items-center justify-center gap-6">
+          {/* Filter Button Group */}
           <div className="flex items-center gap-3 liquid-glass-strong rounded-full p-2">
             {/* Category Filter - Icon button */}
             <Select value={selectedCategory} onValueChange={onCategoryChange}>
@@ -193,7 +193,7 @@ export function SearchFilters({
 
           </div>
 
-          {/* View Toggle Button Group - Right */}
+          {/* View Toggle Button Group */}
           <div className="flex items-center gap-3 liquid-glass-strong rounded-full p-2">
             {view === "calendar" ? (
               <Button
