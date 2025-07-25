@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Plus, CalendarDays, List, Grid3X3, Sparkles, Theater, Users, DollarSign, Filter } from "lucide-react";
+import { Search, Plus, CalendarDays, List, Grid3X3, Sparkles, Theater, Users, DollarSign, Filter, Trash2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -193,12 +193,12 @@ export function SearchFilters({
             {/* Clear Filters Button */}
             {hasActiveFilters && (
               <Button
-                variant="outline"
+                variant="ghost"
                 onClick={onClearFilters}
-                className="h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass bg-red-500/80 text-white hover:bg-red-600/90 transition-all duration-200 shadow-lg border-red-400/50"
+                className="h-12 w-12 p-0 rounded-full border-0 liquid-glass bg-red-500/80 text-white hover:bg-red-600/90 transition-all duration-200 shadow-lg"
                 title="Filter löschen"
               >
-                <Filter className="h-5 w-5 text-white" />
+                <Trash2 className="h-5 w-5 text-white" />
               </Button>
             )}
           </div>
@@ -449,6 +449,69 @@ export function SearchFilters({
           </Button>
         </div>
       </div>
+
+      {/* Active Filters Display */}
+      {hasActiveFilters && (
+        <div className="mt-6 flex justify-center">
+          <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl">
+            {searchQuery && (
+              <div className="flex items-center gap-1 bg-purple-500/20 text-white px-3 py-1 rounded-full text-sm border border-purple-400/30">
+                <span>🔍 "{searchQuery}"</span>
+                <button 
+                  onClick={() => removeFilter('search')}
+                  className="ml-1 hover:bg-white/20 rounded-full p-0.5"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            {selectedCategory && selectedCategory !== "all" && (
+              <div className="flex items-center gap-1 bg-orange-500/20 text-white px-3 py-1 rounded-full text-sm border border-orange-400/30">
+                <span>{selectedCategory}</span>
+                <button 
+                  onClick={() => removeFilter('category')}
+                  className="ml-1 hover:bg-white/20 rounded-full p-0.5"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            {selectedAudience && selectedAudience !== "all" && (
+              <div className="flex items-center gap-1 bg-blue-500/20 text-white px-3 py-1 rounded-full text-sm border border-blue-400/30">
+                <span>{getAudienceLabel(selectedAudience)}</span>
+                <button 
+                  onClick={() => removeFilter('audience')}
+                  className="ml-1 hover:bg-white/20 rounded-full p-0.5"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            {(dateFrom || dateTo) && (
+              <div className="flex items-center gap-1 bg-lime-500/20 text-white px-3 py-1 rounded-full text-sm border border-lime-400/30">
+                <span>📅 {dateFrom && dateTo ? `${dateFrom} - ${dateTo}` : dateFrom || dateTo}</span>
+                <button 
+                  onClick={() => removeFilter('date')}
+                  className="ml-1 hover:bg-white/20 rounded-full p-0.5"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            {showFreeEventsOnly && (
+              <div className="flex items-center gap-1 bg-green-500/20 text-white px-3 py-1 rounded-full text-sm border border-green-400/30">
+                <span>🆓 Kostenlos</span>
+                <button 
+                  onClick={() => removeFilter('freeEvents')}
+                  className="ml-1 hover:bg-white/20 rounded-full p-0.5"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Event Count Display */}
       {eventCount !== undefined && (
