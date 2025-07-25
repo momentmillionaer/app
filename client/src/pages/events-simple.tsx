@@ -44,8 +44,18 @@ export default function Events() {
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
+
+
   // Filter events
   const filteredEvents = events.filter(event => {
+    // Filter past events if any filter is active
+    if (hasActiveFilters) {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0); // Start of today
+      const eventDate = new Date(event.date || '');
+      eventDate.setHours(0, 0, 0, 0);
+      if (eventDate < now) return false; // Exclude past events when filters are active
+    }
     // Text search
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
@@ -127,7 +137,14 @@ export default function Events() {
                      filteredEvents;
 
   // Check if any filter is active
-  const hasActiveFilters = searchTerm || selectedCategory || selectedAudience || dateFrom || dateTo || showFreeOnly;
+  const hasActiveFilters = (
+    searchTerm || 
+    (selectedCategory && selectedCategory !== "all") || 
+    (selectedAudience && selectedAudience !== "all") || 
+    dateFrom || 
+    dateTo || 
+    showFreeOnly
+  );
 
   // Clear all filters
   const handleClearFilters = () => {
