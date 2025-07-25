@@ -157,28 +157,52 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
           )}
         </div>
 
-        {/* Event Details */}
+        {/* Event Details - Mobile: horizontal row, Desktop: vertical stack */}
         <div className="text-sm text-white/80">
-          {/* All details in one row on mobile, vertical on desktop */}
-          <div className="flex flex-row items-center gap-2 text-xs md:flex-col md:items-start md:space-y-2 md:gap-0 md:text-sm">
-            {event.location && (
-              <div className="flex items-center space-x-1 flex-1 min-w-0">
-                <MapPin className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
-                <span className="truncate">{event.location}</span>
-              </div>
-            )}
-            {event.time && (
-              <div className="flex items-center space-x-1 flex-shrink-0">
-                <Clock className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
-                <span className="whitespace-nowrap">{event.time}</span>
-              </div>
-            )}
-            {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
-              <div className="flex items-center space-x-1 flex-shrink-0">
-                <Euro className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
-                <span className="font-semibold whitespace-nowrap">{event.price}</span>
-              </div>
-            )}
+          <div className="lg:space-y-2">
+            {/* Mobile horizontal layout */}
+            <div className="flex items-center justify-start gap-3 lg:hidden">
+              {event.location && (
+                <div className="flex items-center gap-1 flex-1 min-w-0">
+                  <MapPin className="h-3 w-3 flex-shrink-0" />
+                  <span className="text-xs truncate">{event.location}</span>
+                </div>
+              )}
+              {event.time && (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <Clock className="h-3 w-3 flex-shrink-0" />
+                  <span className="text-xs whitespace-nowrap">{event.time}</span>
+                </div>
+              )}
+              {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <Euro className="h-3 w-3 flex-shrink-0" />
+                  <span className="text-xs font-semibold">{event.price}</span>
+                </div>
+              )}
+            </div>
+            
+            {/* Desktop vertical layout */}
+            <div className="hidden lg:block space-y-2">
+              {event.location && (
+                <div className="flex items-center space-x-2">
+                  <MapPin className="h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">{event.location}</span>
+                </div>
+              )}
+              {event.time && (
+                <div className="flex items-center space-x-2">
+                  <Clock className="h-4 w-4 flex-shrink-0" />
+                  <span>{event.time}</span>
+                </div>
+              )}
+              {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
+                <div className="flex items-center space-x-2">
+                  <Euro className="h-4 w-4 flex-shrink-0" />
+                  <span className="font-semibold">{event.price}</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
