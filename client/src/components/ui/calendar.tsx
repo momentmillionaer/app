@@ -41,12 +41,12 @@ function Calendar({
         day_range_end: "day-range-end",
         day_selected:
           "bg-orange-500 text-white font-semibold hover:bg-orange-600 rounded-lg",
-        day_today: "border-2 border-lime-400 bg-transparent text-white font-semibold rounded-lg shadow-lg shadow-lime-400/30",
+        day_today: "bg-lime-400 text-black font-semibold rounded-lg",
         day_outside:
           "text-white/25 pointer-events-none rounded-lg",
         day_disabled: "text-white/25 opacity-40 cursor-not-allowed rounded-lg",
         day_range_middle:
-          "bg-orange-500/25 text-white rounded-lg",
+          "bg-orange-500/40 text-white rounded-lg",
         day_hidden: "invisible",
         ...classNames,
       }}

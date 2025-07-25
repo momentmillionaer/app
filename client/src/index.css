@@ -374,22 +374,35 @@
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* Date Range Picker - Clean mode-specific styling */
+/* Date Range Picker - Filter button style calendar selection */
 .date-range-calendar.single-mode [aria-selected="true"] {
-  background: transparent !important;
-  border: 2px solid var(--brand-orange) !important;
+  background: var(--brand-orange) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: white !important;
 }
 
 .date-range-calendar.range-mode [aria-selected="true"] {
   background: var(--brand-orange) !important;
   border: none !important;
+  border-radius: 8px !important;
+  color: white !important;
 }
 
-/* Today styling with lime border */
+/* Today styling with lime background like filter buttons */
 .date-range-calendar [data-today="true"] {
-  border: 2px solid hsl(var(--brand-lime)) !important;
-  background: transparent !important;
-  box-shadow: 0 0 8px rgba(208, 254, 29, 0.4) !important;
+  background: hsl(var(--brand-lime)) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: black !important;
+  font-weight: 600 !important;
+}
+
+/* Range middle days with lighter orange */
+.date-range-calendar.range-mode .rdp-day_range_middle {
+  background: rgba(254, 92, 43, 0.4) !important;
+  border-radius: 8px !important;
+  color: white !important;
 }
 
 /* Clean override for disabled/past days */
@@ -397,6 +410,7 @@
   color: rgba(255, 255, 255, 0.25) !important;
   opacity: 0.5 !important;
   cursor: not-allowed !important;
+  border-radius: 8px !important;
 }
 
 /* Remove all ios-calendar overrides - using date-range-calendar only */
