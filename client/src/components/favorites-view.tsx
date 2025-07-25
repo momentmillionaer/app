@@ -40,7 +40,7 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
           <div
             key={`${event.notionId}-${index}`}
             onClick={() => onEventClick(event)}
-            className="group relative rounded-[2rem] cursor-pointer transform transition-all duration-300 hover:scale-105 border-2 border-purple-500/30 hover:border-purple-400/50 h-80 overflow-hidden"
+            className="group relative rounded-[2rem] cursor-pointer transform transition-all duration-300 hover:scale-105 border-2 border-purple-500/30 hover:border-purple-400/50 h-96 overflow-hidden"
             style={{
               backgroundImage: event.imageUrl ? `url(${event.imageUrl})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               backgroundSize: 'cover',
@@ -48,8 +48,21 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
               backgroundRepeat: 'no-repeat'
             }}
           >
+            {/* Background Image with Blur Effect */}
+            {event.imageUrl && (
+              <div 
+                className="absolute inset-0 transition-all duration-300 group-hover:blur-0 blur-sm"
+                style={{
+                  backgroundImage: `url(${event.imageUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat'
+                }}
+              />
+            )}
+            
             {/* Background Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
             
             {/* Favorite Star Badge */}
             <div className="absolute top-4 right-4 z-10">
@@ -61,9 +74,7 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
             {/* Free Badge */}
             {event.price === "0" && (
               <div className="absolute top-4 left-4 z-10">
-                <Badge className="bg-lime-500 text-black font-bold rounded-full border-0 px-3 py-1 shadow-lg">
-                  🆓 GRATIS
-                </Badge>
+                <span className="text-2xl drop-shadow-lg">🆓</span>
               </div>
             )}
 
@@ -75,13 +86,13 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
               </Badge>
 
               {/* Title */}
-              <h3 className="font-bold text-white text-xl leading-tight line-clamp-2 group-hover:text-purple-200 transition-colors drop-shadow-lg">
+              <h3 className="font-bold text-white text-xl leading-tight line-clamp-2 group-hover:text-purple-200 transition-colors" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
                 {event.title}
               </h3>
 
               {/* Subtitle */}
               {event.subtitle && (
-                <p className="text-white/90 text-sm italic line-clamp-1 drop-shadow-lg">
+                <p className="text-white text-sm italic line-clamp-1" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>
                   {event.subtitle}
                 </p>
               )}
@@ -89,8 +100,8 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
               {/* Event Details */}
               <div className="flex flex-wrap gap-3 text-sm">
                 {/* Date */}
-                <div className="flex items-center gap-1 text-white/90 drop-shadow-lg">
-                  <Calendar className="h-4 w-4" />
+                <div className="flex items-center gap-1 text-white" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>
+                  <Calendar className="h-4 w-4 drop-shadow-lg" />
                   <span>
                     {event.date ? format(new Date(event.date), "dd. MMM", { locale: de }) : "Datum folgt"}
                   </span>
@@ -98,16 +109,16 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
 
                 {/* Time */}
                 {event.time && (
-                  <div className="flex items-center gap-1 text-white/90 drop-shadow-lg">
-                    <Clock className="h-4 w-4" />
+                  <div className="flex items-center gap-1 text-white" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>
+                    <Clock className="h-4 w-4 drop-shadow-lg" />
                     <span>{event.time}</span>
                   </div>
                 )}
 
                 {/* Location */}
                 {event.location && (
-                  <div className="flex items-center gap-1 text-white/90 drop-shadow-lg">
-                    <MapPin className="h-4 w-4" />
+                  <div className="flex items-center gap-1 text-white" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>
+                    <MapPin className="h-4 w-4 drop-shadow-lg" />
                     <span className="line-clamp-1">{event.location}</span>
                   </div>
                 )}
@@ -116,7 +127,7 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
               {/* Price */}
               {event.price && event.price !== "0" && (
                 <div className="text-right">
-                  <span className="text-white font-bold text-lg drop-shadow-lg">
+                  <span className="text-white font-bold text-lg" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
                     €{event.price}
                   </span>
                 </div>
