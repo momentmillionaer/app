@@ -110,14 +110,22 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
       )}
 
       <div className="space-y-4">
-        {/* Header with category and date */}
+        {/* Header with categories and date */}
         <div className="flex items-start justify-between">
-          {/* Category Badge */}
-          {event.categories && event.categories.length > 0 && (
-            <Badge className="bg-white/15 text-white border-white/25 text-xs px-3 py-1 w-fit">
-              {event.categories[0]}
-            </Badge>
-          )}
+          {/* Category Badges */}
+          <div className="flex flex-wrap gap-2">
+            {event.categories && event.categories.length > 0 ? (
+              event.categories.map((category, index) => (
+                <Badge key={index} className="bg-white/15 text-white border-white/25 text-xs px-3 py-1 w-fit">
+                  {category}
+                </Badge>
+              ))
+            ) : event.category && (
+              <Badge className="bg-white/15 text-white border-white/25 text-xs px-3 py-1 w-fit">
+                {event.category}
+              </Badge>
+            )}
+          </div>
           
           {/* Date */}
           {eventDate && (

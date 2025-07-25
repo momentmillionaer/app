@@ -180,6 +180,19 @@ Preferred communication style: Simple, everyday language.
 - ✓ ShareEventDialog completely functional without duplicate buttons
 - ✓ Event modal and card images now have robust error handling
 
+**July 25, 2025 - Favoriten EventCards Design & UI Improvements**
+- ✓ Redesigned Favoriten EventCards with event image as full background
+- ✓ Enhanced background blur effect (blur-sm, hover:blur-0) for better text readability
+- ✓ Implemented text overlays with improved shadow effects and positioning
+- ✓ Increased card height to h-96 for better visual impact
+- ✓ Replaced borders with purple/orange glow effects on hover
+- ✓ Free events marked only with 🆓 emoji (no badge text)
+- ✓ All category badges now display in EventCards across all views (list, grid, favorites)
+- ✓ Search bar height adjusted to match button group height (h-12)
+- ✓ Enhanced category display with flex-wrap layout for multiple badges
+- ✓ Stronger background overlay (from-black/90 via-black/50 to-black/20) for text contrast
+- ✓ Removed p-element from favorites header for cleaner layout
+
 **July 20, 2025 - Timezone Implementation & Notion Sync Enhancement**
 - ✓ Comprehensive timezone update to GMT+2 (Europe/Vienna) for Weiz, Austria
 - ✓ All date/time displays now use Austrian locale (de-AT) and Vienna timezone

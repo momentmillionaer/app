@@ -118,7 +118,7 @@ export function SearchFilters({
           <Input
             type="text"
             placeholder="Events, Veranstaltungsorte oder Beschreibungen durchsuchen..."
-            className="pl-10 py-2 rounded-full border-0 liquid-glass bg-white/20 text-white placeholder:text-white/50"
+            className="pl-10 h-12 rounded-full border-0 liquid-glass bg-white/20 text-white placeholder:text-white/50"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
