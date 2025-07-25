@@ -130,12 +130,12 @@ export function SearchFilters({
         <div className="flex items-center justify-center gap-4">
           {/* Category Filter - Icon button */}
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-white justify-center transition-all duration-300 ${
+            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass text-white justify-center transition-all duration-300 ${
               selectedCategory && selectedCategory !== "all" 
-                ? 'bg-gradient-to-r from-orange-500 to-red-500 shadow-lg' 
+                ? 'bg-gradient-to-r from-orange-500 to-red-500 shadow-lg border-orange-400/50' 
                 : 'bg-white/20 hover:bg-white/30'
             }`}>
-              <Theater className="h-5 w-5" />
+              <Theater className="h-5 w-5 text-white" />
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
@@ -149,12 +149,12 @@ export function SearchFilters({
 
           {/* Audience Filter - Icon button */}
           <Select value={selectedAudience} onValueChange={onAudienceChange}>
-            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-white justify-center transition-all duration-300 ${
+            <SelectTrigger className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass text-white justify-center transition-all duration-300 ${
               selectedAudience && selectedAudience !== "all" 
-                ? 'bg-gradient-to-r from-blue-500 to-indigo-500 shadow-lg' 
+                ? 'bg-gradient-to-r from-blue-500 to-indigo-500 shadow-lg border-blue-400/50' 
                 : 'bg-white/20 hover:bg-white/30'
             }`}>
-              <Users className="h-5 w-5" />
+              <Users className="h-5 w-5 text-white" />
             </SelectTrigger>
             <SelectContent className="rounded-3xl border-0 ios-glass-popup">
               {audienceOptions.map((option) => (
@@ -165,7 +165,7 @@ export function SearchFilters({
             </SelectContent>
           </Select>
 
-          {/* Date Range Filter - Emoji only button */}
+          {/* Date Range Filter - Icon button */}
           <DateRangePicker
             dateFrom={dateFrom}
             dateTo={dateTo}
@@ -178,23 +178,14 @@ export function SearchFilters({
           <Button
             variant="outline"
             onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
-            className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
+            className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
               showFreeEventsOnly 
-                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg' 
+                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg border-green-400/50' 
                 : 'bg-white/20 text-white hover:bg-white/30'
             }`}
             title="Kostenlose Events"
           >
-            <DollarSign className="h-5 w-5" />
-          </Button>
-
-          {/* Add Event Button */}
-          <Button
-            onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-            className="h-12 w-12 p-0 rounded-full liquid-glass bg-gradient-to-r from-orange-500 to-purple-500 text-white transition-all duration-300 border-0 hover:from-orange-600 hover:to-purple-600 shadow-lg"
-            title="Event hinzufügen"
-          >
-            <Plus className="h-5 w-5" />
+            <DollarSign className="h-5 w-5 text-white" />
           </Button>
 
           {/* Clear Filters Button */}
@@ -202,10 +193,10 @@ export function SearchFilters({
             <Button
               variant="outline"
               onClick={onClearFilters}
-              className="h-12 w-12 p-0 rounded-full border-0 liquid-glass bg-red-500/80 text-white hover:bg-red-600/90 transition-all duration-200 shadow-lg"
+              className="h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass bg-red-500/80 text-white hover:bg-red-600/90 transition-all duration-200 shadow-lg border-red-400/50"
               title="Filter löschen"
             >
-              <Filter className="h-5 w-5" />
+              <Filter className="h-5 w-5 text-white" />
             </Button>
           )}
 
@@ -214,42 +205,51 @@ export function SearchFilters({
             <Button
               variant="outline"
               onClick={() => onViewChange("calendar")}
-              className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
+              className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
                 view === "calendar" 
-                  ? 'bg-gradient-to-r from-lime-500 to-green-500 text-white shadow-lg' 
+                  ? 'bg-gradient-to-r from-lime-500 to-green-500 text-white shadow-lg border-lime-400/50' 
                   : 'bg-white/15 text-white hover:bg-white/25'
               }`}
               title="Kalender"
             >
-              <CalendarDays className="h-5 w-5" />
+              <CalendarDays className="h-5 w-5 text-white" />
             </Button>
             
             <Button
               variant="outline"
               onClick={() => onViewChange("grid")}
-              className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
+              className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
                 view === "grid" 
-                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg' 
+                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border-blue-400/50' 
                   : 'bg-white/15 text-white hover:bg-white/25'
               }`}
               title="Raster"
             >
-              <Grid3X3 className="h-5 w-5" />
+              <Grid3X3 className="h-5 w-5 text-white" />
             </Button>
             
             <Button
               variant="outline"
               onClick={() => onViewChange("favorites")}
-              className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass transition-all duration-300 ${
+              className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
                 view === "favorites" 
-                  ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg' 
+                  ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg border-yellow-400/50' 
                   : 'bg-white/15 text-white hover:bg-white/25'
               }`}
               title="Conni's Favoriten"
             >
-              <Sparkles className="h-5 w-5" />
+              <Sparkles className="h-5 w-5 text-white" />
             </Button>
           </div>
+
+          {/* Add Event Button - Positioned at the far right */}
+          <Button
+            onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
+            className="h-12 w-12 p-0 rounded-full liquid-glass bg-gradient-to-r from-orange-500 to-purple-500 text-white transition-all duration-300 border border-orange-400/50 hover:from-orange-600 hover:to-purple-600 shadow-lg ml-auto"
+            title="Event hinzufügen"
+          >
+            <Plus className="h-5 w-5 text-white" />
+          </Button>
         </div>
       ) : (
         /* Mobile: Emoji-only circular buttons with equal spacing */

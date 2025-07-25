@@ -114,14 +114,14 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={`h-12 w-12 p-0 rounded-full border-0 liquid-glass text-white transition-all duration-300 ${
+          className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass text-white transition-all duration-300 ${
             (dateFrom || dateTo) 
-              ? 'bg-gradient-to-r from-lime-500 to-green-500 shadow-lg' 
+              ? 'bg-gradient-to-r from-lime-500 to-green-500 shadow-lg border-lime-400/50' 
               : 'bg-white/20 hover:bg-white/30'
           }`}
           title="Datum Filter"
         >
-          <CalendarDays className="h-5 w-5" />
+          <CalendarDays className="h-5 w-5 text-white" />
         </Button>
       </PopoverTrigger>
       
