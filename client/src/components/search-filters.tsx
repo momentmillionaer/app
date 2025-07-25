@@ -136,8 +136,8 @@ export function SearchFilters({
                 selectedCategory && selectedCategory !== "all" 
                   ? 'bg-gradient-to-r from-orange-500 to-purple-600 text-white shadow-lg border-orange-400/50' 
                   : 'bg-white/20 text-white hover:bg-white/30'
-              } [&>svg]:hidden`}>
-                <Theater className="h-5 w-5 text-white" />
+              }`}>
+                <Theater className="h-5 w-5 text-white" style={{ display: 'block' }} />
               </SelectTrigger>
               <SelectContent className="rounded-3xl border-0 ios-glass-popup">
                 <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
@@ -155,8 +155,8 @@ export function SearchFilters({
                 selectedAudience && selectedAudience !== "all" 
                   ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border-blue-400/50' 
                   : 'bg-white/20 text-white hover:bg-white/30'
-              } [&>svg]:hidden`}>
-                <Users className="h-5 w-5 text-white" />
+              }`}>
+                <Users className="h-5 w-5 text-white" style={{ display: 'block' }} />
               </SelectTrigger>
               <SelectContent className="rounded-3xl border-0 ios-glass-popup">
                 {audienceOptions.map((option) => (
@@ -261,8 +261,8 @@ export function SearchFilters({
                 selectedCategory && selectedCategory !== "all" 
                   ? 'bg-gradient-to-r from-orange-500 to-purple-600 text-white shadow-lg border-orange-400/50' 
                   : 'bg-white/20 text-white hover:bg-white/30'
-              } [&>svg]:hidden`}>
-                <Theater className="h-5 w-5 text-white" />
+              }`}>
+                <Theater className="h-5 w-5 text-white" style={{ display: 'block' }} />
               </SelectTrigger>
               <SelectContent className="rounded-3xl border-0 ios-glass-popup">
                 <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
@@ -280,8 +280,8 @@ export function SearchFilters({
                 selectedAudience && selectedAudience !== "all" 
                   ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border-blue-400/50' 
                   : 'bg-white/20 text-white hover:bg-white/30'
-              } [&>svg]:hidden`}>
-                <Users className="h-5 w-5 text-white" />
+              }`}>
+                <Users className="h-5 w-5 text-white" style={{ display: 'block' }} />
               </SelectTrigger>
               <SelectContent className="rounded-3xl border-0 ios-glass-popup">
                 {audienceOptions.map((option) => (
