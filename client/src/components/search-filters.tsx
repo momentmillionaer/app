@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Plus, CalendarDays, List, Grid3X3, Sparkles, Theater, Users, DollarSign, Filter, Trash2 } from "lucide-react";
+import { Search, Plus, CalendarDays, List, Grid3X3, Sparkles, Theater, Users, DollarSign, Filter, Trash2, Gift } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -187,7 +187,7 @@ export function SearchFilters({
               }`}
               title="Kostenlose Events"
             >
-              <DollarSign className="h-5 w-5 text-white" />
+              <Gift className="h-5 w-5 text-white" />
             </Button>
 
 
@@ -196,12 +196,12 @@ export function SearchFilters({
           {/* View Toggle Button Group */}
           <div className="flex items-center gap-3 liquid-glass-strong rounded-full p-2">
             <Button
-              variant="outline"
+              variant={view === "calendar" ? "outline" : "ghost"}
               onClick={() => onViewChange("calendar")}
-              className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
+              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 ${
                 view === "calendar" 
-                  ? 'bg-gradient-to-r from-lime-500 to-green-500 text-white shadow-lg border-lime-400/50' 
-                  : 'bg-white/15 text-white hover:bg-white/25'
+                  ? 'bg-gradient-to-r from-lime-500 to-green-500 text-white shadow-lg border border-lime-400/50 liquid-glass' 
+                  : 'text-white hover:bg-white/15 border-0'
               }`}
               title="Kalender"
             >
@@ -209,12 +209,12 @@ export function SearchFilters({
             </Button>
             
             <Button
-              variant="outline"
+              variant={view === "grid" ? "outline" : "ghost"}
               onClick={() => onViewChange("grid")}
-              className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
+              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 ${
                 view === "grid" 
-                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border-blue-400/50' 
-                  : 'bg-white/15 text-white hover:bg-white/25'
+                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg border border-blue-400/50 liquid-glass' 
+                  : 'text-white hover:bg-white/15 border-0'
               }`}
               title="Raster"
             >
@@ -222,12 +222,12 @@ export function SearchFilters({
             </Button>
             
             <Button
-              variant="outline"
+              variant={view === "favorites" ? "outline" : "ghost"}
               onClick={() => onViewChange("favorites")}
-              className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
+              className={`h-12 w-12 p-0 rounded-full transition-all duration-300 ${
                 view === "favorites" 
-                  ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg border-yellow-400/50' 
-                  : 'bg-white/15 text-white hover:bg-white/25'
+                  ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg border border-yellow-400/50 liquid-glass' 
+                  : 'text-white hover:bg-white/15 border-0'
               }`}
               title="Conni's Favoriten"
             >
