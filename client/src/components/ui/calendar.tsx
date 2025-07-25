@@ -41,10 +41,10 @@ function Calendar({
         day_range_end: "day-range-end",
         day_selected:
           "bg-orange-500 text-white font-semibold hover:bg-orange-600 rounded-lg",
-        day_today: "bg-lime-400 text-black font-semibold rounded-lg",
+        day_today: "bg-lime-400 text-black font-semibold rounded-lg !important",
         day_outside:
           "text-white/25 pointer-events-none rounded-lg",
-        day_disabled: "text-white/25 opacity-40 cursor-not-allowed rounded-lg",
+        day_disabled: "text-white/30 opacity-40 cursor-not-allowed rounded-lg bg-transparent",
         day_range_middle:
           "bg-orange-500/40 text-white rounded-lg",
         day_hidden: "invisible",

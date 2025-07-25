@@ -389,13 +389,20 @@
   color: white !important;
 }
 
-/* Today styling with lime background like filter buttons */
+/* Today styling with lime background - rounded and prominent */
+.date-range-calendar .rdp-day_today .rdp-day_button,
 .date-range-calendar [data-today="true"] {
   background: hsl(var(--brand-lime)) !important;
   border: none !important;
   border-radius: 8px !important;
   color: black !important;
   font-weight: 600 !important;
+}
+
+/* Ensure today's date always shows lime, even when selected */
+.date-range-calendar .rdp-day_today[aria-selected="true"] {
+  background: hsl(var(--brand-lime)) !important;
+  color: black !important;
 }
 
 /* Range middle days with lighter orange */
@@ -405,11 +412,20 @@
   color: white !important;
 }
 
-/* Clean override for disabled/past days */
-.date-range-calendar .rdp-day_button[disabled] {
-  color: rgba(255, 255, 255, 0.25) !important;
-  opacity: 0.5 !important;
+/* Past days - clearly grayed out */
+.date-range-calendar .rdp-day_button[disabled],
+.date-range-calendar .rdp-day_disabled .rdp-day_button {
+  color: rgba(255, 255, 255, 0.3) !important;
+  opacity: 0.4 !important;
   cursor: not-allowed !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+}
+
+/* Outside days (other month) */
+.date-range-calendar .rdp-day_outside .rdp-day_button {
+  color: rgba(255, 255, 255, 0.2) !important;
+  opacity: 0.3 !important;
   border-radius: 8px !important;
 }
 
