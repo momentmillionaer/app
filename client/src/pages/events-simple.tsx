@@ -253,7 +253,7 @@ export default function Events() {
                       {eventsToShow.length} {eventsToShow.length === 1 ? 'Event gefunden' : 'Events gefunden'}
                     </p>
                   </div>
-                  <div className="grid gap-6 grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {eventsToShow.map((event) => (
                       <EventCard
                         key={event.notionId}
@@ -295,7 +295,7 @@ export default function Events() {
                   {eventsToShow.length} {eventsToShow.length === 1 ? 'Event gefunden' : 'Events gefunden'}
                 </p>
               </div>
-              <div className="grid gap-6 grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {eventsToShow.map((event) => (
                   <EventCard
                     key={event.notionId}
