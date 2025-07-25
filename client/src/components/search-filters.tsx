@@ -235,14 +235,7 @@ export function SearchFilters({
             </Button>
           </div>
 
-          {/* Add Event Button - Positioned at the far right */}
-          <Button
-            onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-            className="h-12 w-12 p-0 rounded-full liquid-glass bg-gradient-to-r from-orange-500 to-purple-500 text-white transition-all duration-300 border border-orange-400/50 hover:from-orange-600 hover:to-purple-600 shadow-lg"
-            title="Event hinzufügen"
-          >
-            <Plus className="h-5 w-5 text-white" />
-          </Button>
+
         </div>
       ) : (
         /* Mobile: Emoji-only circular buttons with equal spacing */
@@ -307,14 +300,7 @@ export function SearchFilters({
             <span>🆓</span>
           </Button>
 
-          {/* Add Event Button Mobile */}
-          <Button
-            onClick={() => window.open('https://tally.so/r/m606Pk', '_blank')}
-            className="h-12 w-12 p-0 rounded-full liquid-glass bg-white/20 text-white transition-all duration-300 border-0 hover:bg-gradient-to-r hover:from-orange-500 hover:to-purple-600 text-lg"
-            title="Event hinzufügen"
-          >
-            <span>➕</span>
-          </Button>
+
 
           {/* Clear Filters Button Mobile */}
           {hasActiveFilters && (
