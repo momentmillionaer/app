@@ -405,10 +405,23 @@
   color: black !important;
 }
 
-/* Range middle days with lighter orange */
+/* Range middle days with lighter orange - no rounded corners */
 .date-range-calendar.range-mode .rdp-day_range_middle {
   background: rgba(254, 92, 43, 0.4) !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
+  color: white !important;
+}
+
+/* Range start and end days keep rounded corners */
+.date-range-calendar.range-mode .rdp-day_range_start {
+  background: var(--brand-orange) !important;
+  border-radius: 8px 0 0 8px !important;
+  color: white !important;
+}
+
+.date-range-calendar.range-mode .rdp-day_range_end {
+  background: var(--brand-orange) !important;
+  border-radius: 0 8px 8px 0 !important;
   color: white !important;
 }
 

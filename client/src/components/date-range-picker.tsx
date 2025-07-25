@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarDays, X, BarChart3 } from "lucide-react";
+import { CalendarDays, X, BarChart3, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -128,7 +128,7 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
       <PopoverContent className="w-auto p-0 rounded-2xl border-0 ios-glass-popup" align="start">
         <div className="p-4 space-y-4">
           {/* Mode Toggle */}
-          <div className="flex items-center gap-2 p-2 bg-white/10 rounded-full mb-4">
+          <div className="flex items-center justify-center gap-2 p-2 bg-white/10 rounded-full mb-4 w-fit mx-auto">
             {mode === 'single' ? (
               <Button
                 variant="ghost"
@@ -203,7 +203,8 @@ export function DateRangePicker({ dateFrom, dateTo, onDateFromChange, onDateToCh
               onClick={handleClear}
               className="text-xs rounded-full px-3 py-1 bg-white/20 hover:bg-white/30 text-white border-white/20"
             >
-              🗑️ Löschen
+              <Trash2 className="w-3 h-3 mr-1" />
+              Löschen
             </Button>
             <Button
               variant="default"

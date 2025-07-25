@@ -46,7 +46,7 @@ function Calendar({
           "text-white/25 pointer-events-none rounded-lg",
         day_disabled: "text-white/30 opacity-40 cursor-not-allowed rounded-lg bg-transparent",
         day_range_middle:
-          "bg-orange-500/40 text-white rounded-lg",
+          "bg-orange-500/40 text-white",
         day_hidden: "invisible",
         ...classNames,
       }}
