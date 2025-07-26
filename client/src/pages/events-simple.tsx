@@ -52,7 +52,7 @@ export default function Events() {
   } = useQuery<Event[]>({
     queryKey: ["/api/events"],
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: 1000, // Very short cache to see loading screen
   });
 
   // Check URL for event parameter and open modal if event exists
@@ -181,8 +181,19 @@ export default function Events() {
     setShowFreeOnly(false);
   };
 
-  // Show loading screen
-  if (isLoading) {
+  // Show loading screen (force for demo)
+  const [forceLoading, setForceLoading] = useState(true);
+  
+  useEffect(() => {
+    // Force loading screen for 6 seconds to see the animation
+    const timer = setTimeout(() => {
+      setForceLoading(false);
+    }, 6000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading || forceLoading) {
     return <LoadingScreen />;
   }
 
