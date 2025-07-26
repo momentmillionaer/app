@@ -10,6 +10,7 @@ import { FavoritesView } from "@/components/favorites-view";
 import { Footer } from "@/components/footer";
 import { InstagramPreview } from "@/components/instagram-preview";
 import { LatestEventPopup } from "@/components/latest-event-popup";
+import { LoadingScreen } from "@/components/loading-screen";
 import { type Event } from "@shared/schema";
 
 export default function Events() {
@@ -180,30 +181,13 @@ export default function Events() {
     setShowFreeOnly(false);
   };
 
+  // Show loading screen
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <Header eventCount={0} lastUpdated={new Date().toISOString()} />
-          <div className="flex justify-center items-center h-64">
-            <div className="text-lg text-white">Loading events...</div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <Header eventCount={0} lastUpdated={new Date().toISOString()} />
-          <div className="flex justify-center items-center h-64">
-            <div className="text-lg text-red-600">Error loading events</div>
-          </div>
-        </div>
-      </div>
-    );
+    return <div className="p-8 text-center text-red-500">Fehler beim Laden der Events: {error.message}</div>;
   }
 
   return (
