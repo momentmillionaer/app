@@ -185,10 +185,10 @@ export default function Events() {
   const [forceLoading, setForceLoading] = useState(true);
   
   useEffect(() => {
-    // Force loading screen for 6 seconds to see the animation
+    // Force loading screen for 5 seconds to see the classical paintings animation
     const timer = setTimeout(() => {
       setForceLoading(false);
-    }, 6000);
+    }, 5000);
     
     return () => clearTimeout(timer);
   }, []);
