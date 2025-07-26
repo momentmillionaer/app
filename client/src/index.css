@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Loading screen animations */
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes floatAnimation {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float-animation {
+  animation: floatAnimation 3s ease-in-out infinite;
+}
+
 /* Custom font faces */
 @font-face {
   font-family: 'Connihof';
