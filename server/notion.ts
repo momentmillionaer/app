@@ -315,7 +315,7 @@ export async function getEventsFromNotion(databaseId: string) {
                 })(),
                 website: properties.Website?.url || properties.URL?.url || null,
                 ticketUrl: properties.Tickets?.url || properties.Ticket?.url || properties["Ticket URL"]?.url || null, // Add ticket URL mapping
-                organizer: properties.Veranstalter?.rich_text?.[0]?.plain_text || "",
+                organizer: properties["Veranstalter / Brand"]?.rich_text?.[0]?.plain_text || properties.Veranstalter?.rich_text?.[0]?.plain_text || "",
                 attendees: properties["Für wen?"]?.multi_select?.map((aud: any) => aud.name).join(", ") || "",
                 imageUrl: imageUrl,
                 documentsUrls: documentsUrls,
