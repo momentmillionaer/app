@@ -159,7 +159,8 @@ export function SearchFilters({
                 <Users className="h-5 w-5 text-white" style={{ display: 'block' }} />
               </SelectTrigger>
               <SelectContent className="rounded-3xl border-0 ios-glass-popup">
-                {audienceOptions.map((option) => (
+                <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Alle Zielgruppen</SelectItem>
+                {audienceOptions.slice(1).map((option) => (
                   <SelectItem key={option.value} value={option.value} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
                     {option.label}
                   </SelectItem>
@@ -284,7 +285,8 @@ export function SearchFilters({
                 <Users className="h-5 w-5 text-white" style={{ display: 'block' }} />
               </SelectTrigger>
               <SelectContent className="rounded-3xl border-0 ios-glass-popup">
-                {audienceOptions.map((option) => (
+                <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Alle Zielgruppen</SelectItem>
+                {audienceOptions.slice(1).map((option) => (
                   <SelectItem key={option.value} value={option.value} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
                     {option.label}
                   </SelectItem>

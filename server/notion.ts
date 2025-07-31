@@ -258,7 +258,33 @@ export async function getEventsFromNotion(databaseId: string) {
                 date: eventDate,
                 endDate: endDate,
                 time: properties.Zeit?.rich_text?.[0]?.plain_text || "",
-                price: properties.Preis?.rich_text?.[0]?.plain_text || "0€",
+                price: (() => {
+                    const priceText = properties.Preis?.rich_text?.[0]?.plain_text || '0';
+                    if (!priceText || priceText.trim() === '') return "0";
+                    
+                    // Clean and parse price - remove everything except numbers, dots, and commas
+                    const cleanPrice = priceText.replace(/[^\d.,]/g, '');
+                    
+                    if (cleanPrice && cleanPrice !== '') {
+                        // Convert comma to dot for proper parsing
+                        const normalizedPrice = cleanPrice.replace(',', '.');
+                        const parsedPrice = parseFloat(normalizedPrice);
+                        
+                        if (!isNaN(parsedPrice)) {
+                            // Format as string without decimals if it's a whole number
+                            return parsedPrice % 1 === 0 ? parsedPrice.toString() : parsedPrice.toFixed(2);
+                        }
+                    }
+                    
+                    // Check for free keywords
+                    if (priceText.toLowerCase().includes('kostenlos') || 
+                        priceText.toLowerCase().includes('gratis') || 
+                        priceText.toLowerCase().includes('frei')) {
+                        return "0";
+                    }
+                    
+                    return "0";
+                })(),
                 website: properties.Website?.url || properties.URL?.url || null,
                 ticketUrl: properties.Tickets?.url || properties.Ticket?.url || properties["Ticket URL"]?.url || null, // Add ticket URL mapping
                 organizer: properties.Veranstalter?.rich_text?.[0]?.plain_text || "",

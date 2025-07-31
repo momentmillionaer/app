@@ -167,9 +167,21 @@ export default function Events() {
   const favoriteEvents = filterPastEvents(events.filter(event => event.isFavorite));
   const gridFilteredEvents = filterPastEvents(filteredEvents);
   
-  const eventsToShow = view === "favorites" ? favoriteEvents : 
-                     view === "grid" ? gridFilteredEvents : 
-                     filteredEvents;
+  // Sort events by date when filters are active
+  const sortEventsByDate = (eventsArray: Event[]) => {
+    if (hasActiveFilters) {
+      return [...eventsArray].sort((a, b) => {
+        const dateA = new Date(a.date || '').getTime();
+        const dateB = new Date(b.date || '').getTime();
+        return dateA - dateB; // Earliest events first
+      });
+    }
+    return eventsArray;
+  };
+
+  const eventsToShow = view === "favorites" ? sortEventsByDate(favoriteEvents) : 
+                     view === "grid" ? sortEventsByDate(gridFilteredEvents) : 
+                     sortEventsByDate(filteredEvents);
 
   // Clear all filters
   const handleClearFilters = () => {

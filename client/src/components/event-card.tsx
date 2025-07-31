@@ -177,7 +177,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
               {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
                 <div className="flex items-center gap-1 ml-2">
                   <Euro className="h-3 w-3 flex-shrink-0" />
-                  <span className="text-xs font-semibold">{event.price}</span>
+                  <span className="text-xs font-semibold">{event.price}€</span>
                 </div>
               )}
             </div>
@@ -199,7 +199,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
               {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
                 <div className="flex items-center space-x-2">
                   <Euro className="h-4 w-4 flex-shrink-0" />
-                  <span className="font-semibold">{event.price}</span>
+                  <span className="font-semibold">{event.price}€</span>
                 </div>
               )}
             </div>
