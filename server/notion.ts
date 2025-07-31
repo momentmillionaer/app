@@ -287,7 +287,7 @@ export async function getEventsFromNotion(databaseId: string) {
                     }
                     
                     if (!priceValue || priceValue.trim() === '') {
-                        return "0";
+                        return null; // No price info
                     }
                     
                     // Clean and parse price - remove everything except numbers, dots, and commas
@@ -311,7 +311,7 @@ export async function getEventsFromNotion(databaseId: string) {
                         return "0";
                     }
                     
-                    return "0";
+                    return null; // Cannot parse price, no price info
                 })(),
                 website: properties.Website?.url || properties.URL?.url || null,
                 ticketUrl: properties.Tickets?.url || properties.Ticket?.url || properties["Ticket URL"]?.url || null, // Add ticket URL mapping

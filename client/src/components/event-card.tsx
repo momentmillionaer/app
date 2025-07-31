@@ -174,7 +174,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
                   <span className="text-xs whitespace-nowrap">{event.time}</span>
                 </div>
               )}
-              {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
+              {event.price && event.price !== "0" && (
                 <div className="flex items-center gap-1 ml-2">
                   <Ticket className="h-3 w-3 flex-shrink-0 text-white" />
                   <span className="text-xs font-semibold text-white">€ {event.price && event.price.includes && event.price.includes('.') ? event.price.replace('.', ',') : event.price + ',00'}</span>
@@ -196,7 +196,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
                   <span>{event.time}</span>
                 </div>
               )}
-              {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
+              {event.price && event.price !== "0" && (
                 <div className="flex items-center space-x-2">
                   <Ticket className="h-4 w-4 flex-shrink-0 text-white" />
                   <span className="font-semibold text-white">€ {event.price && event.price.includes && event.price.includes('.') ? event.price.replace('.', ',') : event.price + ',00'}</span>

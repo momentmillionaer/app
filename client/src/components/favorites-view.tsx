@@ -142,6 +142,13 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
                     </span>
                   </div>
                 )}
+                
+                {/* Free emoji for price === "0" */}
+                {event.price === "0" && (
+                  <div className="text-right">
+                    <span className="text-2xl">🆓</span>
+                  </div>
+                )}
               </div>
             </div>
 
