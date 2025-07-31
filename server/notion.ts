@@ -183,7 +183,7 @@ export async function getEventsFromNotion(databaseId: string) {
                 ? new Date(properties.Datum.date.end)
                 : null;
 
-            // Extract image URLs from files property - strict image filtering
+            // Extract image URLs from files property - improved filtering
             const imageUrls = properties.Dateien?.files?.map((file: any) => {
                 let url = null;
                 if (file.type === 'external') {
@@ -194,15 +194,25 @@ export async function getEventsFromNotion(databaseId: string) {
                 
                 if (url) {
                     const lowerUrl = url.toLowerCase();
-                    // Only accept actual image files and known image hosting
-                    const isValidImage = lowerUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i) ||
-                                       lowerUrl.includes('prod-files-secure.s3.us-west-2.amazonaws.com') ||
-                                       lowerUrl.includes('images.unsplash.com');
                     
-                    // Exclude document files explicitly
-                    const isDocument = lowerUrl.includes('.pdf') || lowerUrl.includes('.doc');
+                    // Exclude obvious document files first
+                    const isDocument = lowerUrl.includes('.pdf') || lowerUrl.includes('.doc') || 
+                                     lowerUrl.includes('.docx') || lowerUrl.includes('.txt') ||
+                                     lowerUrl.includes('.zip') || lowerUrl.includes('.ppt');
                     
-                    return (isValidImage && !isDocument) ? url : null;
+                    if (isDocument) {
+                        return null;
+                    }
+                    
+                    // Accept image files or trusted hosting domains
+                    const hasImageExtension = lowerUrl.match(/\.(jpg|jpeg|png|gif|webp|svg|bmp|tiff)$/i);
+                    const isTrustedHost = lowerUrl.includes('prod-files-secure.s3.us-west-2.amazonaws.com') ||
+                                        lowerUrl.includes('images.unsplash.com') ||
+                                        lowerUrl.includes('imgur.com') ||
+                                        lowerUrl.includes('cloudinary.com') ||
+                                        lowerUrl.includes('notion.so');
+                    
+                    return (hasImageExtension || isTrustedHost) ? url : null;
                 }
                 return null;
             }).filter(Boolean) || [];

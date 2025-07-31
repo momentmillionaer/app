@@ -355,7 +355,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                     e.currentTarget.style.background = 'rgba(254, 92, 43, 0.3)';
                   }}
                 >
-                  🎫 Tickets
+                  Tickets
                 </button>
               )}
               
@@ -376,7 +376,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                     e.currentTarget.style.background = 'rgba(0, 0, 255, 0.3)';
                   }}
                 >
-                  ℹ️ Tickets und Infos
+                  Tickets und Infos
                 </button>
               )}
             </div>

@@ -62,15 +62,15 @@ export function SearchFilters({
 
   // Create audience options with German labels
   const getAudienceLabel = (audience: string): string => {
-    if (audience.includes('❤️')) return '❤️ Paare';
-    if (audience.includes('👯')) return '👯‍♀️ Freunde';
-    if (audience.includes('🦸')) return '🦸🏼‍♀️ Solo';
-    if (audience.includes('🧑‍🧒‍🧒')) return '🧑‍🧒‍🧒 Familie';
-    return audience; // Fallback to original value
+    if (audience.includes('❤️')) return 'Paare';
+    if (audience.includes('👯')) return 'Freunde';
+    if (audience.includes('🦸')) return 'Solo';
+    if (audience.includes('🧑‍🧒‍🧒')) return 'Familie';
+    return audience.replace(/[^\w\s]/gi, '').trim(); // Remove emojis and trim
   };
 
   const audienceOptions = [
-    { value: "all", label: "🎯 Alle Zielgruppen", emoji: "🎯" },
+    { value: "all", label: "Alle Zielgruppen", emoji: "" },
     ...audiences.map(audience => ({
       value: audience,
       label: getAudienceLabel(audience),
@@ -140,7 +140,7 @@ export function SearchFilters({
                 <Theater className="h-5 w-5 text-white" style={{ display: 'block' }} />
               </SelectTrigger>
               <SelectContent className="rounded-3xl border-0 ios-glass-popup">
-                <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
+                <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Alle Kategorien</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
                     {category}
@@ -265,7 +265,7 @@ export function SearchFilters({
                 <Theater className="h-5 w-5 text-white" style={{ display: 'block' }} />
               </SelectTrigger>
               <SelectContent className="rounded-3xl border-0 ios-glass-popup">
-                <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">🎭 Alle Kategorien</SelectItem>
+                <SelectItem value="all" className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">Alle Kategorien</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category} className="rounded-full focus:bg-white/10 text-white data-[highlighted]:text-white hover:text-white">
                     {category}
@@ -396,7 +396,7 @@ export function SearchFilters({
           <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl">
             {searchQuery && (
               <div className="flex items-center gap-1 bg-purple-500/20 text-white px-3 py-1 rounded-full text-sm border border-purple-400/30">
-                <span>🔍 "{searchQuery}"</span>
+                <span>"{searchQuery}"</span>
                 <button 
                   onClick={() => removeFilter('search')}
                   className="ml-1 hover:bg-white/20 rounded-full p-0.5"
