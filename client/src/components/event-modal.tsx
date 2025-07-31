@@ -263,14 +263,14 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
               )}
 
               {/* Price */}
-              {event.price && (
+              {event.price && event.price !== "0" && (
                 <div className="liquid-glass p-4 rounded-2xl">
                   <div className="flex items-center space-x-3">
                     <Euro className="h-5 w-5 text-brand-lime" />
                     <div>
                       <p className="text-sm text-white/70 drop-shadow-sm">Preis</p>
                       <p className="text-white font-medium drop-shadow-sm">
-                        €{event.price}
+                        € {parseFloat(event.price).toFixed(2).replace('.', ',')}
                       </p>
                     </div>
                   </div>
