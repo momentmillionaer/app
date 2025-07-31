@@ -176,7 +176,14 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
               )}
               {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
                 <div className="flex items-center gap-1 ml-2">
-                  <span className="text-xs font-semibold">€ {parseFloat(event.price).toFixed(2).replace('.', ',')}</span>
+                  <span className="text-xs font-semibold">€ {(() => {
+                    try {
+                      const price = parseFloat(event.price || '0');
+                      return isNaN(price) ? event.price : price.toFixed(2).replace('.', ',');
+                    } catch {
+                      return event.price;
+                    }
+                  })()}</span>
                 </div>
               )}
             </div>
@@ -197,7 +204,14 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
               )}
               {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
                 <div className="flex items-center space-x-2">
-                  <span className="font-semibold">€ {parseFloat(event.price).toFixed(2).replace('.', ',')}</span>
+                  <span className="font-semibold">€ {(() => {
+                    try {
+                      const price = parseFloat(event.price || '0');
+                      return isNaN(price) ? event.price : price.toFixed(2).replace('.', ',');
+                    } catch {
+                      return event.price;
+                    }
+                  })()}</span>
                 </div>
               )}
             </div>
