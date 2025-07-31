@@ -152,7 +152,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
           )}
           {event.organizer && (
             <p className="text-white/70 text-sm mt-1">
-              von {event.organizer}
+              {event.organizer.includes(',') ? event.organizer.replace(/,/g, ' & ') : event.organizer}
             </p>
           )}
         </div>

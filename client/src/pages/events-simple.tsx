@@ -164,9 +164,6 @@ export default function Events() {
     return eventsArray;
   };
 
-  const favoriteEvents = filterPastEvents(events.filter(event => event.isFavorite));
-  const gridFilteredEvents = filterPastEvents(filteredEvents);
-  
   // Sort events by date - always sort by date (earliest first)
   const sortEventsByDate = (eventsArray: Event[]) => {
     return [...eventsArray].sort((a, b) => {
@@ -176,7 +173,10 @@ export default function Events() {
     });
   };
 
-  const eventsToShow = view === "favorites" ? sortEventsByDate(favoriteEvents) : 
+  const favoriteEvents = sortEventsByDate(filterPastEvents(events.filter(event => event.isFavorite)));
+  const gridFilteredEvents = filterPastEvents(filteredEvents);
+
+  const eventsToShow = view === "favorites" ? favoriteEvents : 
                      view === "grid" ? sortEventsByDate(gridFilteredEvents) : 
                      sortEventsByDate(filteredEvents);
 
