@@ -183,12 +183,26 @@ export async function getEventsFromNotion(databaseId: string) {
                 ? new Date(properties.Datum.date.end)
                 : null;
 
-            // Extract image URLs from files property
+            // Extract image URLs from files property - strict image filtering
             const imageUrls = properties.Dateien?.files?.map((file: any) => {
+                let url = null;
                 if (file.type === 'external') {
-                    return file.external.url;
+                    url = file.external.url;
                 } else if (file.type === 'file') {
-                    return file.file.url;
+                    url = file.file.url;
+                }
+                
+                if (url) {
+                    const lowerUrl = url.toLowerCase();
+                    // Only accept actual image files and known image hosting
+                    const isValidImage = lowerUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i) ||
+                                       lowerUrl.includes('prod-files-secure.s3.us-west-2.amazonaws.com') ||
+                                       lowerUrl.includes('images.unsplash.com');
+                    
+                    // Exclude document files explicitly
+                    const isDocument = lowerUrl.includes('.pdf') || lowerUrl.includes('.doc');
+                    
+                    return (isValidImage && !isDocument) ? url : null;
                 }
                 return null;
             }).filter(Boolean) || [];

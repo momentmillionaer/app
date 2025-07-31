@@ -180,6 +180,17 @@ Preferred communication style: Simple, everyday language.
 - ✓ ShareEventDialog completely functional without duplicate buttons
 - ✓ Event modal and card images now have robust error handling
 
+**July 31, 2025 - Event Modal Button Enhancement & Notion Integration Fix**
+- ✓ Fixed critical Notion integration failure - 224 events now loading successfully
+- ✓ Added ticketUrl field to event schema and proper Notion property mapping
+- ✓ Rebuilt Event Modal with separate Ticket and Info buttons for better UX
+- ✓ Implemented orange ticket button (🎫 Tickets) with purple hover effect
+- ✓ Updated Info button to "ℹ️ Tickets und Infos" with blue background and lime hover
+- ✓ Enhanced image filtering to prevent PDF files from being loaded as images
+- ✓ Fixed routes.ts syntax errors that were breaking server compilation
+- ✓ Restored proper getEventsFromNotion function with comprehensive field mapping
+- ✓ Improved document vs image detection with stricter URL filtering
+
 **July 25, 2025 - Favoriten EventCards Design & UI Improvements**
 - ✓ Redesigned Favoriten EventCards with event image as full background
 - ✓ Enhanced background blur effect (blur-sm, hover:blur-0) for better text readability
