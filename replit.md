@@ -190,6 +190,10 @@ Preferred communication style: Simple, everyday language.
 - ✓ Fixed routes.ts syntax errors that were breaking server compilation
 - ✓ Restored proper getEventsFromNotion function with comprehensive field mapping
 - ✓ Improved document vs image detection with stricter URL filtering
+- ✓ Implemented price format "€ XX,XX" in all EventCards and modal
+- ✓ Removed all emojis from buttons across entire application
+- ✓ Fixed price display to show in EventCards (not just modal) except for free events (price "0")
+- ✓ Free events display only 🆓 emoji in bottom right corner
 
 **July 25, 2025 - Favoriten EventCards Design & UI Improvements**
 - ✓ Redesigned Favoriten EventCards with event image as full background
