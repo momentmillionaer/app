@@ -106,41 +106,43 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
                 </p>
               )}
 
-              {/* Event Details */}
-              <div className="flex flex-wrap gap-3 text-sm">
-                {/* Date */}
-                <div className="flex items-center gap-1 text-white" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>
-                  <Calendar className="h-4 w-4 drop-shadow-lg" />
-                  <span>
-                    {event.date ? format(new Date(event.date), "dd. MMM", { locale: de }) : "Datum folgt"}
-                  </span>
+              {/* Event Details and Price Row */}
+              <div className="flex justify-between items-start">
+                <div className="flex flex-wrap gap-3 text-sm">
+                  {/* Date */}
+                  <div className="flex items-center gap-1 text-white" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>
+                    <Calendar className="h-4 w-4 drop-shadow-lg" />
+                    <span>
+                      {event.date ? format(new Date(event.date), "dd. MMM", { locale: de }) : "Datum folgt"}
+                    </span>
+                  </div>
+
+                  {/* Time */}
+                  {event.time && (
+                    <div className="flex items-center gap-1 text-white" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>
+                      <Clock className="h-4 w-4 drop-shadow-lg" />
+                      <span>{event.time}</span>
+                    </div>
+                  )}
+
+                  {/* Location */}
+                  {event.location && (
+                    <div className="flex items-center gap-1 text-white" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>
+                      <MapPin className="h-4 w-4 drop-shadow-lg" />
+                      <span className="line-clamp-1">{event.location}</span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Time */}
-                {event.time && (
-                  <div className="flex items-center gap-1 text-white" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>
-                    <Clock className="h-4 w-4 drop-shadow-lg" />
-                    <span>{event.time}</span>
-                  </div>
-                )}
-
-                {/* Location */}
-                {event.location && (
-                  <div className="flex items-center gap-1 text-white" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>
-                    <MapPin className="h-4 w-4 drop-shadow-lg" />
-                    <span className="line-clamp-1">{event.location}</span>
+                {/* Price - aligned with date */}
+                {event.price && event.price !== "0" && (
+                  <div className="text-right">
+                    <span className="text-white font-bold text-lg" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+                      €{event.price}
+                    </span>
                   </div>
                 )}
               </div>
-
-              {/* Price */}
-              {event.price && event.price !== "0" && (
-                <div className="text-right">
-                  <span className="text-white font-bold text-lg" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
-                    €{event.price}
-                  </span>
-                </div>
-              )}
             </div>
 
             {/* Glow Effects */}

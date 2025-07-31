@@ -64,7 +64,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
         })
       }}
     >
-      {/* Free Event Emoji - small, bottom right */}
+      {/* Free Event Emoji - only show when price is explicitly "0" as string */}
       {event.price === "0" && (
         <div className="absolute bottom-4 right-4 text-2xl">
           🆓
