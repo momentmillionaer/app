@@ -183,7 +183,7 @@ export function SearchFilters({
               onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
               className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
                 showFreeEventsOnly 
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg border-green-400/50' 
+                  ? 'bg-gradient-to-r from-purple-600 to-orange-500 text-white shadow-lg border-purple-400/50' 
                   : 'bg-white/20 text-white hover:bg-white/30'
               }`}
               title="Kostenlose Events"
@@ -309,7 +309,7 @@ export function SearchFilters({
               onClick={() => onFreeEventsChange(!showFreeEventsOnly)}
               className={`h-12 w-12 p-0 rounded-full border border-white/30 liquid-glass transition-all duration-300 ${
                 showFreeEventsOnly 
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg border-green-400/50' 
+                  ? 'bg-gradient-to-r from-purple-600 to-orange-500 text-white shadow-lg border-purple-400/50' 
                   : 'bg-white/20 text-white hover:bg-white/30'
               }`}
               title="Kostenlose Events"
@@ -441,7 +441,7 @@ export function SearchFilters({
               </div>
             )}
             {showFreeEventsOnly && (
-              <div className="flex items-center gap-1 bg-green-500/20 text-white px-3 py-1 rounded-full text-sm border border-green-400/30">
+              <div className="flex items-center gap-1 bg-purple-500/20 text-white px-3 py-1 rounded-full text-sm border border-purple-400/30">
                 <span>🆓 Kostenlos</span>
                 <button 
                   onClick={() => removeFilter('freeEvents')}
