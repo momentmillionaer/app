@@ -52,7 +52,7 @@ export default function Events() {
   } = useQuery<Event[]>({
     queryKey: ["/api/events"],
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
-    staleTime: 1000, // Very short cache to see loading screen
+    staleTime: 30 * 1000, // 30 second cache
   });
 
   // Check URL for event parameter and open modal if event exists
@@ -193,19 +193,7 @@ export default function Events() {
     setShowFreeOnly(false);
   };
 
-  // Show loading screen (force for demo)
-  const [forceLoading, setForceLoading] = useState(true);
-  
-  useEffect(() => {
-    // Force loading screen for 5 seconds to see the classical paintings animation
-    const timer = setTimeout(() => {
-      setForceLoading(false);
-    }, 5000);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading || forceLoading) {
+  if (isLoading) {
     return <LoadingScreen />;
   }
 

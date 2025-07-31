@@ -276,11 +276,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all audiences from events
   app.get("/api/audiences", async (req, res) => {
     try {
-      // Check cache first
-      const cachedAudiences = cache.get("audiences");
-      if (cachedAudiences) {
-        console.log("Returning cached audiences");
-        return res.json(cachedAudiences);
+      // Check cache first (skip if refresh requested)
+      const refresh = req.query.refresh === 'true';
+      if (!refresh) {
+        const cachedAudiences = cache.get("audiences");
+        if (cachedAudiences) {
+          console.log("Returning cached audiences");
+          return res.json(cachedAudiences);
+        }
+      } else {
+        console.log("Refreshing audiences cache...");
       }
 
       // Try to find the Momente database
@@ -307,7 +312,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         database_id: momenteDb.id
       });
       
-      const audienceProperty = databaseResponse.properties.Zielgruppe;
+      const audienceProperty = databaseResponse.properties["Für wen?"];
       let audiences = [];
       
       if (audienceProperty && audienceProperty.type === 'multi_select') {

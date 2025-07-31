@@ -199,9 +199,10 @@ Preferred communication style: Simple, everyday language.
 - ✓ Added fallback price field names (Preis, Price, Kosten) for maximum compatibility
 - ✓ Prices now display correctly in white text with ticket icon (no background boxes)
 - ✓ Confirmed working: Events show actual prices (€ 97,50, € 125,00, € 69,00) from Notion database
-- ✓ Fixed Zielgruppen filter to reference actual Notion "Zielgruppe" multi-select field
+- ✓ Fixed Zielgruppen filter to reference actual Notion "Für wen?" multi-select field  
 - ✓ Added organizer display in EventCard underneath event title ("von [Veranstalter]")
 - ✓ Updated price styling: white text with ticket icon instead of yellow backgrounds
+- ✓ Zielgruppen dropdown now displays correct emoji options: 👯‍♀️, ❤️, 🦸🏼‍♀️, 🧑‍🧒‍🧒
 
 **July 25, 2025 - Favoriten EventCards Design & UI Improvements**
 - ✓ Redesigned Favoriten EventCards with event image as full background
