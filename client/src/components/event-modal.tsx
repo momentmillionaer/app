@@ -270,14 +270,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
                     <div>
                       <p className="text-sm text-white/70 drop-shadow-sm">Preis</p>
                       <p className="text-white font-medium drop-shadow-sm">
-                        € {(() => {
-                          try {
-                            const price = parseFloat(event.price || '0');
-                            return isNaN(price) ? event.price : price.toFixed(2).replace('.', ',');
-                          } catch {
-                            return event.price;
-                          }
-                        })()}
+                        € {event.price.includes('.') ? event.price.replace('.', ',') : event.price + ',00'}
                       </p>
                     </div>
                   </div>
