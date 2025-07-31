@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { notion, findDatabaseByTitle } from "./notion";
+import { notion, findDatabaseByTitle, getEventsFromNotion } from "./notion";
 import { cache } from "./cache";
 import { z } from "zod";
 
@@ -130,39 +130,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         databaseId = momenteDb.id;
         console.log(`Found Momente database with ID: ${databaseId}`);
         
-        // Load all events with pagination
-        let allEvents = [];
-        let hasMore = true;
-        let nextCursor = undefined;
+        // Use the new getEventsFromNotion function
+        const allEventsData = await getEventsFromNotion(databaseId);
+        console.log(`Successfully loaded ${allEventsData.length} total events from Momente database`);
         
-        while (hasMore) {
-          const response = await notion.databases.query({
-            database_id: databaseId,
-            sorts: [
-              {
-                property: "Datum",
-                direction: "ascending"
-              }
-            ],
-            page_size: 100,
-            start_cursor: nextCursor
-          });
-          
-          allEvents.push(...response.results);
-          hasMore = response.has_more;
-          nextCursor = response.next_cursor;
-          
-          console.log(`Loaded ${response.results.length} events (batch), total: ${allEvents.length}, hasMore: ${response.has_more}`);
-          
-          // Add exponential backoff delay to prevent rate limiting
-          if (hasMore) {
-            const delay = Math.min(200 * Math.pow(1.5, Math.floor(allEvents.length / 100)), 2000);
-            await new Promise(resolve => setTimeout(resolve, delay));
-          }
-        }
+        // Cache the events (30 minutes) and backup (24 hours)
+        cache.set("events", allEventsData, 30 * 60 * 1000); // 30 minutes
+        console.log("Cached events for 30 minutes");
         
-        eventsResponse = { results: allEvents };
-        console.log(`Successfully loaded ${allEvents.length} total events from Momente database`);
+        cache.set("events-backup", allEventsData, 24 * 60 * 60 * 1000); // 24 hours
+        console.log("Long-term cached events-backup for 24 hours");
+        
+        return res.json(allEventsData);
         
       } catch (searchError) {
         console.error("Error searching for Momente database:", searchError);
@@ -205,221 +184,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const eventsWithRelations = await Promise.all(eventsResponse.results.map(async (page: any) => {
-        const properties = page.properties;
-        
+      // This code should not be reached since we return early above
+      return res.status(500).json({ 
+        error: "Unexpected code path",
+        message: "Ein unerwarteter Fehler ist aufgetreten"
+      });
 
-        
-        // Use categories directly from your Notion database
-        const categories = properties.Kategorie?.multi_select?.map((cat: any) => cat.name) || [];
-        const primaryCategory = categories.length > 0 ? categories[0] : "Sonstiges";
-
-        // Extract date and time with Austrian timezone handling
-        let eventDate = null;
-        let eventTime = "";
-        if (properties.Datum?.date?.start) {
-          const dateString = properties.Datum.date.start;
-          // Handle both date-only and datetime formats with Austrian timezone
-          if (dateString.includes('T')) {
-            // DateTime format - ensure we use Vienna timezone
-            const fullDate = new Date(dateString);
-            eventDate = fullDate.toLocaleDateString('sv-SE', { timeZone: 'Europe/Vienna' });
-            eventTime = fullDate.toLocaleTimeString('de-AT', { 
-              hour: '2-digit', 
-              minute: '2-digit',
-              timeZone: 'Europe/Vienna'
-            });
-          } else {
-            // Date-only format
-            eventDate = dateString;
-          }
-        }
-
-        // Extract image URL and documents from "Dateien" property with better filtering
-        let imageUrl = "";
-        let documentsUrls: string[] = [];
-        let allImageUrls: string[] = [];
-        
-        if (properties.Dateien?.files && properties.Dateien.files.length > 0) {
-          for (const file of properties.Dateien.files) {
-            let url = "";
-            if (file.type === "file") {
-              url = file.file.url;
-            } else if (file.type === "external") {
-              url = file.external.url;
-            }
-            
-            if (url) {
-              const lowerUrl = url.toLowerCase();
-              const isImageFile = lowerUrl.includes('.jpg') || lowerUrl.includes('.jpeg') || 
-                                lowerUrl.includes('.png') || lowerUrl.includes('.webp') || 
-                                lowerUrl.includes('.gif') || lowerUrl.includes('.svg');
-              
-              // Also check for common image hosting patterns
-              const isImageHost = lowerUrl.includes('prod-files-secure.s3.us-west-2.amazonaws.com') ||
-                                lowerUrl.includes('images.unsplash.com') ||
-                                lowerUrl.includes('imgur.com') ||
-                                lowerUrl.includes('cloudinary.com');
-              
-              // Check for document files
-              const isDocumentFile = lowerUrl.includes('.pdf') || lowerUrl.includes('.doc') || 
-                                    lowerUrl.includes('.docx') || lowerUrl.includes('.txt') || 
-                                    lowerUrl.includes('.zip') || lowerUrl.includes('.ppt') ||
-                                    lowerUrl.includes('.pptx') || lowerUrl.includes('.xls') ||
-                                    lowerUrl.includes('.xlsx');
-              
-              if ((isImageFile || isImageHost) && !isDocumentFile) {
-                allImageUrls.push(url);
-                if (!imageUrl) {
-                  imageUrl = url; // Use first valid image found
-                }
-              } else if (isDocumentFile) {
-                documentsUrls.push(url); // Collect all document files
-              }
-            }
-          }
-          
-          // If we have multiple images, prioritize high-quality, accessible ones
-          if (allImageUrls.length > 1) {
-            // Prefer reliable hosting and good formats
-            const sortedImages = allImageUrls.sort((a, b) => {
-              // Priority 1: AWS S3 hosting (most reliable)
-              const aIsAWS = a.includes('prod-files-secure.s3.us-west-2.amazonaws.com');
-              const bIsAWS = b.includes('prod-files-secure.s3.us-west-2.amazonaws.com');
-              
-              // Priority 2: Common image formats
-              const aGoodFormat = a.includes('.jpg') || a.includes('.png') || a.includes('.webp');
-              const bGoodFormat = b.includes('.jpg') || b.includes('.png') || b.includes('.webp');
-              
-              // Priority 3: Reasonable URL length
-              const aReasonableLength = a.length < 300;
-              const bReasonableLength = b.length < 300;
-              
-              if (aIsAWS && !bIsAWS) return -1;
-              if (!aIsAWS && bIsAWS) return 1;
-              if (aGoodFormat && !bGoodFormat) return -1;
-              if (!aGoodFormat && bGoodFormat) return 1;
-              if (aReasonableLength && !bReasonableLength) return -1;
-              if (!aReasonableLength && bReasonableLength) return 1;
-              
-              return a.length - b.length; // Prefer shorter URLs as tiebreaker
-            });
-            
-            imageUrl = sortedImages[0];
-          }
-        }
-
-        return {
-          notionId: page.id,
-          title: properties.Name?.title?.[0]?.plain_text || "Untitled Event",
-          subtitle: properties.Untertitel?.rich_text?.[0]?.plain_text || "",
-          description: properties.Details?.rich_text?.[0]?.plain_text || properties.Beschreibung?.rich_text?.[0]?.plain_text || "",
-          category: primaryCategory,
-          categories: categories, // Send all categories
-          location: properties.Ort?.select?.name || "",
-          date: eventDate,
-          endDate: properties.Datum?.date?.end || null, // Add end date support
-          time: eventTime,
-          price: properties.Preis?.number !== undefined && properties.Preis?.number !== null ? properties.Preis.number.toString() : "",
-          website: properties.URL?.url || "",
-          organizer: await (async () => {
-            // Handle relation field for organizer
-            const organizerRelation = properties["Veranstalter / Brand"];
-            if (organizerRelation?.relation && organizerRelation.relation.length > 0) {
-              try {
-                // Get the first related page
-                const relatedPageId = organizerRelation.relation[0].id;
-                const relatedPage = await notion.pages.retrieve({ page_id: relatedPageId });
-                
-                // Try to get the title from the related page properties
-                if (relatedPage.properties) {
-                  // Look for title property first
-                  for (const [key, prop] of Object.entries(relatedPage.properties)) {
-                    if (prop.type === 'title' && prop.title && prop.title.length > 0) {
-                      const title = prop.title[0].plain_text;
-                      if (title && title.trim()) {
-                        return title.trim();
-                      }
-                    }
-                  }
-                  
-                  // Fallback: look for rich_text properties
-                  for (const [key, prop] of Object.entries(relatedPage.properties)) {
-                    if (prop.type === 'rich_text' && prop.rich_text && prop.rich_text.length > 0) {
-                      const text = prop.rich_text[0].plain_text;
-                      if (text && text.trim()) {
-                        return text.trim();
-                      }
-                    }
-                  }
-                  
-                  // Fallback: look for select properties  
-                  for (const [key, prop] of Object.entries(relatedPage.properties)) {
-                    if (prop.type === 'select' && prop.select && prop.select.name) {
-                      return prop.select.name;
-                    }
-                  }
-                }
-              } catch (error) {
-                // If relation page is not accessible, derive organizer from event details
-                const eventTitle = properties.Name?.title?.[0]?.plain_text || "";
-                const eventLocation = properties.Ort?.select?.name || "";
-                
-                // Smart fallbacks based on location or title
-                if (eventLocation.toLowerCase().includes("schlossberg")) {
-                  return "Schlossberg Graz";
-                } else if (eventLocation.toLowerCase().includes("mur")) {
-                  return "Mur Events";
-                } else if (eventTitle.toLowerCase().includes("brunch")) {
-                  return "Gastronomie Partner";
-                } else if (eventTitle.toLowerCase().includes("konzert") || eventTitle.toLowerCase().includes("musik")) {
-                  return "Musik Veranstalter";
-                } else if (eventTitle.toLowerCase().includes("kunst") || eventTitle.toLowerCase().includes("kultur")) {
-                  return "Kultur Graz";
-                }
-              }
-            }
-            return "Event Partner";
-          })(),
-          attendees: properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name).join(", ") || "",
-          imageUrl: imageUrl,
-          documentsUrls: documentsUrls,
-          isFavorite: properties["Conni's Favorites"]?.checkbox === true // Extract Conni's Favorites checkbox (must be explicitly true)
-        };
-      }));
-
-      // Cache the events for 30 minutes (for frequent access)
-      cache.set("events", eventsWithRelations, 30);
-      
-      // Also cache for 24 hours as backup
-      cache.setLongTerm("events-backup", eventsWithRelations, 24);
-      
-      res.json(eventsWithRelations);
     } catch (error) {
-      console.error("Error fetching events:", error);
-      console.error("Error details:", error.message);
-      if (error.code === 'object_not_found') {
-        console.log("Database not found, returning empty array");
-        return res.json([]);
+      console.error("❌ Error fetching events:", error);
+      
+      // Handle rate limiting with cache fallback
+      if (error.code === 'rate_limited') {
+        console.log("Rate limited, trying fallback cache...");
+        
+        let fallbackEvents = cache.getExpiredCache("events") || cache.get("events-backup") || cache.getExpiredCache("events-backup");
+        
+        if (fallbackEvents) {
+          console.log("Returning cached events due to rate limit");
+          res.set('X-Cache', 'fallback');
+          return res.json(fallbackEvents);
+        }
       }
+      
       res.status(500).json({ 
-        message: "Failed to fetch events from Notion",
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: "Failed to fetch events",
+        message: "Fehler beim Laden der Events. Bitte versuchen Sie es später erneut.",
+        details: error instanceof Error ? error.message : "Unknown error"
       });
     }
   });
 
-
-  // Get available categories from Notion database
+  // Get all categories from events
   app.get("/api/categories", async (req, res) => {
     try {
-      if (!process.env.NOTION_INTEGRATION_SECRET) {
-        return res.status(503).json({ 
-          error: "Notion integration not configured",
-          message: "NOTION_INTEGRATION_SECRET nicht gesetzt"
-        });
-      }
-
       // Check cache first
       const cachedCategories = cache.get("categories");
       if (cachedCategories) {
@@ -427,277 +224,112 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json(cachedCategories);
       }
 
-      // Search for Momente database
-      let databaseId = null;
-      let response;
-      
-      try {
-        const searchResponse = await notion.search({
-          query: "Momente",
-          filter: {
-            property: "object",
-            value: "database"
-          }
-        });
-        
-        const momenteDb = searchResponse.results.find((db: any) => 
-          db.title && db.title.some((title: any) => 
-            title.plain_text && title.plain_text.toLowerCase().includes("momente")
-          )
-        );
-        
-        if (!momenteDb) {
-          return res.status(404).json({ 
-            error: "Momente database not found",
-            message: "Momente-Datenbank nicht gefunden"
-          });
-        }
-        
-        databaseId = momenteDb.id;
-        
-        response = await notion.databases.query({
-          database_id: databaseId,
-          page_size: 100
-        });
-      } catch (searchError) {
-        console.error("Error searching for Momente database (categories):", searchError);
-        
-        // Handle rate limiting for categories
-        if (searchError.code === 'rate_limited') {
-          const cachedCategories = cache.getExpiredCache("categories");
-          if (cachedCategories) {
-            console.log("Returning expired cached categories due to rate limit");
-            res.set('X-Cache', 'expired-fallback');
-            return res.json(cachedCategories);
-          }
-        }
-        
-        return res.status(500).json({ 
-          error: "Database search failed",
-          message: "Fehler beim Suchen der Momente-Datenbank"
-        });
+      // Get events to extract categories
+      const eventsResponse = await fetch(`http://localhost:${process.env.PORT || 5000}/api/events`);
+      if (!eventsResponse.ok) {
+        throw new Error("Failed to fetch events for categories");
       }
-
-      // Extract all unique categories
-      const categoriesSet = new Set<string>();
-      response.results.forEach((page: any) => {
-        const categories = page.properties.Kategorie?.multi_select?.map((cat: any) => cat.name) || [];
-        categories.forEach((cat: string) => categoriesSet.add(cat));
+      
+      const events = await eventsResponse.json();
+      
+      // Extract unique categories from all events
+      const categoriesSet = new Set();
+      events.forEach((event: any) => {
+        if (event.categories && Array.isArray(event.categories)) {
+          event.categories.forEach((cat: string) => categoriesSet.add(cat));
+        } else if (event.category) {
+          categoriesSet.add(event.category);
+        }
       });
-
-      const sortedCategories = Array.from(categoriesSet).sort();
       
-      // Cache categories for 60 minutes (longer since they change rarely)
-      cache.set("categories", sortedCategories, 60);
+      const categories = Array.from(categoriesSet).sort();
       
-      // Also store as long-term backup
-      cache.setLongTerm("categories-backup", sortedCategories, 24);
+      // Cache categories (60 minutes) and backup (24 hours)
+      cache.set("categories", categories, 60 * 60 * 1000); // 60 minutes  
+      console.log("Cached categories for 60 minutes");
       
-      res.json(sortedCategories);
+      cache.set("categories-backup", categories, 24 * 60 * 60 * 1000); // 24 hours
+      console.log("Long-term cached categories-backup for 24 hours");
+      
+      res.json(categories);
+      
     } catch (error) {
-      console.error("Error fetching categories:", error);
-      console.error("Error details:", error.message);
-      if (error.code === 'object_not_found') {
-        console.log("Database not found, returning empty array");
-        return res.json([]);
+      console.error("❌ Error fetching categories:", error);
+      
+      // Try fallback cache
+      let fallbackCategories = cache.getExpiredCache("categories") || cache.get("categories-backup") || cache.getExpiredCache("categories-backup");
+      
+      if (fallbackCategories) {
+        console.log("Returning cached categories due to error");
+        res.set('X-Cache', 'fallback');
+        return res.json(fallbackCategories);
       }
+      
       res.status(500).json({ 
-        message: "Failed to fetch categories from Notion",
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: "Failed to fetch categories",
+        message: "Fehler beim Laden der Kategorien",
+        details: error instanceof Error ? error.message : "Unknown error"
       });
     }
   });
 
-  // Search and filter events
-  app.get("/api/events/search", async (req, res) => {
-    try {
-      const { q, category, dateFrom, dateTo } = req.query;
-      
-      const eventsDb = await findDatabaseByTitle("Events");
-      
-      if (!eventsDb) {
-        return res.status(404).json({ 
-          message: "Events database not found. Please run setup first." 
-        });
-      }
-
-      // Build Notion query filters
-      const filters: any[] = [];
-      
-      if (category && category !== "" && category !== "all") {
-        filters.push({
-          property: "Category",
-          select: {
-            equals: category
-          }
-        });
-      }
-
-      if (dateFrom) {
-        filters.push({
-          property: "Date",
-          date: {
-            on_or_after: dateFrom
-          }
-        });
-      }
-
-      if (dateTo) {
-        filters.push({
-          property: "Date",
-          date: {
-            on_or_before: dateTo
-          }
-        });
-      }
-
-      const queryParams: any = {
-        database_id: eventsDb.id,
-        sorts: [
-          {
-            property: "Date", 
-            direction: "ascending"
-          }
-        ]
-      };
-
-      if (filters.length > 0) {
-        queryParams.filter = filters.length === 1 ? filters[0] : {
-          and: filters
-        };
-      }
-
-      const response = await notion.databases.query(queryParams);
-
-      let events = response.results.map((page: any) => {
-        const properties = page.properties;
-        
-        return {
-          notionId: page.id,
-          title: properties.Title?.title?.[0]?.plain_text || "Untitled Event",
-          description: properties.Description?.rich_text?.[0]?.plain_text || "",
-          category: properties.Category?.select?.name?.toLowerCase() || "other",
-          location: properties.Location?.rich_text?.[0]?.plain_text || "",
-          date: properties.Date?.date?.start || null,
-          time: properties.Time?.rich_text?.[0]?.plain_text || "",
-          price: properties.Price?.rich_text?.[0]?.plain_text || "",
-          website: properties.Website?.url || "",
-          attendees: properties.Attendees?.rich_text?.[0]?.plain_text || "",
-        };
-      });
-
-      // Client-side text search (since Notion doesn't support full-text search)
-      if (q && typeof q === "string") {
-        const searchTerm = q.toLowerCase();
-        events = events.filter(event => 
-          event.title.toLowerCase().includes(searchTerm) ||
-          event.description.toLowerCase().includes(searchTerm) ||
-          event.location.toLowerCase().includes(searchTerm)
-        );
-      }
-
-      res.json(events);
-    } catch (error) {
-      console.error("Error searching events:", error);
-      res.status(500).json({ 
-        message: "Failed to search events",
-        error: error instanceof Error ? error.message : "Unknown error"
-      });
-    }
-  });
-
-  // Get all available audience values from Notion database
+  // Get all audiences from events
   app.get("/api/audiences", async (req, res) => {
     try {
-      if (!process.env.NOTION_INTEGRATION_SECRET) {
-        return res.status(503).json({ 
-          error: "Notion integration not configured",
-          message: "NOTION_INTEGRATION_SECRET nicht gesetzt"
-        });
+      // Check cache first
+      const cachedAudiences = cache.get("audiences");
+      if (cachedAudiences) {
+        console.log("Returning cached audiences");
+        return res.json(cachedAudiences);
       }
 
-      // Search for Momente database
-      let databaseId = null;
-      let response;
-      
-      try {
-        const searchResponse = await notion.search({
-          query: "Momente",
-          filter: {
-            property: "object",
-            value: "database"
-          }
-        });
-        
-        const momenteDb = searchResponse.results.find((db: any) => 
-          db.title && db.title.some((title: any) => 
-            title.plain_text && title.plain_text.toLowerCase().includes("momente")
-          )
-        );
-        
-        if (!momenteDb) {
-          return res.status(404).json({ 
-            error: "Momente database not found",
-            message: "Momente-Datenbank nicht gefunden"
-          });
+      // Try to find the Momente database
+      const searchResponse = await notion.search({
+        query: "Momente",
+        filter: {
+          property: "object",
+          value: "database"
         }
-        
-        databaseId = momenteDb.id;
-        
-        response = await notion.databases.query({
-          database_id: databaseId,
-          page_size: 100
-        });
-      } catch (searchError) {
-        console.error("Error searching for Momente database:", searchError);
-        return res.status(500).json({ 
-          error: "Database search failed",
-          message: "Fehler beim Suchen der Momente-Datenbank"
-        });
+      });
+      
+      const momenteDb = searchResponse.results.find((db: any) => 
+        db.title && db.title.some((title: any) => 
+          title.plain_text && title.plain_text.toLowerCase().includes("momente")
+        )
+      );
+      
+      if (!momenteDb) {
+        throw new Error("Momente database not found");
       }
-
-      const audienceSet = new Set<string>();
       
-      response.results.forEach((page: any) => {
-        const properties = page.properties;
-        const audiences = properties["Für wen?"]?.multi_select?.map((audience: any) => audience.name) || [];
-        audiences.forEach((audience: string) => audienceSet.add(audience));
+      // Get database properties to extract audience options
+      const databaseResponse = await notion.databases.retrieve({
+        database_id: momenteDb.id
       });
-
-      const uniqueAudiences = Array.from(audienceSet).sort();
       
-      // Cache audiences for 10 minutes
-      cache.set("audiences", uniqueAudiences, 10);
+      const audienceProperty = databaseResponse.properties.Zielgruppe;
+      let audiences = [];
       
-      res.json(uniqueAudiences);
-    } catch (error) {
-      console.error("Error fetching audiences:", error);
-      console.error("Error details:", error.message);
-      if (error.code === 'object_not_found') {
-        console.log("Database not found for audiences, returning empty array");
-        return res.json([]);
+      if (audienceProperty && audienceProperty.type === 'multi_select') {
+        audiences = audienceProperty.multi_select.options.map((option: any) => option.name);
       }
-      res.status(500).json({ 
-        message: "Failed to fetch audiences from Notion",
-        error: error instanceof Error ? error.message : "Unknown error"
-      });
-    }
-  });
-
-  // Sync check endpoint
-  app.get("/api/sync-check", async (req, res) => {
-    try {
-      const syncResult = await import("./sync-check").then(module => module.checkNotionEventsSync());
-      res.json(syncResult);
+      
+      // Cache audiences (10 minutes)
+      cache.set("audiences", audiences, 10 * 60 * 1000); // 10 minutes
+      console.log("Cached audiences for 10 minutes");
+      
+      res.json(audiences);
+      
     } catch (error) {
-      console.error("Error in sync check:", error);
-      res.status(500).json({ 
-        message: "Sync check failed",
-        error: error instanceof Error ? error.message : "Unknown error"
-      });
+      console.error("❌ Error fetching audiences:", error);
+      
+      // Return empty array as fallback for audiences
+      res.json([]);
     }
   });
 
   const httpServer = createServer(app);
   return httpServer;
 }
+        
+

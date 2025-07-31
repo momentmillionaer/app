@@ -33,6 +33,7 @@ export const events = pgTable("events", {
   time: text("time"),
   price: text("price"),
   website: text("website"),
+  ticketUrl: text("ticket_url"), // For ticket purchase links
   organizer: text("organizer"),
   attendees: text("attendees"),
   imageUrl: text("image_url"),

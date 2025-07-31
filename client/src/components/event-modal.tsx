@@ -336,26 +336,50 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
               Teilen
             </button>
 
-            {/* Website Button - Bottom Right */}
-            {event.website && (
-              <button
-                onClick={() => window.open(event.website || '', '_blank')}
-                className="liquid-glass-button flex items-center px-6 py-3 rounded-full text-white font-medium drop-shadow-lg transition-all duration-300 border border-white/20 hover:border-white/40 hover:backdrop-blur-xl"
-                style={{
-                  background: 'rgba(0, 0, 255, 0.3)',
-                  backdropFilter: 'blur(20px) saturate(150%)',
-                  WebkitBackdropFilter: 'blur(20px) saturate(150%)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(208, 254, 29, 0.4)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(0, 0, 255, 0.3)';
-                }}
-              >
-                Tickets & Info
-              </button>
-            )}
+            {/* Right side buttons */}
+            <div className="flex gap-3">
+              {/* Tickets Button (if available) */}
+              {event.ticketUrl && (
+                <button
+                  onClick={() => window.open(event.ticketUrl || '', '_blank')}
+                  className="liquid-glass-button flex items-center px-6 py-3 rounded-full text-white font-medium drop-shadow-lg transition-all duration-300 border border-white/20 hover:border-white/40 hover:backdrop-blur-xl"
+                  style={{
+                    background: 'rgba(254, 92, 43, 0.3)', // Orange color for tickets
+                    backdropFilter: 'blur(20px) saturate(150%)',
+                    WebkitBackdropFilter: 'blur(20px) saturate(150%)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(147, 51, 234, 0.4)'; // Purple hover
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(254, 92, 43, 0.3)';
+                  }}
+                >
+                  🎫 Tickets
+                </button>
+              )}
+              
+              {/* Website/Info Button */}
+              {event.website && (
+                <button
+                  onClick={() => window.open(event.website || '', '_blank')}
+                  className="liquid-glass-button flex items-center px-6 py-3 rounded-full text-white font-medium drop-shadow-lg transition-all duration-300 border border-white/20 hover:border-white/40 hover:backdrop-blur-xl"
+                  style={{
+                    background: 'rgba(0, 0, 255, 0.3)',
+                    backdropFilter: 'blur(20px) saturate(150%)',
+                    WebkitBackdropFilter: 'blur(20px) saturate(150%)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(208, 254, 29, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(0, 0, 255, 0.3)';
+                  }}
+                >
+                  ℹ️ Info
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -369,6 +393,7 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
           location: event.location || '',
           organizer: event.organizer || '',
           website: event.website || '',
+          ticketUrl: event.ticketUrl || '',
           attendees: event.attendees || '',
           imageUrl: event.imageUrl || '',
           categories: event.categories || [],

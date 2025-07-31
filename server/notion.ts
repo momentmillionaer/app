@@ -151,6 +151,105 @@ export async function createDatabaseIfNotExists(title, properties) {
 }
 
 
+// Get all events from the Notion events database with comprehensive field mapping
+export async function getEventsFromNotion(databaseId: string) {
+    try {
+        const allEvents: any[] = [];
+        let hasMore = true;
+        let startCursor: string | undefined = undefined;
+
+        // Paginate through all events
+        while (hasMore) {
+            const response = await notion.databases.query({
+                database_id: databaseId,
+                start_cursor: startCursor,
+                page_size: 100,
+            });
+
+            allEvents.push(...response.results);
+            hasMore = response.has_more;
+            startCursor = response.next_cursor || undefined;
+        }
+
+        return allEvents.map((page: any) => {
+            const properties = page.properties;
+
+            // Extract event date with proper timezone handling
+            const eventDate = properties.Datum?.date?.start
+                ? new Date(properties.Datum.date.start)
+                : new Date();
+
+            const endDate = properties.Datum?.date?.end
+                ? new Date(properties.Datum.date.end)
+                : null;
+
+            // Extract image URLs from files property
+            const imageUrls = properties.Dateien?.files?.map((file: any) => {
+                if (file.type === 'external') {
+                    return file.external.url;
+                } else if (file.type === 'file') {
+                    return file.file.url;
+                }
+                return null;
+            }).filter(Boolean) || [];
+
+            // Get the first image as main image
+            const imageUrl = imageUrls.length > 0 ? imageUrls[0] : null;
+
+            // Extract document URLs (PDFs, etc.) - exclude images more strictly
+            const documentsUrls = properties.Dateien?.files?.filter((file: any) => {
+                const url = file.type === 'external' ? file.external.url : file.file?.url;
+                if (!url) return false;
+                
+                const lowerUrl = url.toLowerCase();
+                // Check for document file extensions
+                const isDocument = lowerUrl.includes('.pdf') || lowerUrl.includes('.doc') || 
+                                 lowerUrl.includes('.docx') || lowerUrl.includes('.txt') || 
+                                 lowerUrl.includes('.zip') || lowerUrl.includes('.ppt') ||
+                                 lowerUrl.includes('.pptx') || lowerUrl.includes('.xls') ||
+                                 lowerUrl.includes('.xlsx');
+                
+                // Make sure it's NOT an image
+                const isImage = lowerUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i) ||
+                              lowerUrl.includes('prod-files-secure.s3.us-west-2.amazonaws.com') ||
+                              lowerUrl.includes('images.unsplash.com');
+                
+                return isDocument && !isImage;
+            }).map((file: any) => 
+                file.type === 'external' ? file.external.url : file.file.url
+            ) || [];
+
+            // Extract categories as array
+            const categories = properties.Kategorie?.multi_select?.map((cat: any) => cat.name) || [];
+            const mainCategory = categories.length > 0 ? categories[0] : "Andere";
+
+            return {
+                notionId: page.id,
+                title: properties.Name?.title?.[0]?.plain_text || "Untitled Event",
+                subtitle: properties.Untertitel?.rich_text?.[0]?.plain_text || null,
+                description: properties.Beschreibung?.rich_text?.[0]?.plain_text || "",
+                category: mainCategory,
+                categories: categories,
+                location: properties.Ort?.rich_text?.[0]?.plain_text || "",
+                date: eventDate,
+                endDate: endDate,
+                time: properties.Zeit?.rich_text?.[0]?.plain_text || "",
+                price: properties.Preis?.rich_text?.[0]?.plain_text || "0€",
+                website: properties.Website?.url || properties.URL?.url || null,
+                ticketUrl: properties.Tickets?.url || properties.Ticket?.url || properties["Ticket URL"]?.url || null, // Add ticket URL mapping
+                organizer: properties.Veranstalter?.rich_text?.[0]?.plain_text || "",
+                attendees: properties.Zielgruppe?.multi_select?.map((aud: any) => aud.name).join(", ") || "",
+                imageUrl: imageUrl,
+                documentsUrls: documentsUrls,
+                isFavorite: properties["Conni's Favorites"]?.checkbox || false,
+            };
+        });
+    } catch (error) {
+        console.error("Error fetching events from Notion:", error);
+        throw new Error("Failed to fetch events from Notion");
+    }
+}
+
 // Example function to Get all tasks from the Notion database
 export async function getTasks(tasksDatabaseId: string) {
     try {
