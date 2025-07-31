@@ -259,11 +259,45 @@ export async function getEventsFromNotion(databaseId: string) {
                 endDate: endDate,
                 time: properties.Zeit?.rich_text?.[0]?.plain_text || "",
                 price: (() => {
-                    const priceText = properties.Preis?.rich_text?.[0]?.plain_text || '0';
-                    if (!priceText || priceText.trim() === '') return "0";
+                    // Debug: Log the price property structure
+                    console.log(`Event "${properties.Name?.title?.[0]?.plain_text}" price property:`, JSON.stringify(properties.Preis, null, 2));
+                    
+                    // Try multiple field types for price
+                    let priceValue = null;
+                    
+                    // Try as number field
+                    if (properties.Preis?.number !== null && properties.Preis?.number !== undefined) {
+                        priceValue = properties.Preis.number.toString();
+                    }
+                    // Try as rich text field
+                    else if (properties.Preis?.rich_text?.[0]?.plain_text) {
+                        priceValue = properties.Preis.rich_text[0].plain_text;
+                    }
+                    // Try as title field
+                    else if (properties.Preis?.title?.[0]?.plain_text) {
+                        priceValue = properties.Preis.title[0].plain_text;
+                    }
+                    // Try as formula field
+                    else if (properties.Preis?.formula?.number !== null && properties.Preis?.formula?.number !== undefined) {
+                        priceValue = properties.Preis.formula.number.toString();
+                    }
+                    // Try other common price field names
+                    else if (properties.Price?.number !== null && properties.Price?.number !== undefined) {
+                        priceValue = properties.Price.number.toString();
+                    }
+                    else if (properties.Kosten?.number !== null && properties.Kosten?.number !== undefined) {
+                        priceValue = properties.Kosten.number.toString();
+                    }
+                    
+                    if (!priceValue || priceValue.trim() === '') {
+                        console.log("No price found, defaulting to 0");
+                        return "0";
+                    }
+                    
+                    console.log(`Raw price value: "${priceValue}"`);
                     
                     // Clean and parse price - remove everything except numbers, dots, and commas
-                    const cleanPrice = priceText.replace(/[^\d.,]/g, '');
+                    const cleanPrice = priceValue.replace(/[^\d.,]/g, '');
                     
                     if (cleanPrice && cleanPrice !== '') {
                         // Convert comma to dot for proper parsing
@@ -272,17 +306,21 @@ export async function getEventsFromNotion(databaseId: string) {
                         
                         if (!isNaN(parsedPrice)) {
                             // Format as string without decimals if it's a whole number
-                            return parsedPrice % 1 === 0 ? parsedPrice.toString() : parsedPrice.toFixed(2);
+                            const result = parsedPrice % 1 === 0 ? parsedPrice.toString() : parsedPrice.toFixed(2);
+                            console.log(`Parsed price: "${result}"`);
+                            return result;
                         }
                     }
                     
                     // Check for free keywords
-                    if (priceText.toLowerCase().includes('kostenlos') || 
-                        priceText.toLowerCase().includes('gratis') || 
-                        priceText.toLowerCase().includes('frei')) {
+                    if (priceValue.toLowerCase().includes('kostenlos') || 
+                        priceValue.toLowerCase().includes('gratis') || 
+                        priceValue.toLowerCase().includes('frei')) {
+                        console.log("Found free keyword, returning 0");
                         return "0";
                     }
                     
+                    console.log("Could not parse price, defaulting to 0");
                     return "0";
                 })(),
                 website: properties.Website?.url || properties.URL?.url || null,

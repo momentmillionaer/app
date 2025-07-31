@@ -176,7 +176,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
               )}
               {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
                 <div className="flex items-center gap-1 ml-2">
-                  <span className="text-xs font-semibold text-yellow-300 bg-black/50 px-1 rounded">€ {event.price.includes && event.price.includes('.') ? event.price.replace('.', ',') : event.price + ',00'}</span>
+                  <span className="text-xs font-semibold text-yellow-300 bg-black/50 px-1 rounded">€ {event.price && event.price.includes && event.price.includes('.') ? event.price.replace('.', ',') : event.price + ',00'}</span>
                 </div>
               )}
             </div>
@@ -197,7 +197,7 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
               )}
               {event.price !== undefined && event.price !== null && event.price !== "" && event.price !== "0" && (
                 <div className="flex items-center space-x-2">
-                  <span className="font-semibold text-yellow-300 bg-black/50 px-2 py-1 rounded">€ {event.price.includes && event.price.includes('.') ? event.price.replace('.', ',') : event.price + ',00'}</span>
+                  <span className="font-semibold text-yellow-300 bg-black/50 px-2 py-1 rounded">€ {event.price && event.price.includes && event.price.includes('.') ? event.price.replace('.', ',') : event.price + ',00'}</span>
                 </div>
               )}
             </div>
