@@ -259,9 +259,6 @@ export async function getEventsFromNotion(databaseId: string) {
                 endDate: endDate,
                 time: properties.Zeit?.rich_text?.[0]?.plain_text || "",
                 price: (() => {
-                    // Debug: Log the price property structure
-                    console.log(`Event "${properties.Name?.title?.[0]?.plain_text}" price property:`, JSON.stringify(properties.Preis, null, 2));
-                    
                     // Try multiple field types for price
                     let priceValue = null;
                     
@@ -290,11 +287,8 @@ export async function getEventsFromNotion(databaseId: string) {
                     }
                     
                     if (!priceValue || priceValue.trim() === '') {
-                        console.log("No price found, defaulting to 0");
                         return "0";
                     }
-                    
-                    console.log(`Raw price value: "${priceValue}"`);
                     
                     // Clean and parse price - remove everything except numbers, dots, and commas
                     const cleanPrice = priceValue.replace(/[^\d.,]/g, '');
@@ -306,9 +300,7 @@ export async function getEventsFromNotion(databaseId: string) {
                         
                         if (!isNaN(parsedPrice)) {
                             // Format as string without decimals if it's a whole number
-                            const result = parsedPrice % 1 === 0 ? parsedPrice.toString() : parsedPrice.toFixed(2);
-                            console.log(`Parsed price: "${result}"`);
-                            return result;
+                            return parsedPrice % 1 === 0 ? parsedPrice.toString() : parsedPrice.toFixed(2);
                         }
                     }
                     
@@ -316,11 +308,9 @@ export async function getEventsFromNotion(databaseId: string) {
                     if (priceValue.toLowerCase().includes('kostenlos') || 
                         priceValue.toLowerCase().includes('gratis') || 
                         priceValue.toLowerCase().includes('frei')) {
-                        console.log("Found free keyword, returning 0");
                         return "0";
                     }
                     
-                    console.log("Could not parse price, defaulting to 0");
                     return "0";
                 })(),
                 website: properties.Website?.url || properties.URL?.url || null,

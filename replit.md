@@ -194,6 +194,11 @@ Preferred communication style: Simple, everyday language.
 - ✓ Removed all emojis from buttons across entire application
 - ✓ Fixed price display to show in EventCards (not just modal) except for free events (price "0")
 - ✓ Free events display only 🆓 emoji in bottom right corner
+- ✓ RESOLVED: Critical price parsing issue - comprehensive Notion field type support implemented
+- ✓ Enhanced price field mapping to support Number, Rich Text, Title, and Formula field types
+- ✓ Added fallback price field names (Preis, Price, Kosten) for maximum compatibility
+- ✓ Prices now display correctly in prominent yellow boxes with black background
+- ✓ Confirmed working: Events show actual prices (€ 97,50, € 125,00, € 69,00) from Notion database
 
 **July 25, 2025 - Favoriten EventCards Design & UI Improvements**
 - ✓ Redesigned Favoriten EventCards with event image as full background
