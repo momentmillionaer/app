@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Share2, Download, Copy, Link } from "lucide-react";
 import { Event } from "@shared/schema";
+import { SimpleShareGenerator } from './simple-share-generator';
 
 interface ShareEventDialogProps {
   event: Event;
@@ -179,52 +180,37 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      // Event image
-      const imageHeight = event.imageUrl ? 420 : 0;
+      // Skip image loading for now - just use text layout
+      const imageHeight = 0;
       let contentStartY = cardY + 48;
+      
+      console.log('📝 Skipping image loading, proceeding with text rendering...');
 
-      if (event.imageUrl && imageHeight > 0) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.roundRect(cardX + 24, cardY + 24, cardWidth - 48, imageHeight, 20);
-        ctx.clip();
-        
-        try {
-          const img = new Image();
-          img.crossOrigin = 'anonymous';
-          
-          await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = reject;
-            img.src = event.imageUrl || '';
-          });
-          
-          if (img.complete && img.naturalWidth > 0) {
-            const scale = Math.max((cardWidth - 48) / img.naturalWidth, imageHeight / img.naturalHeight);
-            const scaledWidth = img.naturalWidth * scale;
-            const scaledHeight = img.naturalHeight * scale;
-            const imgX = cardX + 24 + ((cardWidth - 48) - scaledWidth) / 2;
-            const imgY = cardY + 24 + (imageHeight - scaledHeight) / 2;
-            
-            ctx.drawImage(img, imgX, imgY, scaledWidth, scaledHeight);
-            
-            // Gradient overlay
-            const gradient = ctx.createLinearGradient(0, cardY + 24, 0, cardY + 24 + imageHeight);
-            gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(cardX + 24, cardY + 24, cardWidth - 48, imageHeight);
-          }
-        } catch (error) {
-          console.log('Image loading failed:', error);
-        }
-        
-        ctx.restore();
-        contentStartY = cardY + imageHeight + 80;
+      // Add event title text
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 42px Helvetica, Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(event.title || 'Event Title', canvas.width / 2, cardY + 120);
+      
+      // Add date
+      ctx.font = '32px Helvetica, Arial, sans-serif';
+      ctx.fillText(
+        new Date(event.date || '').toLocaleDateString('de-AT'),
+        canvas.width / 2, 
+        cardY + 180
+      );
+      
+      // Add location if available
+      if (event.location) {
+        ctx.font = '28px Helvetica, Arial, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillText(event.location, canvas.width / 2, cardY + 220);
       }
+      
+      console.log('✅ Text content added');
 
       // Content
-      let currentY = contentStartY;
+      let currentY = cardY + 280;
 
       // Category badge
       if (event.category) {
