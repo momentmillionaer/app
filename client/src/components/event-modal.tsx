@@ -341,7 +341,14 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
               {/* Tickets Button (if available) */}
               {event.ticketUrl && (
                 <button
-                  onClick={() => window.open(event.ticketUrl || '', '_blank')}
+                  onClick={() => {
+                    let url = event.ticketUrl || '';
+                    // Fix URL if it doesn't have protocol
+                    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+                      url = 'https://' + url;
+                    }
+                    window.open(url, '_blank');
+                  }}
                   className="liquid-glass-button flex items-center px-6 py-3 rounded-full text-white font-medium drop-shadow-lg transition-all duration-300 border border-white/20 hover:border-white/40 hover:backdrop-blur-xl"
                   style={{
                     background: 'rgba(254, 92, 43, 0.3)', // Orange color for tickets
@@ -362,7 +369,14 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
               {/* Website/Info Button */}
               {event.website && (
                 <button
-                  onClick={() => window.open(event.website || '', '_blank')}
+                  onClick={() => {
+                    let url = event.website || '';
+                    // Fix URL if it doesn't have protocol
+                    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+                      url = 'https://' + url;
+                    }
+                    window.open(url, '_blank');
+                  }}
                   className="liquid-glass-button flex items-center px-6 py-3 rounded-full text-white font-medium drop-shadow-lg transition-all duration-300 border border-white/20 hover:border-white/40 hover:backdrop-blur-xl"
                   style={{
                     background: 'rgba(0, 0, 255, 0.3)',

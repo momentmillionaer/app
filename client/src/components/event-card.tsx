@@ -109,6 +109,58 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
         </div>
       )}
 
+      {/* Emoji Fallback when image fails to load */}
+      {imageError && (
+        <div className="mb-4 overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/20 to-orange-500/20 flex items-center justify-center" style={{ aspectRatio: '16/9' }}>
+          <span className="text-6xl">
+            {(() => {
+              const title = event.title?.toLowerCase() || '';
+              const category = event.category?.toLowerCase() || '';
+              
+              if (title.includes('yoga') || title.includes('meditation') || category.includes('sport')) return '🧘';
+              if (title.includes('food') || title.includes('essen') || title.includes('restaurant') || category.includes('kulinarik')) return '🍽️';
+              if (title.includes('musik') || title.includes('music') || title.includes('konzert') || title.includes('band')) return '🎵';
+              if (title.includes('kunst') || title.includes('art') || title.includes('galerie') || title.includes('ausstellung')) return '🎨';
+              if (title.includes('kino') || title.includes('film') || title.includes('movie') || category.includes('shows')) return '🎬';
+              if (title.includes('party') || title.includes('club') || title.includes('dance') || title.includes('dancing')) return '🎉';
+              if (title.includes('markt') || title.includes('market') || title.includes('festival') || category.includes('märkte')) return '🎪';
+              if (title.includes('workshop') || title.includes('kurs') || title.includes('seminar') || title.includes('lernen')) return '📚';
+              if (title.includes('natur') || title.includes('outdoor') || title.includes('wandern') || title.includes('hiking')) return '🌿';
+              if (title.includes('date') || title.includes('dating') || category.includes('dating')) return '💕';
+              if (title.includes('kind') || title.includes('family') || title.includes('familie')) return '👨‍👩‍👧‍👦';
+              
+              return '🎊'; // Default fallback
+            })()}
+          </span>
+        </div>
+      )}
+
+      {/* Emoji Fallback when no image URL exists */}
+      {!event.imageUrl && (
+        <div className="mb-4 overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/20 to-orange-500/20 flex items-center justify-center" style={{ aspectRatio: '16/9' }}>
+          <span className="text-6xl">
+            {(() => {
+              const title = event.title?.toLowerCase() || '';
+              const category = event.category?.toLowerCase() || '';
+              
+              if (title.includes('yoga') || title.includes('meditation') || category.includes('sport')) return '🧘';
+              if (title.includes('food') || title.includes('essen') || title.includes('restaurant') || category.includes('kulinarik')) return '🍽️';
+              if (title.includes('musik') || title.includes('music') || title.includes('konzert') || title.includes('band')) return '🎵';
+              if (title.includes('kunst') || title.includes('art') || title.includes('galerie') || title.includes('ausstellung')) return '🎨';
+              if (title.includes('kino') || title.includes('film') || title.includes('movie') || category.includes('shows')) return '🎬';
+              if (title.includes('party') || title.includes('club') || title.includes('dance') || title.includes('dancing')) return '🎉';
+              if (title.includes('markt') || title.includes('market') || title.includes('festival') || category.includes('märkte')) return '🎪';
+              if (title.includes('workshop') || title.includes('kurs') || title.includes('seminar') || title.includes('lernen')) return '📚';
+              if (title.includes('natur') || title.includes('outdoor') || title.includes('wandern') || title.includes('hiking')) return '🌿';
+              if (title.includes('date') || title.includes('dating') || category.includes('dating')) return '💕';
+              if (title.includes('kind') || title.includes('family') || title.includes('familie')) return '👨‍👩‍👧‍👦';
+              
+              return '🎊'; // Default fallback
+            })()}
+          </span>
+        </div>
+      )}
+
       <div className="space-y-4">
         {/* Header with categories and date */}
         <div className="flex items-start justify-between">

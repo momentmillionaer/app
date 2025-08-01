@@ -60,6 +60,32 @@ export function FavoritesView({ events, onEventClick }: FavoritesViewProps) {
                 }}
               />
             )}
+
+            {/* Emoji Fallback when no image */}
+            {!event.imageUrl && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-8xl">
+                  {(() => {
+                    const title = event.title?.toLowerCase() || '';
+                    const category = event.category?.toLowerCase() || '';
+                    
+                    if (title.includes('yoga') || title.includes('meditation') || category.includes('sport')) return '🧘';
+                    if (title.includes('food') || title.includes('essen') || title.includes('restaurant') || category.includes('kulinarik')) return '🍽️';
+                    if (title.includes('musik') || title.includes('music') || title.includes('konzert') || title.includes('band')) return '🎵';
+                    if (title.includes('kunst') || title.includes('art') || title.includes('galerie') || title.includes('ausstellung')) return '🎨';
+                    if (title.includes('kino') || title.includes('film') || title.includes('movie') || category.includes('shows')) return '🎬';
+                    if (title.includes('party') || title.includes('club') || title.includes('dance') || title.includes('dancing')) return '🎉';
+                    if (title.includes('markt') || title.includes('market') || title.includes('festival') || category.includes('märkte')) return '🎪';
+                    if (title.includes('workshop') || title.includes('kurs') || title.includes('seminar') || title.includes('lernen')) return '📚';
+                    if (title.includes('natur') || title.includes('outdoor') || title.includes('wandern') || title.includes('hiking')) return '🌿';
+                    if (title.includes('date') || title.includes('dating') || category.includes('dating')) return '💕';
+                    if (title.includes('kind') || title.includes('family') || title.includes('familie')) return '👨‍👩‍👧‍👦';
+                    
+                    return '🎊'; // Default fallback
+                  })()}
+                </span>
+              </div>
+            )}
             
             {/* Background Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
