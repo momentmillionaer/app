@@ -109,97 +109,32 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ];
       const randomGlow = glowColors[Math.floor(Math.random() * glowColors.length)];
       
-      // Apply app background
-      await new Promise<boolean>((resolve) => {
-        const backgroundImg = new Image();
-        backgroundImg.crossOrigin = 'anonymous';
-        
-        backgroundImg.onload = () => {
-          console.log('Classical painting loaded successfully:', randomPainting);
-          
-          // Cover behavior: scale to fill entire canvas without distortion
-          const scaleX = canvas.width / backgroundImg.naturalWidth;
-          const scaleY = canvas.height / backgroundImg.naturalHeight;
-          const scale = Math.max(scaleX, scaleY);
-          
-          const scaledWidth = backgroundImg.naturalWidth * scale;
-          const scaledHeight = backgroundImg.naturalHeight * scale;
-          
-          // Center the image
-          const offsetX = (canvas.width - scaledWidth) / 2;
-          const offsetY = (canvas.height - scaledHeight) / 2;
-          
-          // Draw the background image
-          ctx.drawImage(backgroundImg, offsetX, offsetY, scaledWidth, scaledHeight);
-          
-          // Add a stronger dark overlay for better text readability
-          ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          
-          resolve(true);
-        };
-        
-        backgroundImg.onerror = () => {
-          console.log('Background failed for:', randomPainting, 'trying alternative paths...');
-          
-          // Try alternative paths
-          const fileName = randomPainting.split('/').pop();
-          const alternativePaths = [
-            `/${fileName}`,
-            `/assets/${fileName}`,
-            `./attached_assets/${fileName}`,
-            randomPainting.replace('/attached_assets/', '/'),
-            randomPainting.replace('/attached_assets/', '/assets/')
-          ];
-          
-          let pathIndex = 0;
-          const tryNextPath = () => {
-            if (pathIndex < alternativePaths.length) {
-              console.log('Trying path:', alternativePaths[pathIndex]);
-              const testImg = new Image();
-              testImg.crossOrigin = 'anonymous';
-              testImg.onload = () => {
-                console.log('Successfully loaded from:', alternativePaths[pathIndex]);
-                // Use the same scaling logic
-                const scaleX = canvas.width / testImg.naturalWidth;
-                const scaleY = canvas.height / testImg.naturalHeight;
-                const scale = Math.max(scaleX, scaleY);
-                
-                const scaledWidth = testImg.naturalWidth * scale;
-                const scaledHeight = testImg.naturalHeight * scale;
-                const offsetX = (canvas.width - scaledWidth) / 2;
-                const offsetY = (canvas.height - scaledHeight) / 2;
-                
-                ctx.drawImage(testImg, offsetX, offsetY, scaledWidth, scaledHeight);
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                resolve(true);
-              };
-              testImg.onerror = () => {
-                pathIndex++;
-                tryNextPath();
-              };
-              testImg.src = alternativePaths[pathIndex];
-            } else {
-              // All paths failed, use gradient fallback
-              console.log('❌ All painting paths failed, using gradient fallback');
-              const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-              gradient.addColorStop(0, '#6366f1');
-              gradient.addColorStop(1, '#f59e0b');
-              ctx.fillStyle = gradient;
-              ctx.fillRect(0, 0, canvas.width, canvas.height);
-              console.log('✅ Gradient fallback applied');
-              resolve(true); // Change to true so image generation continues
-            }
-          };
-          
-          tryNextPath();
-        };
-        
-        // Load the selected classical painting
-        console.log('🖼️ Attempting to load background:', randomPainting);
-        backgroundImg.src = randomPainting;
-      });
+      // Create beautiful gradient background instead of loading external images
+      console.log('🎨 Creating gradient background...');
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      
+      // Use colors from the glow palette for a nice gradient
+      const gradientColors = [
+        ['#9333ea', '#3b82f6'], // Purple to Blue
+        ['#f59e0b', '#ef4444'], // Orange to Red  
+        ['#3b82f6', '#06b6d4'], // Blue to Cyan
+        ['#d0fe1d', '#84cc16'], // Lime to Green
+        ['#f3dcfa', '#e879f9'], // Pink to Magenta
+        ['#fee4c3', '#f59e0b']  // Cream to Orange
+      ];
+      
+      const randomGradientColors = gradientColors[Math.floor(Math.random() * gradientColors.length)];
+      gradient.addColorStop(0, randomGradientColors[0]);
+      gradient.addColorStop(1, randomGradientColors[1]);
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Add a subtle overlay for better text readability
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      console.log('✅ Gradient background created successfully');
 
       // Card layout - same size for both formats, centered for story
       const cardPadding = 48;
