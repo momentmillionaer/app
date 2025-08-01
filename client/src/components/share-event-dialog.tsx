@@ -621,6 +621,22 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         </div>
         
         <div className="space-y-6 max-h-[60vh] overflow-y-auto">
+          {/* Manual Generate Button - for debugging */}
+          {!shareImageUrl && !isGenerating && (
+            <div className="text-center py-4">
+              <button
+                onClick={generateShareImage}
+                className="px-6 py-3 bg-purple-500/80 text-white rounded-full hover:bg-purple-600/80 transition-all duration-300"
+                style={{
+                  backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
+                }}
+              >
+                Bild erstellen
+              </button>
+            </div>
+          )}
+          
           {/* Loading State */}
           {isGenerating && (
             <div className="text-center py-8">
@@ -685,13 +701,13 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         />
         
         {/* Debug info in development */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="text-xs text-white/60 mt-2">
-            Canvas: {canvasRef.current ? 'Ready' : 'Not ready'} | 
-            Image: {shareImageUrl ? `Generated (${Math.round(shareImageUrl.length / 1024)}KB)` : 'None'} | 
-            Loading: {isGenerating ? 'Yes' : 'No'}
-          </div>
-        )}
+        <div className="text-xs text-white/60 mt-2 p-2 bg-black/20 rounded">
+          <div>Canvas: {canvasRef.current ? 'Ready' : 'Not ready'}</div>
+          <div>Image: {shareImageUrl ? `Generated (${Math.round(shareImageUrl.length / 1024)}KB)` : 'None'}</div>
+          <div>Loading: {isGenerating ? 'Yes' : 'No'}</div>
+          <div>Format: {format}</div>
+          <div>Event: {event.title}</div>
+        </div>
       </DialogContent>
     </Dialog>
   );
