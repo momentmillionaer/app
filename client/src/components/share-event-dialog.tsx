@@ -76,16 +76,16 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         canvas.height = 1920;
       }
       
-      // Classical paintings from attached assets - using correct file names
+      // Classical paintings from attached assets - using latest versions
       const paintings = [
-        '/attached_assets/208195fgsdl_1753089340156.jpg', // Woman knitting by the coast
-        '/attached_assets/222401fgsdl_1753089340158.jpg', // Evening dinner scene with candles
-        '/attached_assets/226718fgsdl_1753089340158.jpg', // Oriental marketplace scene
-        '/attached_assets/228439fgsdl_1753089340159.jpg', // Classical feast in colonnade
-        '/attached_assets/244783fgsdl_1753089340159.jpg', // Garden scene with classical figures
-        '/attached_assets/245018fgsdl_1753089340159.jpg', // Rococo garden party
-        '/attached_assets/509932ldsdl_1753089340159.jpg', // River landscape
-        '/attached_assets/540710ldsdl_1753089340159.jpg'  // Norwegian fjord scene
+        '/attached_assets/208195fgsdl_1753093711962.jpg', // Woman knitting by the coast
+        '/attached_assets/222401fgsdl_1753093711965.jpg', // Evening dinner scene with candles
+        '/attached_assets/226718fgsdl_1753093711965.jpg', // Oriental marketplace scene
+        '/attached_assets/228439fgsdl_1753093711965.jpg', // Classical feast in colonnade
+        '/attached_assets/244783fgsdl_1753093711966.jpg', // Garden scene with classical figures
+        '/attached_assets/245018fgsdl_1753093711966.jpg', // Rococo garden party
+        '/attached_assets/509932ldsdl_1753093711966.jpg', // River landscape
+        '/attached_assets/540710ldsdl_1753093711966.jpg'  // Norwegian fjord scene
       ];
       const randomPainting = paintings[Math.floor(Math.random() * paintings.length)];
       
