@@ -28,7 +28,7 @@ Preferred communication style: Simple, everyday language.
 - **Image Handling**: Enhanced image loading with `referrerPolicy="no-referrer"`, `loading="lazy"`, robust error handling, and retry mechanisms.
 - **Multi-day Event Support**: Logic to display events spanning multiple days correctly across all relevant dates in the calendar.
 - **Performance**: Comprehensive caching system for events (30 min TTL, 24 hr backup) and categories (60 min TTL, 24 hr backup). Intelligent rate-limiting handling with cache fallbacks. Exponential backoff for Notion API pagination.
-- **Event Sharing**: Canvas-based image generation for social media optimized sharing (1080x1350px 4:5 ratio) with event details, blurred background, and glass-morphism overlay.
+- **Event Sharing**: SimpleShareGenerator component using Canvas-based image generation for social media optimized sharing (1080x1350px 4:5 ratio and 1080x1920px 9:16 story format) with event details, gradient background, and glass-morphism overlay. Fully functional without external dependencies.
 - **PWA Setup**: `favicon`, app icons, `manifest.json` for home screen integration on mobile devices.
 - **SEO**: `robots.txt` and `sitemap.xml` included.
 

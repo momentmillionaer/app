@@ -540,19 +540,14 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         </div>
         
         <div className="space-y-6 max-h-[60vh] overflow-y-auto">
-          {/* Manual Generate Button - for debugging */}
+          {/* Simple Generate Button */}
           {!shareImageUrl && !isGenerating && (
             <div className="text-center py-4">
-              <button
-                onClick={generateShareImage}
-                className="px-6 py-3 bg-purple-500/80 text-white rounded-full hover:bg-purple-600/80 transition-all duration-300"
-                style={{
-                  backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
-                  WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
-                }}
-              >
-                Bild erstellen
-              </button>
+              <SimpleShareGenerator 
+                event={event}
+                format={format}
+                onImageGenerated={setShareImageUrl}
+              />
             </div>
           )}
           

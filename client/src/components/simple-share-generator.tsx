@@ -1,14 +1,14 @@
 import { useState } from 'react';
 
-interface Event {
+interface SimpleEvent {
   title?: string;
-  date?: string;
+  date?: string | Date;
   location?: string;
   notionId?: string;
 }
 
 interface SimpleShareGeneratorProps {
-  event: Event;
+  event: SimpleEvent;
   format: "post" | "story";
   onImageGenerated: (imageUrl: string) => void;
 }
