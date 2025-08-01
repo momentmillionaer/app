@@ -109,11 +109,8 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ];
       const randomGlow = glowColors[Math.floor(Math.random() * glowColors.length)];
       
-      // Create beautiful gradient background instead of loading external images
+      // Create beautiful gradient background
       console.log('🎨 Creating gradient background...');
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      
-      // Use colors from the glow palette for a nice gradient
       const gradientColors = [
         ['#9333ea', '#3b82f6'], // Purple to Blue
         ['#f59e0b', '#ef4444'], // Orange to Red  
@@ -124,17 +121,18 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ];
       
       const randomGradientColors = gradientColors[Math.floor(Math.random() * gradientColors.length)];
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       gradient.addColorStop(0, randomGradientColors[0]);
       gradient.addColorStop(1, randomGradientColors[1]);
       
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Add a subtle overlay for better text readability
+      // Add subtle overlay for text readability
       ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      console.log('✅ Gradient background created successfully');
+      console.log('✅ Gradient background created');
 
       // Card layout - same size for both formats, centered for story
       const cardPadding = 48;
