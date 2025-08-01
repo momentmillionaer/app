@@ -56,14 +56,23 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
   };
 
   const generateShareImage = async () => {
+    console.log('🎨 Starting share image generation...');
     setIsGenerating(true);
     
     try {
       const canvas = canvasRef.current;
-      if (!canvas) return;
+      if (!canvas) {
+        console.error('❌ Canvas not found');
+        return;
+      }
       
       const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+      if (!ctx) {
+        console.error('❌ Canvas context not found');
+        return;
+      }
+      
+      console.log('✅ Canvas and context ready');
       
       // Set canvas size based on selected format
       if (format === "post") {
@@ -173,13 +182,14 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
               testImg.src = alternativePaths[pathIndex];
             } else {
               // All paths failed, use gradient fallback
-              console.log('All paths failed, using gradient fallback');
+              console.log('❌ All painting paths failed, using gradient fallback');
               const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
               gradient.addColorStop(0, '#6366f1');
               gradient.addColorStop(1, '#f59e0b');
               ctx.fillStyle = gradient;
               ctx.fillRect(0, 0, canvas.width, canvas.height);
-              resolve(false);
+              console.log('✅ Gradient fallback applied');
+              resolve(true); // Change to true so image generation continues
             }
           };
           
@@ -187,7 +197,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
         };
         
         // Load the selected classical painting
-        console.log('Attempting to load:', randomPainting);
+        console.log('🖼️ Attempting to load background:', randomPainting);
         backgroundImg.src = randomPainting;
       });
 
@@ -509,13 +519,16 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       ctx.textAlign = 'left';
 
       // Generate image URL
+      console.log('🖼️ Converting canvas to image URL...');
       const imageUrl = canvas.toDataURL('image/png', 0.9);
+      console.log('✅ Image generated successfully, size:', imageUrl.length, 'bytes');
       setShareImageUrl(imageUrl);
       
     } catch (error) {
-      console.error('Error generating share image:', error);
+      console.error('❌ Error generating share image:', error);
     } finally {
       setIsGenerating(false);
+      console.log('🏁 Image generation process finished');
     }
   };
 
@@ -663,7 +676,22 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           </div>
         )}
         
-        <canvas ref={canvasRef} className="hidden" />
+        {/* Hidden Canvas for Image Generation */}
+        <canvas 
+          ref={canvasRef} 
+          style={{ display: 'none' }}
+          width={1080}
+          height={1350}
+        />
+        
+        {/* Debug info in development */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="text-xs text-white/60 mt-2">
+            Canvas: {canvasRef.current ? 'Ready' : 'Not ready'} | 
+            Image: {shareImageUrl ? `Generated (${Math.round(shareImageUrl.length / 1024)}KB)` : 'None'} | 
+            Loading: {isGenerating ? 'Yes' : 'No'}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
