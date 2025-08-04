@@ -246,48 +246,48 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       
       ctx.restore();
       
-      // Content positioning (below image, like in screenshot)
-      let currentY = imageY + imageHeight + 40;
+      // Content positioning (below image with larger gap)
+      let currentY = imageY + imageHeight + 60; // Increased gap from 40 to 60
       const contentLeftX = cardX + 40;
       const contentWidth = cardWidth - 80;
       
-      // Category badge (top left, like in screenshot)
+      // Category badge (top left, larger size)
       if (event.category && event.category.trim()) {
-        ctx.font = 'bold 20px "Helvetica Neue", Arial, sans-serif';
+        ctx.font = 'bold 24px "Helvetica Neue", Arial, sans-serif'; // Increased from 20px
         const categoryText = event.category;
         const textMetrics = ctx.measureText(categoryText);
-        const badgeWidth = textMetrics.width + 24;
-        const badgeHeight = 32;
+        const badgeWidth = textMetrics.width + 32; // Increased padding
+        const badgeHeight = 40; // Increased from 32
         
         // Badge background (like in screenshot - dark with transparency)
         ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.beginPath();
-        ctx.roundRect(contentLeftX, currentY - 24, badgeWidth, badgeHeight, 16);
+        ctx.roundRect(contentLeftX, currentY - 30, badgeWidth, badgeHeight, 20); // Increased radius
         ctx.fill();
         
         // Badge text
         ctx.fillStyle = 'white';
         ctx.textAlign = 'left';
-        ctx.fillText(categoryText, contentLeftX + 12, currentY - 4);
-        currentY += 20;
+        ctx.fillText(categoryText, contentLeftX + 16, currentY - 6); // Adjusted positioning
+        currentY += 25;
       }
       
-      // Date (top right, like in screenshot)
+      // Date (top right, larger size)
       if (event.date) {
         const eventDate = new Date(event.date);
         const dayName = formatDate(eventDate, 'EE', { locale: de });
-        const dateStr = formatDate(eventDate, 'dd. MMM', { locale: de });
+        const dateStr = formatDate(eventDate, 'dd. MMM yyyy', { locale: de }); // Added year to prevent cut-off
         
         ctx.textAlign = 'right';
-        ctx.font = 'bold 20px "Helvetica Neue", Arial, sans-serif';
+        ctx.font = 'bold 24px "Helvetica Neue", Arial, sans-serif'; // Increased from 20px
         ctx.fillStyle = 'white';
-        ctx.fillText(dayName + '.', cardX + cardWidth - 40, currentY - 20);
+        ctx.fillText(dayName + '.', cardX + cardWidth - 40, currentY - 25);
         
-        ctx.font = 'bold 32px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillText(dateStr + '.', cardX + cardWidth - 40, currentY + 8);
+        ctx.font = 'bold 36px "Helvetica Neue", Arial, sans-serif'; // Increased from 32px
+        ctx.fillText(dateStr + '.', cardX + cardWidth - 40, currentY + 5);
       }
       
-      currentY += 40;
+      currentY += 50; // Increased spacing
       
       // Event title (large, bold, lime green like in screenshot)
       ctx.fillStyle = '#D0FE1D'; // Brand lime color
@@ -349,43 +349,50 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         currentY += 40;
       }
       
-      // Organizer (if available)
-      if (event.organizer && event.organizer.trim()) {
-        ctx.font = '22px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        ctx.fillText(`👥 ${event.organizer}`, contentLeftX, currentY);
-        currentY += 40;
-      }
-      
-      // Description (if available, truncated)
+      // Description (4-5 lines, more text)
       if (event.description && event.description.trim()) {
-        const description = event.description.length > 120 
-          ? event.description.substring(0, 117) + '...' 
+        const description = event.description.length > 300 
+          ? event.description.substring(0, 297) + '...' 
           : event.description;
         
-        ctx.font = '20px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+        ctx.font = '22px "Helvetica Neue", Arial, sans-serif'; // Slightly larger font
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // Slightly more opaque
         
-        // Word wrap for description
+        // Word wrap for description (allow up to 5 lines)
         const descWords = description.split(' ');
         let descLine = '';
         const descMaxWidth = contentWidth - 40;
+        let lineCount = 0;
+        const maxLines = 5;
         
         for (const word of descWords) {
           const testLine = descLine + word + ' ';
           const metrics = ctx.measureText(testLine);
           if (metrics.width > descMaxWidth && descLine !== '') {
-            ctx.fillText(descLine.trim(), contentLeftX, currentY);
-            descLine = word + ' ';
-            currentY += 28;
+            if (lineCount < maxLines) {
+              ctx.fillText(descLine.trim(), contentLeftX, currentY);
+              descLine = word + ' ';
+              currentY += 30; // Increased line height
+              lineCount++;
+            } else {
+              break; // Stop at max lines
+            }
           } else {
             descLine = testLine;
           }
         }
-        if (descLine.trim()) {
+        if (descLine.trim() && lineCount < maxLines) {
           ctx.fillText(descLine.trim(), contentLeftX, currentY);
-          currentY += 35;
+          currentY += 45; // More spacing after description
         }
+      }
+      
+      // Organizer (always show if available)
+      if (event.organizer && event.organizer.trim()) {
+        ctx.font = '24px "Helvetica Neue", Arial, sans-serif'; // Increased font size
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.fillText(`👥 Veranstalter: ${event.organizer}`, contentLeftX, currentY);
+        currentY += 45;
       }
       
       // FREE badge (bottom right, like in screenshot)
