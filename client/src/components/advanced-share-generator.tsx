@@ -251,25 +251,31 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       const contentLeftX = cardX + 40;
       const contentWidth = cardWidth - 80;
       
-      // Category badge (top left, larger size)
+      // Category badge (top left, larger size) - show all categories if multiple
       if (event.category && event.category.trim()) {
-        ctx.font = 'bold 24px "Helvetica Neue", Arial, sans-serif'; // Increased from 20px
-        const categoryText = event.category;
-        const textMetrics = ctx.measureText(categoryText);
-        const badgeWidth = textMetrics.width + 32; // Increased padding
-        const badgeHeight = 40; // Increased from 32
+        const categories = event.category.split(',').map(cat => cat.trim()).filter(cat => cat.length > 0);
+        let badgeX = contentLeftX;
         
-        // Badge background - lighter (reduced opacity)
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-        ctx.beginPath();
-        ctx.roundRect(contentLeftX, currentY - 30, badgeWidth, badgeHeight, 20); // Increased radius
-        ctx.fill();
-        
-        // Badge text
-        ctx.fillStyle = 'white';
-        ctx.textAlign = 'left';
-        ctx.fillText(categoryText, contentLeftX + 16, currentY - 6); // Adjusted positioning
-        currentY += 25;
+        for (const categoryText of categories) {
+          ctx.font = 'bold 28px "Helvetica Neue", Arial, sans-serif'; // Increased size
+          const textMetrics = ctx.measureText(categoryText);
+          const badgeWidth = textMetrics.width + 36; // Increased padding
+          const badgeHeight = 44; // Increased height
+          
+          // Badge background - lighter (reduced opacity)
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+          ctx.beginPath();
+          ctx.roundRect(badgeX, currentY - 32, badgeWidth, badgeHeight, 22); // Increased radius
+          ctx.fill();
+          
+          // Badge text
+          ctx.fillStyle = 'white';
+          ctx.textAlign = 'left';
+          ctx.fillText(categoryText, badgeX + 18, currentY - 6); // Adjusted positioning
+          
+          badgeX += badgeWidth + 12; // Space between badges
+        }
+        currentY += 35; // More space after badges
       }
       
       // Date (top right, compact format: Mo 04.08.)
@@ -296,8 +302,8 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       
       currentY += 50; // Increased spacing
       
-      // Event title (large, bold, lime green like in screenshot)
-      ctx.fillStyle = '#D0FE1D'; // Brand lime color
+      // Event title (large, bold, white)
+      ctx.fillStyle = 'white'; // White text as requested
       ctx.font = 'bold 52px "Helvetica Neue", Arial, sans-serif';
       ctx.textAlign = 'left';
       ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
@@ -324,18 +330,26 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       if (line.trim()) {
         ctx.strokeText(line.trim(), contentLeftX, currentY);
         ctx.fillText(line.trim(), contentLeftX, currentY);
-        currentY += 70;
+        currentY += 50; // Reduced spacing after title
       }
       
-      // Subtitle (italic, smaller, like in screenshot)
+      // Subtitle (italic, smaller)
       if (event.subtitle && event.subtitle.trim()) {
         ctx.font = 'italic 28px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = 'white'; // All text white
+        ctx.fillStyle = 'white';
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.lineWidth = 1;
         ctx.strokeText(event.subtitle, contentLeftX, currentY);
         ctx.fillText(event.subtitle, contentLeftX, currentY);
-        currentY += 50;
+        currentY += 45;
+      }
+      
+      // Organizer (without "Veranstalter" label)
+      if (event.organizer && event.organizer.trim()) {
+        ctx.font = '26px "Helvetica Neue", Arial, sans-serif';
+        ctx.fillStyle = 'white';
+        ctx.fillText(`👥 ${event.organizer}`, contentLeftX, currentY);
+        currentY += 40;
       }
       
       // Time (if available from date)
@@ -343,17 +357,9 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         const eventDate = new Date(event.date);
         const timeStr = formatDate(eventDate, 'HH:mm', { locale: de });
         ctx.font = '26px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = 'white'; // All text white
+        ctx.fillStyle = 'white';
         ctx.fillText(`🕐 ${timeStr} Uhr`, contentLeftX, currentY);
-        currentY += 40;
-      }
-      
-      // Location (if available)
-      if (event.location && event.location.trim()) {
-        ctx.font = '24px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = 'white'; // All text white
-        ctx.fillText(`📍 ${event.location}`, contentLeftX, currentY);
-        currentY += 40;
+        currentY += 50; // More space before description
       }
       
       // Description (4-5 lines, more text)
@@ -394,12 +400,12 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         }
       }
       
-      // Organizer (always show if available, without "Veranstalter" label)
-      if (event.organizer && event.organizer.trim()) {
-        ctx.font = '24px "Helvetica Neue", Arial, sans-serif'; // Increased font size
-        ctx.fillStyle = 'white'; // All text white
-        ctx.fillText(`👥 ${event.organizer}`, contentLeftX, currentY);
-        currentY += 45;
+      // Location (if available, after description)
+      if (event.location && event.location.trim()) {
+        ctx.font = '24px "Helvetica Neue", Arial, sans-serif';
+        ctx.fillStyle = 'white';
+        ctx.fillText(`📍 ${event.location}`, contentLeftX, currentY);
+        currentY += 40;
       }
       
       // FREE emoji for price "0" (bottom right)
