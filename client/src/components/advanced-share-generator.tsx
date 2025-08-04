@@ -272,19 +272,26 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         currentY += 25;
       }
       
-      // Date (top right, larger size)
+      // Date (top right, compact format: Mo 04.08.)
       if (event.date) {
         const eventDate = new Date(event.date);
-        const dayName = formatDate(eventDate, 'EE', { locale: de });
-        const dateStr = formatDate(eventDate, 'dd. MMM yyyy', { locale: de }); // Added year to prevent cut-off
+        const dayName = formatDate(eventDate, 'EEEEEE', { locale: de }); // Short day name (Mo, Di, Mi...)
+        const dateStr = formatDate(eventDate, 'dd.MM.', { locale: de }); // DD.MM. format
         
         ctx.textAlign = 'right';
-        ctx.font = 'bold 24px "Helvetica Neue", Arial, sans-serif'; // Increased from 20px
+        ctx.font = 'bold 32px "Helvetica Neue", Arial, sans-serif'; // Larger font
         ctx.fillStyle = 'white';
-        ctx.fillText(dayName + '.', cardX + cardWidth - 40, currentY - 25);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.lineWidth = 1;
         
-        ctx.font = 'bold 36px "Helvetica Neue", Arial, sans-serif'; // Increased from 32px
-        ctx.fillText(dateStr + '.', cardX + cardWidth - 40, currentY + 5);
+        // Day name (Mo, Di, etc.)
+        ctx.strokeText(dayName, cardX + cardWidth - 40, currentY - 15);
+        ctx.fillText(dayName, cardX + cardWidth - 40, currentY - 15);
+        
+        // Date (04.08.)
+        ctx.font = 'bold 40px "Helvetica Neue", Arial, sans-serif'; // Even larger for date
+        ctx.strokeText(dateStr, cardX + cardWidth - 40, currentY + 25);
+        ctx.fillText(dateStr, cardX + cardWidth - 40, currentY + 25);
       }
       
       currentY += 50; // Increased spacing
