@@ -10,6 +10,9 @@ interface AdvancedEvent {
   organizer?: string | null;
   category?: string;
   price?: string | null;
+  description?: string | null;
+  imageUrl?: string | null;
+  time?: string | null;
   notionId?: string;
 }
 
@@ -166,8 +169,8 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       
       console.log('✅ EventCard-style glass morphism card created');
       
-      // Top image section (like in screenshot)
-      const imageHeight = 300;
+      // Top image section (50% of card height for event image)
+      const imageHeight = cardHeight * 0.5; // 50% of card
       const imageY = cardY + 24;
       const imageRadius = 24;
       
@@ -177,9 +180,42 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       ctx.roundRect(cardX + 24, imageY, cardWidth - 48, imageHeight, imageRadius);
       ctx.clip();
       
-      // If background image was loaded, draw a portion as the event image
-      if (bgImg) {
-        // Draw the background image cropped to fit the image area
+      // Try to load event image first, then fallback to background
+      let eventImageLoaded = false;
+      if (event.imageUrl && event.imageUrl.trim()) {
+        try {
+          console.log('🖼️ Loading event image:', event.imageUrl);
+          const eventImg = await loadImageWithCORS(event.imageUrl);
+          
+          // Draw event image cropped to fit the image area
+          const imgAspect = eventImg.width / eventImg.height;
+          const areaAspect = (cardWidth - 48) / imageHeight;
+          
+          let drawW, drawH, drawX, drawY;
+          if (imgAspect > areaAspect) {
+            drawH = imageHeight;
+            drawW = drawH * imgAspect;
+            drawX = cardX + 24 - (drawW - (cardWidth - 48)) / 2;
+            drawY = imageY;
+          } else {
+            drawW = cardWidth - 48;
+            drawH = drawW / imgAspect;
+            drawX = cardX + 24;
+            drawY = imageY - (drawH - imageHeight) / 2;
+          }
+          
+          ctx.drawImage(eventImg, drawX, drawY, drawW, drawH);
+          eventImageLoaded = true;
+          console.log('✅ Event image loaded and drawn');
+        } catch (error) {
+          console.warn('⚠️ Event image failed to load, trying background image:', error);
+        }
+      } else {
+        console.log('ℹ️ No event image URL provided, using background image');
+      }
+      
+      // If event image failed, use background image
+      if (!eventImageLoaded && bgImg) {
         const imgAspect = bgImg.width / bgImg.height;
         const areaAspect = (cardWidth - 48) / imageHeight;
         
@@ -197,13 +233,15 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         }
         
         ctx.drawImage(bgImg, drawX, drawY, drawW, drawH);
-      } else {
-        // Fallback gradient for image area
+        console.log('✅ Background image used as fallback');
+      } else if (!eventImageLoaded) {
+        // Final fallback gradient
         const imgGradient = ctx.createLinearGradient(cardX + 24, imageY, cardX + cardWidth - 24, imageY + imageHeight);
         imgGradient.addColorStop(0, '#6366f1');
         imgGradient.addColorStop(1, '#8b5cf6');
         ctx.fillStyle = imgGradient;
         ctx.fillRect(cardX + 24, imageY, cardWidth - 48, imageHeight);
+        console.log('✅ Gradient fallback used');
       }
       
       ctx.restore();
@@ -290,7 +328,17 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         ctx.lineWidth = 1;
         ctx.strokeText(event.subtitle, contentLeftX, currentY);
         ctx.fillText(event.subtitle, contentLeftX, currentY);
-        currentY += 60;
+        currentY += 50;
+      }
+      
+      // Time (if available from date)
+      if (event.date) {
+        const eventDate = new Date(event.date);
+        const timeStr = formatDate(eventDate, 'HH:mm', { locale: de });
+        ctx.font = '26px "Helvetica Neue", Arial, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.fillText(`🕐 ${timeStr} Uhr`, contentLeftX, currentY);
+        currentY += 40;
       }
       
       // Location (if available)
@@ -298,7 +346,7 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         ctx.font = '24px "Helvetica Neue", Arial, sans-serif';
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
         ctx.fillText(`📍 ${event.location}`, contentLeftX, currentY);
-        currentY += 50;
+        currentY += 40;
       }
       
       // Organizer (if available)
@@ -306,7 +354,38 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         ctx.font = '22px "Helvetica Neue", Arial, sans-serif';
         ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
         ctx.fillText(`👥 ${event.organizer}`, contentLeftX, currentY);
-        currentY += 45;
+        currentY += 40;
+      }
+      
+      // Description (if available, truncated)
+      if (event.description && event.description.trim()) {
+        const description = event.description.length > 120 
+          ? event.description.substring(0, 117) + '...' 
+          : event.description;
+        
+        ctx.font = '20px "Helvetica Neue", Arial, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+        
+        // Word wrap for description
+        const descWords = description.split(' ');
+        let descLine = '';
+        const descMaxWidth = contentWidth - 40;
+        
+        for (const word of descWords) {
+          const testLine = descLine + word + ' ';
+          const metrics = ctx.measureText(testLine);
+          if (metrics.width > descMaxWidth && descLine !== '') {
+            ctx.fillText(descLine.trim(), contentLeftX, currentY);
+            descLine = word + ' ';
+            currentY += 28;
+          } else {
+            descLine = testLine;
+          }
+        }
+        if (descLine.trim()) {
+          ctx.fillText(descLine.trim(), contentLeftX, currentY);
+          currentY += 35;
+        }
       }
       
       // FREE badge (bottom right, like in screenshot)
