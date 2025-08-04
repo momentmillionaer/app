@@ -259,8 +259,8 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         const badgeWidth = textMetrics.width + 32; // Increased padding
         const badgeHeight = 40; // Increased from 32
         
-        // Badge background (like in screenshot - dark with transparency)
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        // Badge background - lighter (reduced opacity)
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
         ctx.beginPath();
         ctx.roundRect(contentLeftX, currentY - 30, badgeWidth, badgeHeight, 20); // Increased radius
         ctx.fill();
@@ -330,7 +330,7 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       // Subtitle (italic, smaller, like in screenshot)
       if (event.subtitle && event.subtitle.trim()) {
         ctx.font = 'italic 28px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillStyle = 'white'; // All text white
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.lineWidth = 1;
         ctx.strokeText(event.subtitle, contentLeftX, currentY);
@@ -343,7 +343,7 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         const eventDate = new Date(event.date);
         const timeStr = formatDate(eventDate, 'HH:mm', { locale: de });
         ctx.font = '26px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.fillStyle = 'white'; // All text white
         ctx.fillText(`🕐 ${timeStr} Uhr`, contentLeftX, currentY);
         currentY += 40;
       }
@@ -351,7 +351,7 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       // Location (if available)
       if (event.location && event.location.trim()) {
         ctx.font = '24px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillStyle = 'white'; // All text white
         ctx.fillText(`📍 ${event.location}`, contentLeftX, currentY);
         currentY += 40;
       }
@@ -363,7 +363,7 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
           : event.description;
         
         ctx.font = '22px "Helvetica Neue", Arial, sans-serif'; // Slightly larger font
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // Slightly more opaque
+        ctx.fillStyle = 'white'; // All text white
         
         // Word wrap for description (allow up to 5 lines)
         const descWords = description.split(' ');
@@ -394,40 +394,25 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         }
       }
       
-      // Organizer (always show if available)
+      // Organizer (always show if available, without "Veranstalter" label)
       if (event.organizer && event.organizer.trim()) {
         ctx.font = '24px "Helvetica Neue", Arial, sans-serif'; // Increased font size
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-        ctx.fillText(`👥 Veranstalter: ${event.organizer}`, contentLeftX, currentY);
+        ctx.fillStyle = 'white'; // All text white
+        ctx.fillText(`👥 ${event.organizer}`, contentLeftX, currentY);
         currentY += 45;
       }
       
-      // FREE badge (bottom right, like in screenshot)
+      // FREE emoji for price "0" (bottom right)
       if (event.price === "0") {
-        const freeText = 'FREE';
-        ctx.font = 'bold 24px "Helvetica Neue", Arial, sans-serif';
-        const freeMetrics = ctx.measureText(freeText);
-        const freeBadgeWidth = freeMetrics.width + 20;
-        const freeBadgeHeight = 40;
-        const freeBadgeX = cardX + cardWidth - freeBadgeWidth - 40;
-        const freeBadgeY = cardY + cardHeight - freeBadgeHeight - 40;
-        
-        // FREE badge background (blue like in screenshot)
-        ctx.fillStyle = 'rgba(59, 130, 246, 0.8)';
-        ctx.beginPath();
-        ctx.roundRect(freeBadgeX, freeBadgeY, freeBadgeWidth, freeBadgeHeight, 8);
-        ctx.fill();
-        
-        // FREE badge text
-        ctx.fillStyle = 'white';
-        ctx.textAlign = 'center';
-        ctx.fillText(freeText, freeBadgeX + freeBadgeWidth / 2, freeBadgeY + 28);
+        ctx.font = '40px "Helvetica Neue", Arial, sans-serif'; // Larger emoji
+        ctx.textAlign = 'right';
+        ctx.fillText('🆓', cardX + cardWidth - 40, cardY + cardHeight - 60);
       }
       
       // Price (if not free)
       if (event.price && event.price.trim() && event.price !== "0") {
         ctx.font = 'bold 28px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = '#D0FE1D';
+        ctx.fillStyle = 'white'; // All text white
         ctx.textAlign = 'right';
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
         ctx.lineWidth = 1;
@@ -437,7 +422,7 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       
       // Brand text at bottom
       ctx.font = '28px "Helvetica Neue", Arial, sans-serif';
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.fillStyle = 'white'; // All text white
       ctx.textAlign = 'center';
       const brandText = 'momentmillionär.at';
       ctx.fillText(brandText, canvas.width / 2, canvas.height - 40);
