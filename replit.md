@@ -12,14 +12,15 @@ Preferred communication style: Simple, everyday language.
 
 ### UI/UX Decisions
 - Modern, responsive design with a focus on intuitive user experience.
-- iOS 26 Liquid Glass design principles, including advanced glass morphism effects, translucent materials, and subtle animations.
+- **Authentic Apple Liquid Glass Materials (iOS 26)**: Implemented following official Apple Human Interface Guidelines with ultra-thin materials (0.08 transparency), enhanced blur (60px), vibrancy effects for text legibility, and dynamic shadow casting with light refraction.
 - Custom color palette: utilizing brand colors (#0A0A0A, #0000FF, #D0FE1D, #F3DCFA, #F4F3F2, #FE5C2B, #FEE4C3) for highlights and consistent branding.
 - Typography: Helvetica font family used throughout the application for clean readability.
 - All text is white with drop shadows for better readability against various backgrounds.
 - Elements like buttons, badges, and toggles are fully rounded (rounded-full) while EventCards are rounded-[2rem].
-- Dynamic gradient background with subtle color transitions.
+- Dynamic gradient background with subtle color transitions that "peek through" glass materials.
 - Automatic filtering of past events when filters are active, preserving full view otherwise.
 - Consistent date display in Austrian locale (de-AT) and Vienna timezone (GMT+2).
+- **Organizer Display Enhancement**: Removed "Veranstalter" label, now shows only organizer names directly for cleaner UI.
 
 ### Technical Implementations
 - **Frontend**: React 18 with TypeScript, Wouter for routing, TanStack Query for server state, Radix UI components with shadcn/ui styling, Tailwind CSS for styling, Vite for building.

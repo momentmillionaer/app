@@ -52,16 +52,22 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
   return (
     <div
       onClick={onClick}
-      className="group cursor-pointer liquid-glass-card rounded-[2rem] p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/20 relative"
+      className="group cursor-pointer liquid-glass rounded-[2rem] p-6 transition-all duration-500 hover:scale-[1.02] relative"
       style={{
-        background: 'rgba(255, 255, 255, 0.06)',
-        backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
-        WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        ...(event.isFavorite && {
-          border: '2px solid rgba(147, 51, 234, 0.3)',
-          background: 'rgba(147, 51, 234, 0.05)',
-        })
+        /* Apple Liquid Glass - Creates distinct functional layer above content */
+        background: event.isFavorite 
+          ? 'rgba(147, 51, 234, 0.08)' 
+          : 'rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(60px) saturate(180%) brightness(1.15) contrast(1.05)',
+        WebkitBackdropFilter: 'blur(60px) saturate(180%) brightness(1.15) contrast(1.05)',
+        border: event.isFavorite 
+          ? '1px solid rgba(147, 51, 234, 0.25)' 
+          : '1px solid rgba(255, 255, 255, 0.15)',
+        boxShadow: event.isFavorite
+          ? '0 12px 40px rgba(147, 51, 234, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+          : '0 8px 32px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+        /* Vibrancy for text legibility */
+        color: 'rgba(255, 255, 255, 0.95)'
       }}
     >
       {/* Free Event Emoji - only show when price is explicitly "0" as string */}
@@ -168,12 +174,33 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
           <div className="flex flex-wrap gap-2">
             {event.categories && event.categories.length > 0 ? (
               event.categories.map((category, index) => (
-                <Badge key={index} className="bg-white/15 text-white border-white/25 text-xs px-3 py-1 w-fit">
+                <Badge 
+                  key={index} 
+                  className="text-xs px-3 py-1 w-fit text-white font-medium"
+                  style={{
+                    /* Apple Liquid Glass - Thin material for content layer elements */
+                    background: 'rgba(255, 255, 255, 0.12)',
+                    backdropFilter: 'blur(40px) saturate(160%) brightness(1.1)',
+                    WebkitBackdropFilter: 'blur(40px) saturate(160%) brightness(1.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+                  }}
+                >
                   {category}
                 </Badge>
               ))
             ) : event.category && (
-              <Badge className="bg-white/15 text-white border-white/25 text-xs px-3 py-1 w-fit">
+              <Badge 
+                className="text-xs px-3 py-1 w-fit text-white font-medium"
+                style={{
+                  /* Apple Liquid Glass - Thin material for content layer elements */
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  backdropFilter: 'blur(40px) saturate(160%) brightness(1.1)',
+                  WebkitBackdropFilter: 'blur(40px) saturate(160%) brightness(1.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+                }}
+              >
                 {event.category}
               </Badge>
             )}
@@ -264,7 +291,17 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
           
           {/* Favorite Badge */}
           {event.isFavorite && (
-            <Badge className="bg-purple-500/20 text-purple-200 border-purple-400/40 font-bold text-xs px-3 py-1">
+            <Badge 
+              className="font-bold text-xs px-3 py-1 text-purple-100"
+              style={{
+                /* Apple Liquid Glass - Purple variant for favorites */
+                background: 'rgba(147, 51, 234, 0.15)',
+                backdropFilter: 'blur(40px) saturate(160%) brightness(1.1)',
+                WebkitBackdropFilter: 'blur(40px) saturate(160%) brightness(1.1)', 
+                border: '1px solid rgba(147, 51, 234, 0.3)',
+                boxShadow: '0 6px 20px rgba(147, 51, 234, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+              }}
+            >
               💫 Conni's Favorit
             </Badge>
           )}
