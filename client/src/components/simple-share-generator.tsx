@@ -3,7 +3,7 @@ import { useState } from 'react';
 interface SimpleEvent {
   title?: string;
   date?: string | Date;
-  location?: string;
+  location?: string | null;
   notionId?: string;
 }
 
@@ -19,7 +19,7 @@ export function SimpleShareGenerator({ event, format, onImageGenerated }: Simple
   const generateImage = async () => {
     try {
       setIsGenerating(true);
-      console.log('🎨 Starting simple image generation...');
+      console.log('🎨 Starting simple image generation for:', event.title);
       
       // Create canvas
       const canvas = document.createElement('canvas');
@@ -29,58 +29,81 @@ export function SimpleShareGenerator({ event, format, onImageGenerated }: Simple
         throw new Error('Could not get 2D context');
       }
       
-      // Set dimensions
+      // Set dimensions based on format
       canvas.width = 1080;
       canvas.height = format === "post" ? 1350 : 1920;
       
-      console.log('✅ Canvas ready:', canvas.width, 'x', canvas.height);
+      console.log('✅ Canvas ready:', canvas.width, 'x', canvas.height, 'for format:', format);
       
-      // Simple gradient background
+      // Create vibrant gradient background
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       gradient.addColorStop(0, '#9333ea'); // Purple
-      gradient.addColorStop(1, '#3b82f6'); // Blue
+      gradient.addColorStop(0.6, '#3b82f6'); // Blue
+      gradient.addColorStop(1, '#1d4ed8'); // Darker blue
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      console.log('✅ Background created');
-      
-      // Add overlay
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      // Add subtle overlay for better text readability
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Add text
+      console.log('✅ Background and overlay created');
+      
+      // Text styling with better readability
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      
+      // Main title
       ctx.fillStyle = 'white';
-      ctx.font = 'bold 64px Arial, sans-serif';
+      ctx.font = 'bold 56px "Helvetica Neue", Arial, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(
-        event.title || 'Event Title', 
-        canvas.width / 2, 
-        canvas.height / 2 - 50
-      );
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+      ctx.lineWidth = 2;
       
-      ctx.font = '42px Arial, sans-serif';
-      ctx.fillText(
-        new Date(event.date || '').toLocaleDateString('de-AT'),
-        canvas.width / 2, 
-        canvas.height / 2 + 50
-      );
+      const title = event.title || 'Event Title';
+      ctx.strokeText(title, centerX, centerY - 60);
+      ctx.fillText(title, centerX, centerY - 60);
       
-      if (event.location) {
-        ctx.font = '36px Arial, sans-serif';
+      // Date
+      const eventDate = event.date ? new Date(event.date) : new Date();
+      const dateStr = eventDate.toLocaleDateString('de-AT', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      ctx.font = '36px "Helvetica Neue", Arial, sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+      ctx.strokeText(dateStr, centerX, centerY + 20);
+      ctx.fillText(dateStr, centerX, centerY + 20);
+      
+      // Location (if available)
+      if (event.location && event.location.trim()) {
+        ctx.font = '32px "Helvetica Neue", Arial, sans-serif';
         ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        ctx.fillText(event.location, canvas.width / 2, canvas.height / 2 + 120);
+        const locationText = `📍 ${event.location}`;
+        ctx.strokeText(locationText, centerX, centerY + 80);
+        ctx.fillText(locationText, centerX, centerY + 80);
       }
       
-      console.log('✅ Text added');
+      // Add brand text at bottom
+      ctx.font = '24px "Helvetica Neue", Arial, sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      const brandText = 'momentmillionär.at';
+      ctx.fillText(brandText, centerX, canvas.height - 60);
       
-      // Convert to data URL
-      const imageUrl = canvas.toDataURL('image/png', 0.9);
-      console.log('✅ Image generated successfully, size:', imageUrl.length, 'bytes');
+      console.log('✅ All text elements added');
+      
+      // Convert to high-quality data URL
+      const imageUrl = canvas.toDataURL('image/png', 0.95);
+      console.log('✅ Image generated successfully! Size:', Math.round(imageUrl.length / 1024), 'KB');
       
       onImageGenerated(imageUrl);
       
     } catch (error) {
       console.error('❌ Error generating image:', error);
+      alert('Fehler beim Erstellen des Bildes. Bitte versuchen Sie es erneut.');
     } finally {
       setIsGenerating(false);
     }
