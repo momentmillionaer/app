@@ -96,9 +96,11 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       const randomBg = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
       console.log('🖼️ Selected background:', randomBg);
       
+      let bgImg: HTMLImageElement | null = null;
+      
       try {
         // Load and draw background image
-        const bgImg = await loadImageWithCORS(randomBg);
+        bgImg = await loadImageWithCORS(randomBg);
         
         // Calculate aspect ratio and cover the canvas
         const canvasRatio = canvas.width / canvas.height;
@@ -125,6 +127,7 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         
       } catch (error) {
         console.warn('⚠️ Background image failed to load, using gradient fallback:', error);
+        bgImg = null;
         
         // Fallback gradient
         const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
@@ -139,15 +142,12 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Create EventCard-style glass morphism card
-      const cardPadding = 48;
+      // Create EventCard-style layout matching the screenshot
+      const cardPadding = 32;
       const cardWidth = canvas.width - (cardPadding * 2);
-      
-      // Use same card height for both formats, center for story
-      const baseCardHeight = format === "post" ? 800 : 900;
+      const cardHeight = format === "post" ? 1000 : 1200;
       let cardX = cardPadding;
-      let cardY = format === "post" ? 200 : (canvas.height - baseCardHeight) / 2;
-      let cardHeight = baseCardHeight;
+      let cardY = format === "post" ? 175 : (canvas.height - cardHeight) / 2;
       
       const cardRadius = 32; // rounded-[2rem] like EventCard
       
@@ -166,23 +166,95 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       
       console.log('✅ EventCard-style glass morphism card created');
       
-      // Content positioning (inside the card)
-      let currentY = cardY + 60;
-      const contentCenterX = canvas.width / 2;
+      // Top image section (like in screenshot)
+      const imageHeight = 300;
+      const imageY = cardY + 24;
+      const imageRadius = 24;
+      
+      // Create clipping path for image
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(cardX + 24, imageY, cardWidth - 48, imageHeight, imageRadius);
+      ctx.clip();
+      
+      // If background image was loaded, draw a portion as the event image
+      if (bgImg) {
+        // Draw the background image cropped to fit the image area
+        const imgAspect = bgImg.width / bgImg.height;
+        const areaAspect = (cardWidth - 48) / imageHeight;
+        
+        let drawW, drawH, drawX, drawY;
+        if (imgAspect > areaAspect) {
+          drawH = imageHeight;
+          drawW = drawH * imgAspect;
+          drawX = cardX + 24 - (drawW - (cardWidth - 48)) / 2;
+          drawY = imageY;
+        } else {
+          drawW = cardWidth - 48;
+          drawH = drawW / imgAspect;
+          drawX = cardX + 24;
+          drawY = imageY - (drawH - imageHeight) / 2;
+        }
+        
+        ctx.drawImage(bgImg, drawX, drawY, drawW, drawH);
+      } else {
+        // Fallback gradient for image area
+        const imgGradient = ctx.createLinearGradient(cardX + 24, imageY, cardX + cardWidth - 24, imageY + imageHeight);
+        imgGradient.addColorStop(0, '#6366f1');
+        imgGradient.addColorStop(1, '#8b5cf6');
+        ctx.fillStyle = imgGradient;
+        ctx.fillRect(cardX + 24, imageY, cardWidth - 48, imageHeight);
+      }
+      
+      ctx.restore();
+      
+      // Content positioning (below image, like in screenshot)
+      let currentY = imageY + imageHeight + 40;
       const contentLeftX = cardX + 40;
       const contentWidth = cardWidth - 80;
       
-      // Event emoji (large, centered at top)
-      const emoji = getEventEmoji(event);
-      ctx.font = '72px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(emoji, contentCenterX, currentY);
-      currentY += 100;
+      // Category badge (top left, like in screenshot)
+      if (event.category && event.category.trim()) {
+        ctx.font = 'bold 20px "Helvetica Neue", Arial, sans-serif';
+        const categoryText = event.category;
+        const textMetrics = ctx.measureText(categoryText);
+        const badgeWidth = textMetrics.width + 24;
+        const badgeHeight = 32;
+        
+        // Badge background (like in screenshot - dark with transparency)
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.beginPath();
+        ctx.roundRect(contentLeftX, currentY - 24, badgeWidth, badgeHeight, 16);
+        ctx.fill();
+        
+        // Badge text
+        ctx.fillStyle = 'white';
+        ctx.textAlign = 'left';
+        ctx.fillText(categoryText, contentLeftX + 12, currentY - 4);
+        currentY += 20;
+      }
       
-      // Event title (bold, large)
-      ctx.fillStyle = 'white';
-      ctx.font = 'bold 48px "Helvetica Neue", Arial, sans-serif';
-      ctx.textAlign = 'center';
+      // Date (top right, like in screenshot)
+      if (event.date) {
+        const eventDate = new Date(event.date);
+        const dayName = formatDate(eventDate, 'EE', { locale: de });
+        const dateStr = formatDate(eventDate, 'dd. MMM', { locale: de });
+        
+        ctx.textAlign = 'right';
+        ctx.font = 'bold 20px "Helvetica Neue", Arial, sans-serif';
+        ctx.fillStyle = 'white';
+        ctx.fillText(dayName + '.', cardX + cardWidth - 40, currentY - 20);
+        
+        ctx.font = 'bold 32px "Helvetica Neue", Arial, sans-serif';
+        ctx.fillText(dateStr + '.', cardX + cardWidth - 40, currentY + 8);
+      }
+      
+      currentY += 40;
+      
+      // Event title (large, bold, lime green like in screenshot)
+      ctx.fillStyle = '#D0FE1D'; // Brand lime color
+      ctx.font = 'bold 52px "Helvetica Neue", Arial, sans-serif';
+      ctx.textAlign = 'left';
       ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
       ctx.lineWidth = 2;
       
@@ -196,103 +268,78 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
         const testLine = line + word + ' ';
         const metrics = ctx.measureText(testLine);
         if (metrics.width > maxWidth && line !== '') {
-          ctx.strokeText(line.trim(), contentCenterX, currentY);
-          ctx.fillText(line.trim(), contentCenterX, currentY);
+          ctx.strokeText(line.trim(), contentLeftX, currentY);
+          ctx.fillText(line.trim(), contentLeftX, currentY);
           line = word + ' ';
-          currentY += 55;
+          currentY += 60;
         } else {
           line = testLine;
         }
       }
       if (line.trim()) {
-        ctx.strokeText(line.trim(), contentCenterX, currentY);
-        ctx.fillText(line.trim(), contentCenterX, currentY);
-        currentY += 75;
+        ctx.strokeText(line.trim(), contentLeftX, currentY);
+        ctx.fillText(line.trim(), contentLeftX, currentY);
+        currentY += 70;
       }
       
-      // Subtitle (if available)
+      // Subtitle (italic, smaller, like in screenshot)
       if (event.subtitle && event.subtitle.trim()) {
-        ctx.font = '32px "Helvetica Neue", Arial, sans-serif';
+        ctx.font = 'italic 28px "Helvetica Neue", Arial, sans-serif';
         ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        ctx.strokeText(event.subtitle, contentCenterX, currentY);
-        ctx.fillText(event.subtitle, contentCenterX, currentY);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.lineWidth = 1;
+        ctx.strokeText(event.subtitle, contentLeftX, currentY);
+        ctx.fillText(event.subtitle, contentLeftX, currentY);
         currentY += 60;
       }
       
-      // Date and time
-      if (event.date) {
-        const eventDate = new Date(event.date);
-        const dateStr = formatDate(eventDate, 'EEEE, dd. MMMM yyyy', { locale: de });
-        const timeStr = formatDate(eventDate, 'HH:mm', { locale: de });
-        
-        ctx.font = '36px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-        ctx.strokeText(`📅 ${dateStr}`, contentCenterX, currentY);
-        ctx.fillText(`📅 ${dateStr}`, contentCenterX, currentY);
-        currentY += 50;
-        
-        ctx.font = '32px "Helvetica Neue", Arial, sans-serif';
-        ctx.strokeText(`🕐 ${timeStr} Uhr`, contentCenterX, currentY);
-        ctx.fillText(`🕐 ${timeStr} Uhr`, contentCenterX, currentY);
-        currentY += 60;
-      }
-      
-      // Location
+      // Location (if available)
       if (event.location && event.location.trim()) {
-        ctx.font = '32px "Helvetica Neue", Arial, sans-serif';
+        ctx.font = '24px "Helvetica Neue", Arial, sans-serif';
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.strokeText(`📍 ${event.location}`, contentCenterX, currentY);
-        ctx.fillText(`📍 ${event.location}`, contentCenterX, currentY);
-        currentY += 60;
-      }
-      
-      // Organizer
-      if (event.organizer && event.organizer.trim()) {
-        ctx.font = '28px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        ctx.strokeText(`👥 ${event.organizer}`, contentCenterX, currentY);
-        ctx.fillText(`👥 ${event.organizer}`, contentCenterX, currentY);
+        ctx.fillText(`📍 ${event.location}`, contentLeftX, currentY);
         currentY += 50;
       }
       
-      // Category badge (if available)
-      if (event.category && event.category.trim()) {
+      // Organizer (if available)
+      if (event.organizer && event.organizer.trim()) {
+        ctx.font = '22px "Helvetica Neue", Arial, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillText(`👥 ${event.organizer}`, contentLeftX, currentY);
+        currentY += 45;
+      }
+      
+      // FREE badge (bottom right, like in screenshot)
+      if (event.price === "0") {
+        const freeText = 'FREE';
         ctx.font = 'bold 24px "Helvetica Neue", Arial, sans-serif';
-        const categoryText = event.category;
-        const textWidth = ctx.measureText(categoryText).width;
-        const badgeWidth = textWidth + 30;
-        const badgeHeight = 36;
-        const badgeX = contentCenterX - badgeWidth / 2;
+        const freeMetrics = ctx.measureText(freeText);
+        const freeBadgeWidth = freeMetrics.width + 20;
+        const freeBadgeHeight = 40;
+        const freeBadgeX = cardX + cardWidth - freeBadgeWidth - 40;
+        const freeBadgeY = cardY + cardHeight - freeBadgeHeight - 40;
         
-        // Badge background
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        // FREE badge background (blue like in screenshot)
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.8)';
         ctx.beginPath();
-        ctx.roundRect(badgeX, currentY - 28, badgeWidth, badgeHeight, 18);
+        ctx.roundRect(freeBadgeX, freeBadgeY, freeBadgeWidth, freeBadgeHeight, 8);
         ctx.fill();
         
-        // Badge text
+        // FREE badge text
         ctx.fillStyle = 'white';
-        ctx.fillText(categoryText, contentCenterX, currentY - 8);
-        currentY += 60;
+        ctx.textAlign = 'center';
+        ctx.fillText(freeText, freeBadgeX + freeBadgeWidth / 2, freeBadgeY + 28);
       }
       
-      // Price (if available and not "0")
+      // Price (if not free)
       if (event.price && event.price.trim() && event.price !== "0") {
-        ctx.font = 'bold 32px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = '#D0FE1D'; // Brand color for price
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.strokeText(`💰 ${event.price}`, contentCenterX, currentY);
-        ctx.fillText(`💰 ${event.price}`, contentCenterX, currentY);
-        currentY += 50;
-      }
-      
-      // Free event indicator
-      if (event.price === "0") {
-        ctx.font = 'bold 36px "Helvetica Neue", Arial, sans-serif';
+        ctx.font = 'bold 28px "Helvetica Neue", Arial, sans-serif';
         ctx.fillStyle = '#D0FE1D';
+        ctx.textAlign = 'right';
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.strokeText('🆓 KOSTENLOS', contentCenterX, currentY);
-        ctx.fillText('🆓 KOSTENLOS', contentCenterX, currentY);
+        ctx.lineWidth = 1;
+        ctx.strokeText(`€ ${event.price}`, cardX + cardWidth - 40, cardY + cardHeight - 60);
+        ctx.fillText(`€ ${event.price}`, cardX + cardWidth - 40, cardY + cardHeight - 60);
       }
       
       // Brand text at bottom
@@ -300,7 +347,7 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
       ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
       ctx.textAlign = 'center';
       const brandText = 'momentmillionär.at';
-      ctx.fillText(brandText, contentCenterX, canvas.height - 40);
+      ctx.fillText(brandText, canvas.width / 2, canvas.height - 40);
       
       console.log('✅ All EventCard-style content added');
       
