@@ -453,13 +453,13 @@ export function AdvancedShareGenerator({ event, format, onImageGenerated }: Adva
     <button
       onClick={generateImage}
       disabled={isGenerating}
-      className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:bg-gray-600 text-white rounded-full font-medium transition-all duration-300 transform hover:scale-105"
+      className="w-full px-4 py-3 bg-white/08 hover:bg-gradient-to-r hover:from-purple-500/60 hover:to-blue-500/60 disabled:bg-white/05 disabled:text-white/50 text-white rounded-full font-medium transition-all duration-300 transform hover:scale-105 border border-white/10"
       style={{
         backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
         WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
       }}
     >
-      {isGenerating ? 'Erstelle EventCard-Style Bild...' : '🎨 EventCard-Style Bild erstellen'}
+{isGenerating ? 'Erstelle Bild...' : 'Bild generieren'}
     </button>
   );
 }

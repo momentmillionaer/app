@@ -73,12 +73,18 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md mx-auto bg-black/90 text-white border border-white/20 rounded-3xl overflow-hidden">
+      <DialogContent className="max-w-md mx-auto text-white border border-white/10 rounded-[2rem] overflow-hidden"
+        style={{
+          background: 'rgba(255, 255, 255, 0.08)',
+          backdropFilter: 'blur(60px) saturate(140%) brightness(1.1)',
+          WebkitBackdropFilter: 'blur(60px) saturate(140%) brightness(1.1)',
+          boxShadow: '0 8px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+        }}>
         <div className="p-6">
-          <DialogTitle className="text-xl font-bold text-center mb-2">
+          <DialogTitle className="text-xl font-bold text-center mb-2 text-white drop-shadow-sm">
             Event teilen
           </DialogTitle>
-          <DialogDescription className="text-white/70 text-center mb-6">
+          <DialogDescription className="text-white/80 text-center mb-6 drop-shadow-sm">
             {event.title}
           </DialogDescription>
 
@@ -86,10 +92,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
           <div className="flex gap-2 mb-6">
             <button
               onClick={() => setFormat("post")}
-              className={`flex-1 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`flex-1 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
                 format === "post" 
-                  ? "bg-purple-500/80 text-white border border-purple-400/40" 
-                  : "bg-white/10 text-white/70 border border-white/20 hover:bg-white/20"
+                  ? "bg-white/15 text-white border-white/30 shadow-lg" 
+                  : "bg-white/05 text-white/70 border-white/10 hover:bg-white/10 hover:text-white"
               }`}
               style={{
                 backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
@@ -100,10 +106,10 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             </button>
             <button
               onClick={() => setFormat("story")}
-              className={`flex-1 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`flex-1 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
                 format === "story" 
-                  ? "bg-orange-500/80 text-white border border-orange-400/40" 
-                  : "bg-white/10 text-white/70 border border-white/20 hover:bg-white/20"
+                  ? "bg-white/15 text-white border-white/30 shadow-lg" 
+                  : "bg-white/05 text-white/70 border-white/10 hover:bg-white/10 hover:text-white"
               }`}
               style={{
                 backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
@@ -145,7 +151,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
               <div className="flex gap-3">
                 <button
                   onClick={handleDownload}
-                  className="flex-1 flex items-center justify-center gap-2 h-12 px-4 bg-white/10 hover:bg-white/20 rounded-full text-white font-medium transition-all duration-300 hover:scale-105 border border-white/20"
+                  className="flex-1 flex items-center justify-center gap-2 h-12 px-4 bg-white/08 hover:bg-white/15 rounded-full text-white font-medium transition-all duration-300 hover:scale-105 border border-white/10"
                   style={{
                     backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
                     WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
@@ -157,7 +163,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
                 
                 <button
                   onClick={handleShare}
-                  className="flex-1 flex items-center justify-center gap-2 h-12 px-4 bg-gradient-to-r from-purple-500/80 to-orange-500/80 hover:from-purple-600/90 hover:to-orange-600/90 rounded-full text-white font-medium transition-all duration-300 hover:scale-105 border border-white/20"
+                  className="flex-1 flex items-center justify-center gap-2 h-12 px-4 bg-white/08 hover:bg-gradient-to-r hover:from-purple-500/60 hover:to-orange-500/60 rounded-full text-white font-medium transition-all duration-300 hover:scale-105 border border-white/10"
                   style={{
                     backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
                     WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
@@ -169,7 +175,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
                 
                 <button
                   onClick={handleCopyLink}
-                  className="flex items-center justify-center gap-2 h-12 px-4 bg-white/10 hover:bg-white/20 rounded-full text-white font-medium transition-all duration-300 hover:scale-105 border border-white/20"
+                  className="flex items-center justify-center gap-2 h-12 px-4 bg-white/08 hover:bg-white/15 rounded-full text-white font-medium transition-all duration-300 hover:scale-105 border border-white/10"
                   style={{
                     backdropFilter: 'blur(20px) saturate(140%) brightness(1.1)',
                     WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.1)'
