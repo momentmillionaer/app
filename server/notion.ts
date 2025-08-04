@@ -171,6 +171,53 @@ export async function getEventsFromNotion(databaseId: string) {
             startCursor = response.next_cursor || undefined;
         }
 
+        // Collect all organizer relation IDs for batch resolution
+        const organizerRelationIds = new Set<string>();
+        allEvents.forEach((page: any) => {
+            const organizerRelationId = page.properties["Veranstalter / Brand"]?.relation?.[0]?.id;
+            if (organizerRelationId) {
+                organizerRelationIds.add(organizerRelationId);
+            }
+        });
+
+        // Batch fetch organizer records
+        const organizerMap = new Map<string, string>();
+        if (organizerRelationIds.size > 0) {
+            try {
+                console.log(`Fetching ${organizerRelationIds.size} organizer records...`);
+                const organizerPromises = Array.from(organizerRelationIds).map(async (relationId) => {
+                    try {
+                        const organizerPage = await notion.pages.retrieve({ page_id: relationId });
+                        if (organizerPage && 'properties' in organizerPage) {
+                            // Get the name from the title field (most common) or Name field
+                            let organizerName = "";
+                            const props = organizerPage.properties;
+                            
+                            // Try common title field names
+                            for (const fieldName of ['Name', 'Title', 'Titel', 'title']) {
+                                if (props[fieldName]?.type === 'title' && props[fieldName].title?.[0]?.plain_text) {
+                                    organizerName = props[fieldName].title[0].plain_text;
+                                    break;
+                                }
+                            }
+                            
+                            if (organizerName) {
+                                organizerMap.set(relationId, organizerName);
+                                console.log(`Resolved organizer ${relationId}: ${organizerName}`);
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`Failed to fetch organizer ${relationId}:`, error);
+                    }
+                });
+                
+                await Promise.all(organizerPromises);
+                console.log(`Successfully resolved ${organizerMap.size} organizers`);
+            } catch (error) {
+                console.log("Error fetching organizers:", error);
+            }
+        }
+
         return allEvents.map((page: any) => {
             const properties = page.properties;
 
@@ -315,10 +362,30 @@ export async function getEventsFromNotion(databaseId: string) {
                 })(),
                 website: properties.Website?.url || properties.URL?.url || null,
                 ticketUrl: properties.Tickets?.url || properties.Ticket?.url || properties["Ticket URL"]?.url || null, // Add ticket URL mapping
-                organizer: properties["Veranstalter / Brand"]?.rich_text?.[0]?.plain_text || 
-                          properties["Veranstalter"]?.rich_text?.[0]?.plain_text || 
-                          properties["Brand"]?.rich_text?.[0]?.plain_text || 
-                          properties["Organizer"]?.rich_text?.[0]?.plain_text || "",
+                organizer: (() => {
+                    // First try to resolve organizer from relation
+                    const organizerRelationId = properties["Veranstalter / Brand"]?.relation?.[0]?.id;
+                    if (organizerRelationId && organizerMap.has(organizerRelationId)) {
+                        return organizerMap.get(organizerRelationId)!;
+                    }
+                    
+                    // Fallback to other text-based organizer fields
+                    const possibleFields = ["Veranstalter", "Brand", "Organizer"];
+                    for (const field of possibleFields) {
+                        const prop = properties[field];
+                        if (prop?.rich_text?.[0]?.plain_text) {
+                            return prop.rich_text[0].plain_text;
+                        }
+                        if (prop?.title?.[0]?.plain_text) {
+                            return prop.title[0].plain_text;
+                        }
+                        if (prop?.select?.name) {
+                            return prop.select.name;
+                        }
+                    }
+                    
+                    return "";
+                })(),
                 attendees: properties["Für wen?"]?.multi_select?.map((aud: any) => aud.name).join(", ") || "",
                 imageUrl: imageUrl,
                 documentsUrls: documentsUrls,
