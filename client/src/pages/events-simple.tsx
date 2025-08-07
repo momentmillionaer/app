@@ -268,7 +268,7 @@ export default function Events() {
     <div 
       className="min-h-screen bg-cover bg-center bg-fixed relative"
       style={{
-        backgroundImage: `url('/classical-painting.jpg')`,
+        backgroundImage: `url('/painting1.jpg')`,
         backgroundBlendMode: 'overlay'
       }}
     >

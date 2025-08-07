@@ -33,20 +33,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("🔄 Manual sync triggered - clearing caches...");
       
       // Clear all relevant caches
-      if (cache.delete) {
-        cache.delete("events");
-        cache.delete("events-backup");
-        cache.delete("categories");
-        cache.delete("categories-backup");
-        cache.delete("audiences");
-      } else {
-        // Alternative cache clearing if delete method not available
-        cache.set("events", null, 0);
-        cache.set("events-backup", null, 0);
-        cache.set("categories", null, 0);
-        cache.set("categories-backup", null, 0);
-        cache.set("audiences", null, 0);
-      }
+      cache.set("events", null, 0);
+      cache.set("events-backup", null, 0);
+      cache.set("categories", null, 0);
+      cache.set("categories-backup", null, 0);
+      cache.set("audiences", null, 0);
       
       console.log("✅ Caches cleared, forcing fresh Notion sync...");
       
@@ -147,7 +138,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error searching for Momente database:", searchError);
         
         // Handle rate limiting specifically - use expired cache as fallback
-        if (searchError.code === 'rate_limited') {
+        if ((searchError as any).code === 'rate_limited') {
           console.log("Rate limited, checking for any cached events (including expired)");
           
           // First try expired regular cache
@@ -180,7 +171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ 
           error: "Database search failed",
           message: "Fehler beim Suchen der Momente-Datenbank",
-          details: searchError.message
+          details: (searchError as Error).message
         });
       }
 
@@ -194,7 +185,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("❌ Error fetching events:", error);
       
       // Handle rate limiting with cache fallback
-      if (error.code === 'rate_limited') {
+      if ((error as any).code === 'rate_limited') {
         console.log("Rate limited, trying fallback cache...");
         
         let fallbackEvents = cache.getExpiredCache("events") || cache.get("events-backup") || cache.getExpiredCache("events-backup");
@@ -224,16 +215,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json(cachedCategories);
       }
 
-      // Get events to extract categories
-      const eventsResponse = await fetch(`http://localhost:${process.env.PORT || 5000}/api/events`);
-      if (!eventsResponse.ok) {
-        throw new Error("Failed to fetch events for categories");
+      // Check if events are cached, if not, fetch them directly from Notion
+      let events = cache.get("events");
+      
+      if (!events) {
+        console.log("No cached events, fetching from Notion for categories...");
+        
+        try {
+          // Search for the Momente database
+          const searchResponse = await notion.search({
+            query: "Momente",
+            filter: {
+              property: "object",
+              value: "database"
+            }
+          });
+          
+          const momenteDb = searchResponse.results.find((db: any) => 
+            db.title && db.title.some((title: any) => 
+              title.plain_text && title.plain_text.toLowerCase().includes("momente")
+            )
+          );
+          
+          if (!momenteDb) {
+            throw new Error("Momente database not found");
+          }
+          
+          events = await getEventsFromNotion(momenteDb.id);
+          console.log(`Fetched ${events.length} events for categories extraction`);
+          
+        } catch (notionError) {
+          console.error("Error fetching events from Notion:", notionError);
+          
+          // Try fallback from events cache
+          events = cache.getExpiredCache("events") || cache.get("events-backup") || cache.getExpiredCache("events-backup");
+          
+          if (!events) {
+            throw new Error("No events available for category extraction");
+          }
+          
+          console.log("Using fallback events for categories");
+        }
       }
       
-      const events = await eventsResponse.json();
-      
       // Extract unique categories from all events
-      const categoriesSet = new Set();
+      const categoriesSet = new Set<string>();
       events.forEach((event: any) => {
         if (event.categories && Array.isArray(event.categories)) {
           event.categories.forEach((cat: string) => categoriesSet.add(cat));
