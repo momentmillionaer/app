@@ -176,13 +176,70 @@ export default function Events() {
   const favoriteEvents = sortEventsByDate(filterPastEvents(events.filter(event => event.isFavorite)));
   const gridFilteredEvents = filterPastEvents(filteredEvents);
   
-  // Get latest 10 events by notionId (newer IDs indicate more recently added events)
-  const latestEvents = [...filterPastEvents(events)]
-    .sort((a, b) => {
-      // Sort by notionId - newer IDs come first
+  // Get latest 10 events by notionId and group events with same title and multiple dates
+  const getLatestEvents = () => {
+    const futureEvents = filterPastEvents(events);
+    
+    // First, group events by title that have multiple dates
+    const groupedEvents = new Map<string, Event[]>();
+    
+    futureEvents.forEach(event => {
+      const hasMultipleDates = event.description?.startsWith('Termine:') || event.endDate;
+      
+      if (hasMultipleDates) {
+        if (!groupedEvents.has(event.title)) {
+          groupedEvents.set(event.title, []);
+        }
+        groupedEvents.get(event.title)!.push(event);
+      }
+    });
+    
+    // Create consolidated events for groups
+    const consolidatedEvents: Event[] = [];
+    const processedTitles = new Set<string>();
+    
+    // Sort all events by notionId first (newer IDs indicate more recently added)
+    const sortedEvents = [...futureEvents].sort((a, b) => {
       return (b.notionId || '').localeCompare(a.notionId || '');
-    })
-    .slice(0, 10);
+    });
+    
+    sortedEvents.forEach(event => {
+      if (processedTitles.has(event.title)) {
+        return; // Skip if we've already processed this title
+      }
+      
+      const groupedEventList = groupedEvents.get(event.title);
+      if (groupedEventList && groupedEventList.length > 1) {
+        // This is a multi-date event - consolidate it
+        const sortedGroup = groupedEventList.sort((a, b) => {
+          const dateA = new Date(a.date || '').getTime();
+          const dateB = new Date(b.date || '').getTime();
+          return dateA - dateB; // Earliest date first
+        });
+        
+        // Use the earliest event as the base and collect all dates
+        const primaryEvent = sortedGroup[0];
+        const allDates = sortedGroup.map(e => e.date).filter(Boolean);
+        
+        // Update description to include all dates
+        const consolidatedEvent = {
+          ...primaryEvent,
+          description: `Termine: ${allDates.join(', ')}`
+        };
+        
+        consolidatedEvents.push(consolidatedEvent);
+        processedTitles.add(event.title);
+      } else {
+        // Single date event or no group found
+        consolidatedEvents.push(event);
+        processedTitles.add(event.title);
+      }
+    });
+    
+    return consolidatedEvents.slice(0, 10);
+  };
+  
+  const latestEvents = getLatestEvents();
 
   const eventsToShow = view === "favorites" ? favoriteEvents : 
                      view === "grid" ? sortEventsByDate(gridFilteredEvents) : 
