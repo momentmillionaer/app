@@ -134,9 +134,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const allEventsData = await getEventsFromNotion(databaseId);
         console.log(`Successfully loaded ${allEventsData.length} total events from Momente database`);
         
-        // Cache the events (30 minutes) and backup (24 hours)
-        cache.set("events", allEventsData, 30 * 60 * 1000); // 30 minutes
-        console.log("Cached events for 30 minutes");
+        // Cache the events (5 hours) and backup (24 hours)
+        cache.set("events", allEventsData, 5 * 60 * 60 * 1000); // 5 hours
+        console.log("Cached events for 5 hours");
         
         cache.set("events-backup", allEventsData, 24 * 60 * 60 * 1000); // 24 hours
         console.log("Long-term cached events-backup for 24 hours");
@@ -244,9 +244,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const categories = Array.from(categoriesSet).sort();
       
-      // Cache categories (60 minutes) and backup (24 hours)
-      cache.set("categories", categories, 60 * 60 * 1000); // 60 minutes  
-      console.log("Cached categories for 60 minutes");
+      // Cache categories (5 hours) and backup (24 hours)
+      cache.set("categories", categories, 5 * 60 * 60 * 1000); // 5 hours  
+      console.log("Cached categories for 5 hours");
       
       cache.set("categories-backup", categories, 24 * 60 * 60 * 1000); // 24 hours
       console.log("Long-term cached categories-backup for 24 hours");
