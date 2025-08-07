@@ -20,7 +20,7 @@ export default function Events() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [showFreeOnly, setShowFreeOnly] = useState(false);
-  const [view, setView] = useState<"calendar" | "grid" | "favorites">("calendar");
+  const [view, setView] = useState<"calendar" | "grid" | "favorites" | "latest">("calendar");
 
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -149,9 +149,9 @@ export default function Events() {
     return true;
   });
 
-  // Filter past events for grid and favorites view
+  // Filter past events for grid, favorites and latest view
   const filterPastEvents = (eventsArray: Event[]) => {
-    if (view === "grid" || view === "favorites") {
+    if (view === "grid" || view === "favorites" || view === "latest") {
       const now = new Date();
       now.setHours(0, 0, 0, 0); // Start of today in Vienna timezone
       
@@ -175,9 +175,18 @@ export default function Events() {
 
   const favoriteEvents = sortEventsByDate(filterPastEvents(events.filter(event => event.isFavorite)));
   const gridFilteredEvents = filterPastEvents(filteredEvents);
+  
+  // Get latest 10 events by notionId (newer IDs indicate more recently added events)
+  const latestEvents = [...filterPastEvents(events)]
+    .sort((a, b) => {
+      // Sort by notionId - newer IDs come first
+      return (b.notionId || '').localeCompare(a.notionId || '');
+    })
+    .slice(0, 10);
 
   const eventsToShow = view === "favorites" ? favoriteEvents : 
                      view === "grid" ? sortEventsByDate(gridFilteredEvents) : 
+                     view === "latest" ? latestEvents :
                      sortEventsByDate(filteredEvents);
 
   // Clear all filters
@@ -277,6 +286,32 @@ export default function Events() {
                 events={favoriteEvents} 
                 onEventClick={handleEventClick}
               />
+            </>
+          )}
+
+          {view === "latest" && (
+            <>
+              <div className="mb-6 text-center">
+                <p className="text-white/80 text-sm drop-shadow-sm font-medium">
+                  Die {latestEvents.length} zuletzt hinzugefügten Events
+                </p>
+              </div>
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {latestEvents.map((event) => (
+                  <EventCard
+                    key={event.notionId}
+                    event={event}
+                    onClick={() => handleEventClick(event)}
+                    view="grid"
+                  />
+                ))}
+                {latestEvents.length === 0 && (
+                  <div className="col-span-full text-center py-12 text-white">
+                    <p className="text-lg font-semibold mb-2 drop-shadow-sm">Keine neuen Events</p>
+                    <p className="text-white/80 drop-shadow-sm">Derzeit sind keine neuen Events verfügbar.</p>
+                  </div>
+                )}
+              </div>
             </>
           )}
 

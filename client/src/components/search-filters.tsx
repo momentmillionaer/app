@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Plus, CalendarDays, List, Grid3X3, Sparkles, Theater, Users, DollarSign, Filter, Trash2, Gift } from "lucide-react";
+import { Search, Plus, CalendarDays, List, Grid3X3, Sparkles, Theater, Users, DollarSign, Filter, Trash2, Gift, Clock } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -24,8 +24,8 @@ interface SearchFiltersProps {
   onFreeEventsChange: (showFree: boolean) => void;
   onClearFilters: () => void;
   eventCount?: number;
-  view: "calendar" | "grid" | "favorites";
-  onViewChange: (view: "calendar" | "grid" | "favorites") => void;
+  view: "calendar" | "grid" | "favorites" | "latest";
+  onViewChange: (view: "calendar" | "grid" | "favorites" | "latest") => void;
 }
 
 export function SearchFilters({
@@ -250,6 +250,25 @@ export function SearchFilters({
                 <Sparkles className="h-5 w-5 text-white" />
               </button>
             )}
+            
+            {view === "latest" ? (
+              <Button
+                variant="outline"
+                onClick={() => onViewChange("latest")}
+                className="h-12 w-12 p-0 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg border border-pink-400/50 liquid-glass transition-all duration-300"
+                title="Neueste Events"
+              >
+                <Clock className="h-5 w-5 text-white" />
+              </Button>
+            ) : (
+              <button
+                onClick={() => onViewChange("latest")}
+                className="h-12 w-12 p-0 rounded-full transition-all duration-300 text-white hover:bg-white/10 bg-transparent border-0 flex items-center justify-center"
+                title="Neueste Events"
+              >
+                <Clock className="h-5 w-5 text-white" />
+              </button>
+            )}
           </div>
         </div>
       ) : (
@@ -386,6 +405,25 @@ export function SearchFilters({
                 title="Conni's Favoriten"
               >
                 <Sparkles className="h-5 w-5 text-white" />
+              </button>
+            )}
+            
+            {view === "latest" ? (
+              <Button
+                variant="outline"
+                onClick={() => onViewChange("latest")}
+                className="h-12 w-12 p-0 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg border border-pink-400/50 liquid-glass transition-all duration-300"
+                title="Neueste Events"
+              >
+                <Clock className="h-5 w-5 text-white" />
+              </Button>
+            ) : (
+              <button
+                onClick={() => onViewChange("latest")}
+                className="h-12 w-12 p-0 rounded-full transition-all duration-300 text-white hover:bg-white/10 bg-transparent border-0 flex items-center justify-center"
+                title="Neueste Events"
+              >
+                <Clock className="h-5 w-5 text-white" />
               </button>
             )}
           </div>
