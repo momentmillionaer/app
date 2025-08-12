@@ -265,14 +265,8 @@ export default function Events() {
   }
 
   return (
-    <div 
-      className="min-h-screen bg-cover bg-center bg-fixed relative"
-      style={{
-        backgroundImage: `url('/painting1.jpg')`,
-        backgroundBlendMode: 'overlay'
-      }}
-    >
-      <div className="absolute inset-0 bg-black/40"></div>
+    <div className="min-h-screen relative">
+      <div className="absolute inset-0 bg-black/20"></div>
       
       <div className="relative z-10 p-6">
         <div className="max-w-7xl mx-auto">
