@@ -141,12 +141,36 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
                     src={event.imageUrl} 
                     alt={event.title}
                     className="w-full h-full object-cover"
+                    crossOrigin="anonymous"
                     referrerPolicy="no-referrer"
                     loading="lazy"
                     onError={(e) => {
-                      console.log('Image loading failed, hiding image for hover preview');
+                      console.error('Image failed to load:', event.imageUrl);
+                      console.error('Image error event:', e);
+                      
+                      // Try multiple fallback strategies
                       const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
+                      const originalSrc = target.src;
+                      
+                      // Strategy 1: Remove URL parameters
+                      const urlWithoutParams = event.imageUrl?.split('?')[0];
+                      if (urlWithoutParams && urlWithoutParams !== originalSrc && !target.dataset.retried) {
+                        console.log('Retrying with URL without parameters:', urlWithoutParams);
+                        target.dataset.retried = 'true';
+                        target.src = urlWithoutParams;
+                        return;
+                      }
+                      
+                      // Strategy 2: Try different cache-busting approach
+                      if (!target.dataset.cacheBusted && event.imageUrl) {
+                        console.log('Trying cache-busted version:', event.imageUrl);
+                        target.dataset.cacheBusted = 'true';
+                        target.src = event.imageUrl + (event.imageUrl.includes('?') ? '&' : '?') + 'cache=' + Date.now();
+                        return;
+                      }
+                    }}
+                    onLoad={() => {
+                      console.log('Image loaded successfully:', event.imageUrl);
                     }}
                   />
                 ) : (
@@ -193,7 +217,7 @@ export function CalendarEventHover({ event, children, onEventClick }: CalendarEv
                 {/* Category emojis and Price */}
                 <div className="flex items-center justify-between">
                   <div className="flex gap-1">
-                    {getCategoryEmojis(event.categories || []).map((emoji, index) => (
+                    {getCategoryEmojis(event.categories).map((emoji, index) => (
                       <span key={index} className="text-lg">{emoji}</span>
                     ))}
                   </div>

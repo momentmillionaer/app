@@ -2,17 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Force visibility for root element */
-#root {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  min-height: 100vh !important;
-  width: 100% !important;
-  position: relative !important;
-  z-index: 1 !important;
-}
-
 /* Loading screen animations */
 @keyframes gradientShift {
   0%, 100% {
@@ -114,7 +103,15 @@
 
   body {
     @apply font-helvetica antialiased text-foreground;
-    background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(22, 33, 62, 0.3) 50%, rgba(83, 58, 113, 0.2) 100%);
+    background: 
+      linear-gradient(135deg, 
+        rgba(26, 10, 46, 0.4) 0%,
+        rgba(22, 33, 62, 0.35) 25%,
+        rgba(15, 52, 96, 0.3) 50%,
+        rgba(83, 58, 113, 0.35) 75%,
+        rgba(106, 76, 147, 0.4) 100%
+      ),
+      url('@assets/244783fgsdl_1752738731988.jpg') center/cover fixed;
     min-height: 100vh;
     color: white;
   }

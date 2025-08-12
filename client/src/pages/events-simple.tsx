@@ -257,34 +257,24 @@ export default function Events() {
   };
 
   if (isLoading) {
-    console.log("Events loading...");
     return <LoadingScreen />;
   }
 
   if (error) {
-    console.error("Events error:", error);
     return <div className="p-8 text-center text-red-500">Fehler beim Laden der Events: {error.message}</div>;
   }
 
-  console.log("Events loaded:", events.length, "Rendering view:", view);
-  
-  // Add debug visibility test
-  console.log("Component render test - this should be visible");
-  
-  // Debug the current filtered events
-  console.log("Events to show:", eventsToShow.length);
-
   return (
     <div 
-      className="min-h-screen relative"
+      className="min-h-screen bg-cover bg-center bg-fixed relative"
       style={{
-        background: 'linear-gradient(145deg, hsl(228, 25%, 9%) 0%, hsl(232, 30%, 12%) 20%, hsl(235, 35%, 15%) 40%, hsl(238, 40%, 18%) 60%, hsl(240, 45%, 21%) 80%, hsl(242, 50%, 24%) 100%), linear-gradient(45deg, hsl(280, 15%, 8%) 0%, hsl(285, 20%, 10%) 25%, hsl(290, 25%, 12%) 50%, hsl(295, 30%, 14%) 75%, hsl(300, 35%, 16%) 100%)',
-        backgroundAttachment: 'fixed'
+        backgroundImage: `url('/painting1.jpg')`,
+        backgroundBlendMode: 'overlay'
       }}
     >
-      <div className="absolute inset-0 opacity-20" style={{backgroundImage: `url('/painting1.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
+      <div className="absolute inset-0 bg-black/40"></div>
       
-      <div className="relative z-10 p-6 min-h-screen">
+      <div className="relative z-10 p-6">
         <div className="max-w-7xl mx-auto">
           <Header eventCount={eventsToShow.length} lastUpdated={new Date().toISOString()} />
           

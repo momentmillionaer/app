@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Share2, Download, Copy, Link } from "lucide-react";
 import { Event } from "@shared/schema";
-import { SimpleShareGenerator } from './simple-share-generator';
+import { AdvancedShareGenerator } from './advanced-share-generator';
 
 interface ShareEventDialogProps {
   event: Event;
@@ -124,7 +124,7 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
             {/* Image Generator */}
             {!shareImageUrl && (
               <div className="text-center py-4">
-                <SimpleShareGenerator 
+                <AdvancedShareGenerator 
                   event={event}
                   format={format}
                   onImageGenerated={setShareImageUrl}
