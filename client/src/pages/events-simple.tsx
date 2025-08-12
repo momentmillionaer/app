@@ -278,10 +278,11 @@ export default function Events() {
     <div 
       className="min-h-screen relative"
       style={{
-        background: 'linear-gradient(135deg, #2a2a3a 0%, #26314e 30%, #1f4470 60%, #634a8d 100%)',
+        background: '#ffffff',
+        color: '#000000'
       }}
     >
-      <div className="absolute inset-0 opacity-10" style={{backgroundImage: `url('/painting1.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
+      <div style={{position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#ffffff', zIndex: -1}}></div>
       
       <div className="relative z-10 p-6 min-h-screen">
         <div className="max-w-7xl mx-auto">
