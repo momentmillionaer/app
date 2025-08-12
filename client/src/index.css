@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Force visibility for root element */
+#root {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  min-height: 100vh !important;
+  width: 100% !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
 /* Loading screen animations */
 @keyframes gradientShift {
   0%, 100% {
