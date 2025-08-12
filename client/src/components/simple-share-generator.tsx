@@ -1,9 +1,18 @@
 import { useState } from 'react';
+import { format as formatDate } from "date-fns";
+import { de } from "date-fns/locale";
 
 interface SimpleEvent {
   title?: string;
+  subtitle?: string | null;
   date?: string | Date;
   location?: string | null;
+  organizer?: string | null;
+  category?: string;
+  price?: string | null;
+  description?: string | null;
+  imageUrl?: string | null;
+  time?: string | null;
   notionId?: string;
 }
 
@@ -13,15 +22,47 @@ interface SimpleShareGeneratorProps {
   onImageGenerated: (imageUrl: string) => void;
 }
 
+const backgroundGradients = [
+  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+  'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+  'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+  'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)'
+];
+
 export function SimpleShareGenerator({ event, format, onImageGenerated }: SimpleShareGeneratorProps) {
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const getEventEmoji = (event: SimpleEvent): string => {
+    const title = (event.title || '').toLowerCase();
+    const category = (event.category || '').toLowerCase();
+    
+    if (category.includes('dating') || category.includes('❤️')) return '❤️';
+    if (category.includes('festivals') || category.includes('🃏')) return '🎉';
+    if (category.includes('musik') || title.includes('konzert') || title.includes('musik')) return '🎵';
+    if (category.includes('sport') || title.includes('sport')) return '⚽';
+    if (category.includes('kunst') || title.includes('kunst') || title.includes('galerie')) return '🎨';
+    if (category.includes('theater') || title.includes('theater')) return '🎭';
+    if (category.includes('kino') || title.includes('film')) return '🎬';
+    if (category.includes('essen') || title.includes('restaurant') || title.includes('food')) return '🍽️';
+    if (category.includes('nacht') || title.includes('party') || title.includes('club')) return '🌙';
+    if (category.includes('markt') || title.includes('markt')) return '🛍️';
+    if (category.includes('workshop') || title.includes('workshop')) return '🛠️';
+    if (category.includes('konferenz') || title.includes('meeting')) return '👥';
+    if (title.includes('weihnacht') || title.includes('christmas')) return '🎄';
+    if (title.includes('silvester') || title.includes('new year')) return '🎆';
+    if (title.includes('outdoor') || title.includes('wandern')) return '🏞️';
+    
+    return '📅';
+  };
 
   const generateImage = async () => {
     try {
       setIsGenerating(true);
-      console.log('🎨 Starting simple image generation for:', event.title);
+      console.log('🎨 Generating share image for:', event.title);
       
-      // Create canvas
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       
@@ -29,93 +70,147 @@ export function SimpleShareGenerator({ event, format, onImageGenerated }: Simple
         throw new Error('Could not get 2D context');
       }
       
-      // Set dimensions based on format
       canvas.width = 1080;
       canvas.height = format === "post" ? 1350 : 1920;
       
-      console.log('✅ Canvas ready:', canvas.width, 'x', canvas.height, 'for format:', format);
-      
-      // Create vibrant gradient background
+      // Create gradient background
+      const randomBg = backgroundGradients[Math.floor(Math.random() * backgroundGradients.length)];
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, '#9333ea'); // Purple
-      gradient.addColorStop(0.6, '#3b82f6'); // Blue
-      gradient.addColorStop(1, '#1d4ed8'); // Darker blue
+      
+      if (randomBg.includes('#667eea')) {
+        gradient.addColorStop(0, '#667eea');
+        gradient.addColorStop(1, '#764ba2');
+      } else if (randomBg.includes('#f093fb')) {
+        gradient.addColorStop(0, '#f093fb');
+        gradient.addColorStop(1, '#f5576c');
+      } else if (randomBg.includes('#4facfe')) {
+        gradient.addColorStop(0, '#4facfe');
+        gradient.addColorStop(1, '#00f2fe');
+      } else if (randomBg.includes('#43e97b')) {
+        gradient.addColorStop(0, '#43e97b');
+        gradient.addColorStop(1, '#38f9d7');
+      } else if (randomBg.includes('#fa709a')) {
+        gradient.addColorStop(0, '#fa709a');
+        gradient.addColorStop(1, '#fee140');
+      } else if (randomBg.includes('#a8edea')) {
+        gradient.addColorStop(0, '#a8edea');
+        gradient.addColorStop(1, '#fed6e3');
+      } else {
+        gradient.addColorStop(0, '#ff9a9e');
+        gradient.addColorStop(1, '#fecfef');
+      }
+      
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Add subtle overlay for better text readability
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+      // Add overlay
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      console.log('✅ Background and overlay created');
+      // Card dimensions
+      const cardPadding = 40;
+      const cardWidth = canvas.width - (cardPadding * 2);
+      const cardHeight = format === "post" ? 900 : 1200;
+      const cardX = cardPadding;
+      const cardY = format === "post" ? 225 : (canvas.height - cardHeight) / 2;
       
-      // Text styling with better readability
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
+      // Draw glass card
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.beginPath();
+      ctx.roundRect(cardX, cardY, cardWidth, cardHeight, 32);
+      ctx.fill();
       
-      // Main title
-      ctx.fillStyle = 'white';
-      ctx.font = 'bold 56px "Helvetica Neue", Arial, sans-serif';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(cardX, cardY, cardWidth, cardHeight, 32);
+      ctx.stroke();
+      
+      // Event emoji
+      ctx.font = '120px Arial';
       ctx.textAlign = 'center';
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-      ctx.lineWidth = 2;
+      ctx.fillStyle = 'white';
+      ctx.fillText(getEventEmoji(event), canvas.width / 2, cardY + 200);
       
-      const title = event.title || 'Event Title';
-      ctx.strokeText(title, centerX, centerY - 60);
-      ctx.fillText(title, centerX, centerY - 60);
-      
-      // Date
-      const eventDate = event.date ? new Date(event.date) : new Date();
-      const dateStr = eventDate.toLocaleDateString('de-AT', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+      // Event title
+      ctx.font = 'bold 64px Arial';
+      ctx.fillStyle = 'white';
+      const titleLines = wrapText(ctx, event.title || 'Event', cardWidth - 80);
+      let yPos = cardY + 320;
+      titleLines.forEach(line => {
+        ctx.fillText(line, canvas.width / 2, yPos);
+        yPos += 80;
       });
       
-      ctx.font = '36px "Helvetica Neue", Arial, sans-serif';
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-      ctx.strokeText(dateStr, centerX, centerY + 20);
-      ctx.fillText(dateStr, centerX, centerY + 20);
-      
-      // Location (if available)
-      if (event.location && event.location.trim()) {
-        ctx.font = '32px "Helvetica Neue", Arial, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        const locationText = `📍 ${event.location}`;
-        ctx.strokeText(locationText, centerX, centerY + 80);
-        ctx.fillText(locationText, centerX, centerY + 80);
+      // Event date
+      if (event.date) {
+        const eventDate = new Date(event.date);
+        const dateStr = formatDate(eventDate, "EEEE, dd.MM.yyyy", { locale: de });
+        ctx.font = '36px Arial';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillText(dateStr, canvas.width / 2, yPos + 60);
+        yPos += 80;
       }
       
-      // Add brand text at bottom
-      ctx.font = '24px "Helvetica Neue", Arial, sans-serif';
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-      const brandText = 'momentmillionär.at';
-      ctx.fillText(brandText, centerX, canvas.height - 60);
+      // Event time and location
+      if (event.time || event.location) {
+        const timeLocation = [event.time, event.location].filter(Boolean).join(' • ');
+        ctx.font = '32px Arial';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillText(timeLocation, canvas.width / 2, yPos + 40);
+        yPos += 60;
+      }
       
-      console.log('✅ All text elements added');
+      // Organizer
+      if (event.organizer) {
+        ctx.font = '28px Arial';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fillText(event.organizer, canvas.width / 2, yPos + 40);
+      }
       
-      // Convert to high-quality data URL
-      const imageUrl = canvas.toDataURL('image/png', 0.95);
-      console.log('✅ Image generated successfully! Size:', Math.round(imageUrl.length / 1024), 'KB');
+      // Branding
+      ctx.font = 'bold 36px Arial';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.fillText('momentmillionär', canvas.width / 2, cardY + cardHeight - 60);
       
-      onImageGenerated(imageUrl);
+      const dataUrl = canvas.toDataURL('image/png');
+      onImageGenerated(dataUrl);
+      console.log('✅ Share image generated successfully');
       
     } catch (error) {
-      console.error('❌ Error generating image:', error);
-      alert('Fehler beim Erstellen des Bildes. Bitte versuchen Sie es erneut.');
+      console.error('❌ Failed to generate share image:', error);
+      throw error;
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const wrapText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] => {
+    const words = text.split(' ');
+    const lines = [];
+    let currentLine = words[0];
+
+    for (let i = 1; i < words.length; i++) {
+      const word = words[i];
+      const width = ctx.measureText(currentLine + ' ' + word).width;
+      if (width < maxWidth) {
+        currentLine += ' ' + word;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    lines.push(currentLine);
+    return lines;
   };
 
   return (
     <button
       onClick={generateImage}
       disabled={isGenerating}
-      className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 text-white rounded-full font-medium transition-colors"
+      className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
     >
-      {isGenerating ? 'Generiere Bild...' : 'Bild erstellen'}
+      {isGenerating ? 'Generiere...' : `${format === 'post' ? 'Post' : 'Story'} Bild erstellen`}
     </button>
   );
 }

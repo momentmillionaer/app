@@ -55,8 +55,8 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
       {/* Modal Content */}
       <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto ios-glass-popup rounded-[2rem] border-0">
         {/* Event Image Header */}
-        {event.imageUrl && (
-          <div className="relative w-full h-48 overflow-hidden rounded-t-[2rem]">
+        <div className="relative w-full h-48 overflow-hidden rounded-t-[2rem] bg-gradient-to-br from-purple-600/20 to-blue-600/20">
+          {event.imageUrl ? (
             <img 
               src={event.imageUrl} 
               alt={event.title}
@@ -65,37 +65,22 @@ export function EventModal({ event, isOpen, onClose }: EventModalProps) {
               referrerPolicy="no-referrer"
               loading="lazy"
               onError={(e) => {
-                console.error('Image failed to load:', event.imageUrl);
-                console.error('Image error event:', e);
-                
-                // Try multiple fallback strategies
-                const target = e.target as HTMLImageElement;
-                const originalSrc = target.src;
-                
-                // Strategy 1: Remove URL parameters
-                const urlWithoutParams = event.imageUrl?.split('?')[0];
-                if (urlWithoutParams && urlWithoutParams !== originalSrc && !target.dataset.retried) {
-                  console.log('Retrying with URL without parameters:', urlWithoutParams);
-                  target.dataset.retried = 'true';
-                  target.src = urlWithoutParams;
-                  return;
+                console.log("Image loading failed, using fallback emoji");
+                e.currentTarget.style.display = 'none';
+                const fallbackDiv = e.currentTarget.parentElement?.querySelector('.fallback-emoji') as HTMLElement;
+                if (fallbackDiv) {
+                  fallbackDiv.style.display = 'flex';
                 }
-                
-                // Strategy 2: Try different cache-busting approach
-                if (!target.dataset.cacheBusted && event.imageUrl) {
-                  console.log('Trying cache-busted version:', event.imageUrl);
-                  target.dataset.cacheBusted = 'true';
-                  target.src = event.imageUrl + (event.imageUrl.includes('?') ? '&' : '?') + 'cache=' + Date.now();
-                  return;
-                }
-              }}
-              onLoad={() => {
-                console.log('Image loaded successfully:', event.imageUrl);
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          ) : null}
+          <div 
+            className="fallback-emoji absolute inset-0 flex items-center justify-center text-8xl" 
+            style={{ display: event.imageUrl ? 'none' : 'flex' }}
+          >
+            {getEventEmoji(event)}
           </div>
-        )}
+        </div>
         
         <div className="p-8">
           {/* Header */}

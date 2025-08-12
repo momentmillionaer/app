@@ -267,12 +267,18 @@ export default function Events() {
   }
 
   console.log("Events loaded:", events.length, "Rendering view:", view);
+  
+  // Add debug visibility test
+  console.log("Component render test - this should be visible");
+  
+  // Debug the current filtered events
+  console.log("Events to show:", eventsToShow.length);
 
   return (
     <div 
       className="min-h-screen relative"
       style={{
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 30%, #0f3460 60%, #533a7d 100%)',
+        background: 'linear-gradient(135deg, #2a2a3a 0%, #26314e 30%, #1f4470 60%, #634a8d 100%)',
       }}
     >
       <div className="absolute inset-0 opacity-10" style={{backgroundImage: `url('/painting1.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
