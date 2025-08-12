@@ -125,7 +125,7 @@ export function GridView({ events, onEventClick }: GridViewProps) {
       {events.map((event, index) => {
         const eventDate = (() => {
           try {
-            return event.date ? parseISO(event.date) : null;
+            return event.date ? parseISO(String(event.date)) : null;
           } catch (error) {
             console.error('Date parsing error:', error, event.date);
             return null;
@@ -157,7 +157,7 @@ export function GridView({ events, onEventClick }: GridViewProps) {
           if (!event.date) return false;
           
           // Parse dates as local dates to avoid timezone issues
-          const eventDateParts = event.date.split('-');
+          const eventDateParts = String(event.date).split('-');
           const eventYear = parseInt(eventDateParts[0]);
           const eventMonth = parseInt(eventDateParts[1]) - 1; // Month is 0-indexed
           const eventDay = parseInt(eventDateParts[2]);
@@ -214,37 +214,11 @@ export function GridView({ events, onEventClick }: GridViewProps) {
                   src={event.imageUrl} 
                   alt={event.title}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 blur-[1px] group-hover:blur-0"
-                  crossOrigin="anonymous"
                   referrerPolicy="no-referrer"
                   loading="lazy"
                   onError={(e) => {
-                    console.error('Image failed to load:', event.imageUrl);
-                    console.error('Image error event:', e);
+                    console.log('Image loading failed, using emoji fallback');
                     handleImageError(event.notionId || '');
-                    
-                    // Try multiple fallback strategies
-                    const target = e.target as HTMLImageElement;
-                    const originalSrc = target.src;
-                    
-                    // Strategy 1: Remove URL parameters
-                    const urlWithoutParams = event.imageUrl?.split('?')[0];
-                    if (urlWithoutParams && urlWithoutParams !== originalSrc && !target.dataset.retried) {
-                      console.log('Retrying with URL without parameters:', urlWithoutParams);
-                      target.dataset.retried = 'true';
-                      target.src = urlWithoutParams;
-                      return;
-                    }
-                    
-                    // Strategy 2: Try different cache-busting approach
-                    if (!target.dataset.cacheBusted && event.imageUrl) {
-                      console.log('Trying cache-busted version:', event.imageUrl);
-                      target.dataset.cacheBusted = 'true';
-                      target.src = event.imageUrl + (event.imageUrl.includes('?') ? '&' : '?') + 'cache=' + Date.now();
-                      return;
-                    }
-                  }}
-                  onLoad={() => {
-                    console.log('Image loaded successfully:', event.imageUrl);
                   }}
                 />
               ) : (
@@ -287,7 +261,7 @@ export function GridView({ events, onEventClick }: GridViewProps) {
               <div className="space-y-2">
                 {/* Category emojis */}
                 <div className="flex gap-1">
-                  {getCategoryEmojis(event.categories).map((emoji, index) => (
+                  {getCategoryEmojis(event.categories || []).map((emoji, index) => (
                     <span key={index} className="text-lg">{emoji}</span>
                   ))}
                 </div>

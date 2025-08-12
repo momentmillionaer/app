@@ -13,6 +13,7 @@ export function Header({ eventCount, lastUpdated }: HeaderProps) {
           <h1 className="text-4xl lg:text-5xl font-normal text-white drop-shadow-lg font-connihof tracking-tight">
             momentmillionär
           </h1>
+          <p className="text-white/80 text-sm mt-2">Events in Graz - {eventCount} Events verfügbar</p>
         </div>
       </div>
     </header>

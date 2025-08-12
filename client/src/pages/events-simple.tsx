@@ -257,24 +257,27 @@ export default function Events() {
   };
 
   if (isLoading) {
+    console.log("Events loading...");
     return <LoadingScreen />;
   }
 
   if (error) {
+    console.error("Events error:", error);
     return <div className="p-8 text-center text-red-500">Fehler beim Laden der Events: {error.message}</div>;
   }
 
+  console.log("Events loaded:", events.length, "Rendering view:", view);
+
   return (
     <div 
-      className="min-h-screen bg-cover bg-center bg-fixed relative"
+      className="min-h-screen relative"
       style={{
-        backgroundImage: `url('/painting1.jpg')`,
-        backgroundBlendMode: 'overlay'
+        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 30%, #0f3460 60%, #533a7d 100%)',
       }}
     >
-      <div className="absolute inset-0 bg-black/40"></div>
+      <div className="absolute inset-0 opacity-10" style={{backgroundImage: `url('/painting1.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
       
-      <div className="relative z-10 p-6">
+      <div className="relative z-10 p-6 min-h-screen">
         <div className="max-w-7xl mx-auto">
           <Header eventCount={eventsToShow.length} lastUpdated={new Date().toISOString()} />
           

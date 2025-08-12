@@ -83,32 +83,11 @@ export function EventCard({ event, onClick, view = "list" }: EventCardProps) {
             src={event.imageUrl || ''}
             alt={event.title || 'Event'}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="eager"
+            loading="lazy"
             decoding="async"
-            crossOrigin="anonymous"
+            referrerPolicy="no-referrer"
             onError={(e) => {
-              console.error('Image loading failed:', event.imageUrl);
-              const img = e.target as HTMLImageElement;
-              
-              // Try without crossOrigin
-              if (img.crossOrigin === "anonymous") {
-                console.log('Retrying without crossOrigin...');
-                img.crossOrigin = '';
-                img.src = '';
-                img.src = event.imageUrl || '';
-                return;
-              }
-              
-              // Try with different referrer policy
-              if (!img.referrerPolicy || img.referrerPolicy === '') {
-                console.log('Retrying with no-referrer policy...');
-                img.referrerPolicy = "no-referrer";
-                img.src = '';
-                img.src = event.imageUrl || '';
-                return;
-              }
-              
-              console.log('All retry strategies failed, hiding image');
+              console.log('Image loading failed, using fallback emoji');
               setImageError(true);
             }}
           />

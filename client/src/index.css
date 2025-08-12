@@ -103,15 +103,7 @@
 
   body {
     @apply font-helvetica antialiased text-foreground;
-    background: 
-      linear-gradient(135deg, 
-        rgba(26, 10, 46, 0.4) 0%,
-        rgba(22, 33, 62, 0.35) 25%,
-        rgba(15, 52, 96, 0.3) 50%,
-        rgba(83, 58, 113, 0.35) 75%,
-        rgba(106, 76, 147, 0.4) 100%
-      ),
-      url('@assets/244783fgsdl_1752738731988.jpg') center/cover fixed;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 30%, #0f3460 60%, #533a7d 100%);
     min-height: 100vh;
     color: white;
   }
